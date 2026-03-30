@@ -5,14 +5,13 @@ namespace FinTrack.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class TransactionsController : ControllerBase
+public class TransactionsController(CreateTransactionHandler handler) : ControllerBase
 {
-    public IActionResult Create(CreateTransactionCommand command)
+    public async Task<IActionResult> Create(
+        CreateTransactionCommand command,
+        CancellationToken cancellationToken)
     {
-        var handler = new CreateTransactionHandler();
-
-        var transaction = handler.Handle(command);
-
-        return Ok(transaction);
+        var result = handler.Handle(command, cancellationToken);
+        return Ok(result);
     }
 }
