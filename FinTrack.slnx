@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="FinTrack.Api/FinTrack.Api.csproj" Id="5195bacf-54ef-41af-a150-f4a53dea134d" />
+    <Project Path="FinTrack.Application/FinTrack.Application.csproj" Id="926e3d59-4904-4fd3-a44e-8ff37a58a23f" />
+    <Project Path="FinTrack.Domain/FinTrack.Domain.csproj" Id="d34f1228-f588-40ee-b6bb-f0d85754c0ff" />
+    <Project Path="FinTrack.Infrastructure/FinTrack.Infrastructure.csproj" Id="a6506d65-e307-4979-95ad-01335e33634e" />
+  </Folder>
+</Solution>
