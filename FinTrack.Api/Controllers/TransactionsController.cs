@@ -28,6 +28,6 @@ public class TransactionsController(
         
         var result = await getHandler.Handle(query, cancellationToken);
 
-        return Ok(result);
+        return result.ToActionResult();
     }
 }

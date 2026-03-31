@@ -1,10 +1,11 @@
 using FinTrack.Application.Common.Interfaces;
+using FinTrack.Application.Common.Results;
 
 namespace FinTrack.Application.Transactions.Get;
 
 public sealed class GetTransactionsHandler(ITransactionRepository repository)
 {
-    public async Task<IReadOnlyList<GetTransactionsResponse>> Handle(
+    public async Task<Result<IReadOnlyList<GetTransactionsResponse>>> Handle(
         GetTransactionsQuery query, 
         CancellationToken cancellationToken)
     {
@@ -13,13 +14,14 @@ public sealed class GetTransactionsHandler(ITransactionRepository repository)
             query.PageSize,
             cancellationToken);
 
-        return transactions
-            .OrderByDescending(t => t.Date)
+        var response = transactions
             .Select(t => new GetTransactionsResponse(
                 t.Id,
                 t.Amount,
                 t.Description,
                 t.Date))
             .ToList();
+
+        return Result<IReadOnlyList<GetTransactionsResponse>>.Success(response);
     }
 }
