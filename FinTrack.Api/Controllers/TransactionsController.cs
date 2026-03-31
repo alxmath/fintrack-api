@@ -1,4 +1,4 @@
-using FinTrack.Application.Common.Results;
+using FinTrack.Api.Extensions;
 using FinTrack.Application.Transactions.Create;
 using Microsoft.AspNetCore.Mvc;
 

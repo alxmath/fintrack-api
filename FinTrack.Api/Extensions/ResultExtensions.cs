@@ -1,6 +1,7 @@
+using FinTrack.Application.Common.Results;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FinTrack.Application.Common.Results;
+namespace FinTrack.Api.Extensions;
 
 public static class ResultExtensions
 {
