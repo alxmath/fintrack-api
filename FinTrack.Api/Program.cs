@@ -1,4 +1,6 @@
+using FinTrack.Application.Transactions.Create;
 using FinTrack.Infrastructure;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,7 @@ if (string.IsNullOrWhiteSpace(connectionString))
     throw new InvalidOperationException("Connection string inválida.");
 
 builder.Services.AddInfrastructure(connectionString);
+builder.Services.AddValidatorsFromAssemblyContaining<CreateTransactionValidator>();
 
 var app = builder.Build();
 
