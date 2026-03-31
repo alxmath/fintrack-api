@@ -2,6 +2,8 @@ using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Transactions.Get;
 using FinTrack.Domain.Entities;
 using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Moq;
 
 namespace FinTrack.Application.Tests.Transactions.Get;
@@ -13,10 +15,11 @@ public class GetTransactionsHandlerTests
     {
         // Arrange
         var repositoryMock = new Mock<ITransactionRepository>();
+        var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
 
         var transactions = new List<Transaction>
         {
-            new("Salário", 100,  DateTime.UtcNow),
+            new("Salário", 100, DateTime.UtcNow),
             new("Mercado", 50, DateTime.UtcNow.AddDays(-1))
         };
 
@@ -24,7 +27,13 @@ public class GetTransactionsHandlerTests
             .Setup(r => r.GetPagedAsync(1, 10, It.IsAny<CancellationToken>()))
             .ReturnsAsync(transactions);
 
-        var handler = new GetTransactionsHandler(repositoryMock.Object);
+        validatorMock
+            .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
+
+        var handler = new GetTransactionsHandler(
+            repositoryMock.Object,
+            validatorMock.Object);
 
         var query = new GetTransactionsQuery(1, 10);
 
@@ -42,12 +51,19 @@ public class GetTransactionsHandlerTests
     {
         // Arrange
         var repositoryMock = new Mock<ITransactionRepository>();
+        var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
 
         repositoryMock
             .Setup(r => r.GetPagedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync([]);
+            .ReturnsAsync(new List<Transaction>());
 
-        var handler = new GetTransactionsHandler(repositoryMock.Object);
+        validatorMock
+            .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
+
+        var handler = new GetTransactionsHandler(
+            repositoryMock.Object,
+            validatorMock.Object);
 
         var query = new GetTransactionsQuery(1, 10);
 
@@ -64,8 +80,15 @@ public class GetTransactionsHandlerTests
     {
         // Arrange
         var repositoryMock = new Mock<ITransactionRepository>();
+        var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
 
-        var handler = new GetTransactionsHandler(repositoryMock.Object);
+        validatorMock
+            .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
+
+        var handler = new GetTransactionsHandler(
+            repositoryMock.Object,
+            validatorMock.Object);
 
         var query = new GetTransactionsQuery(2, 5);
 
@@ -80,5 +103,38 @@ public class GetTransactionsHandlerTests
         repositoryMock.Verify(
             r => r.GetPagedAsync(2, 5, It.IsAny<CancellationToken>()),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_ShouldReturnFailure_WhenValidationFails()
+    {
+        // Arrange
+        var repositoryMock = new Mock<ITransactionRepository>();
+        var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
+
+        var failures = new List<ValidationFailure>
+    {
+        new("PageNumber", "Inválido")
+    };
+
+        validatorMock
+            .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult(failures));
+
+        var handler = new GetTransactionsHandler(
+            repositoryMock.Object,
+            validatorMock.Object);
+
+        var query = new GetTransactionsQuery(0, 10);
+
+        // Act
+        var result = await handler.Handle(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+
+        repositoryMock.Verify(
+            r => r.GetPagedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 }
