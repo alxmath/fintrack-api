@@ -1,7 +1,9 @@
+using FinTrack.Application.Common.Abstractions;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Transactions.Create;
 using FinTrack.Infrastructure.Persistence;
 using FinTrack.Infrastructure.Persistence.Repositories;
+using FinTrack.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +19,8 @@ public static class DependencyInjection
         services.AddScoped<ITransactionRepository, TransactionRepository>();
 
         services.AddScoped<CreateTransactionHandler>();
+
+        services.AddScoped<IDateTimeProvider, DateTimeProvider>();
 
         return services;
     }

@@ -1,10 +1,11 @@
+using FinTrack.Application.Common.Abstractions;
 using FluentValidation;
 
 namespace FinTrack.Application.Transactions.Create;
 
 public class CreateTransactionValidator : AbstractValidator<CreateTransactionCommand>
 {
-    public CreateTransactionValidator()
+    public CreateTransactionValidator(IDateTimeProvider  dateTimeProvider)
     {
         RuleFor(x => x.Description)
             .NotEmpty().WithMessage("Descrição é obrigatória")
@@ -14,7 +15,7 @@ public class CreateTransactionValidator : AbstractValidator<CreateTransactionCom
             .NotEqual(0).WithMessage("Valor não pode ser zero");
 
         RuleFor(x => x.Date)
-            .LessThanOrEqualTo(DateTime.UtcNow)
+            .LessThanOrEqualTo(dateTimeProvider.UtcNow)
             .WithMessage("Data não pode ser futura");
     }
 }
