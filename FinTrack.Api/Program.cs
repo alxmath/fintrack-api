@@ -5,8 +5,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-builder.Services.AddInfraestructure(
-    builder.Configuration.GetConnectionString("DefaultConnection"));
+var connectionString = builder.Configuration
+    .GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException("Connection string inválida.");
+
+builder.Services.AddInfrastructure(connectionString);
 
 var app = builder.Build();
 

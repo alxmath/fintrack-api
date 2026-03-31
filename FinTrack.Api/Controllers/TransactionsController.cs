@@ -1,3 +1,4 @@
+using FinTrack.Application.Common.Results;
 using FinTrack.Application.Transactions.Create;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +13,6 @@ public class TransactionsController(CreateTransactionHandler handler) : Controll
         CancellationToken cancellationToken)
     {
         var result = await handler.Handle(command, cancellationToken);
-
-        if (result.IsFailure)
-            return BadRequest(new { error = result.Error });
-
-        return Ok(result.Value);
+        return result.ToActionResult();
     }
 }
