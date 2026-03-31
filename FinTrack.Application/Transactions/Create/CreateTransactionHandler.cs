@@ -2,7 +2,6 @@ using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FinTrack.Domain.Entities;
 using FluentValidation;
-using System.ComponentModel.DataAnnotations;
 
 namespace FinTrack.Application.Transactions.Create;
 
@@ -10,14 +9,16 @@ public class CreateTransactionHandler(
     ITransactionRepository repository,
     IValidator<CreateTransactionCommand> validator)
 {
-    public async Task<Result<Transaction>> Handle(CreateTransactionCommand command, CancellationToken cancellationToken)
+    public async Task<Result<CreateTransactionResponse>> Handle(
+        CreateTransactionCommand command, 
+        CancellationToken cancellationToken)
     {
         var validationResult = await validator.ValidateAsync(command, cancellationToken);
 
         if (!validationResult.IsValid)
         {
             var error = validationResult.Errors.First().ErrorMessage;
-            return Result<Transaction>.Failure(error);
+            return Result<CreateTransactionResponse>.Failure(error);
         }
 
         var transaction = new Transaction(
@@ -27,6 +28,14 @@ public class CreateTransactionHandler(
 
         await repository.AddAsync(transaction, cancellationToken);
 
-        return Result<Transaction>.Success(transaction);
+        var response = new CreateTransactionResponse
+        {
+            Id = transaction.Id,
+            Description = transaction.Description,
+            Amount = transaction.Amount,
+            Date = transaction.Date
+        };
+
+        return Result<CreateTransactionResponse>.Success(response);
     }
 }
