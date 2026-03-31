@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.yml" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="FinTrack.Api/FinTrack.Api.csproj" Id="5195bacf-54ef-41af-a150-f4a53dea134d" />
     <Project Path="FinTrack.Application/FinTrack.Application.csproj" Id="926e3d59-4904-4fd3-a44e-8ff37a58a23f" />
