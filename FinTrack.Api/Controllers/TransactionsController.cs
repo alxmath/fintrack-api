@@ -11,7 +11,11 @@ public class TransactionsController(CreateTransactionHandler handler) : Controll
         CreateTransactionCommand command,
         CancellationToken cancellationToken)
     {
-        var result = handler.Handle(command, cancellationToken);
-        return Ok(result);
+        var result = await handler.Handle(command, cancellationToken);
+
+        if (result.IsFailure)
+            return BadRequest(new { error = result.Error });
+
+        return Ok(result.Value);
     }
 }
