@@ -1,3 +1,4 @@
+using FinTrack.Api.Extensions;
 using FinTrack.Application.Categories.Create;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +15,20 @@ public class CategoriesController(CreateCategoryHandler handler) : ControllerBas
     {
         var result = await handler.Handle(command, cancellationToken);
 
-        if (!result.IsSuccess)
-            return BadRequest(result);
+        return result.ToActionResult(value =>
+            new CreatedAtActionResult(
+                actionName: nameof(GetById),
+                controllerName: "Categories",
+                routeValues: new { id = value.Id },
+                value: result));
+    }
 
-        var response = result.Value;
-        return CreatedAtAction(nameof(Create), new { id = result.Value.Id }, result);
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        // placeholder até implementar
+        return Ok();
     }
 }

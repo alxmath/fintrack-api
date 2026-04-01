@@ -85,6 +85,7 @@ public class CreateCategoryHandlerTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
         result.Value.Nome.Should().Be("Alimentação");
 
         _repositoryMock.Verify(r =>

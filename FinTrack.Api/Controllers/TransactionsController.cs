@@ -17,7 +17,12 @@ public class TransactionsController(
         CancellationToken cancellationToken)
     {
         var result = await createHandler.Handle(command, cancellationToken);
-        return result.ToActionResult();
+        return result.ToActionResult(value =>
+        new CreatedAtActionResult(
+            actionName: nameof(GetTransactions),
+            controllerName: "Transactions",
+            routeValues: null,
+            value: result));
     }
 
     [HttpGet]

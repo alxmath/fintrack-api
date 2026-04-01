@@ -40,7 +40,9 @@ public class CreateTransactionHandlerTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
+        result.Should().NotBeNull();
         result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
         result.Value.Description.Should().Be("Salário");
 
         repositoryMock.Verify(
@@ -98,7 +100,7 @@ public class CreateTransactionHandlerTests
         validatorMock
             .Setup(v => v.ValidateAsync(command, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult(
-                new[] { new ValidationFailure("Description", "Erro") }));
+                [new ValidationFailure("Description", "Erro")]));
 
         var handler = new CreateTransactionHandler(
             repositoryMock.Object,

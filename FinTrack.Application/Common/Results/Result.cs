@@ -14,10 +14,16 @@ public class Result
         Error = error;
     }
 
-    public static Result Success() => new() { IsSuccess = true };
+    public static Result Success()
+        => new(true, string.Empty);
 
     public static Result Failure(string error)
-        => new() { IsSuccess = false, Error = error };
+    {
+        if (string.IsNullOrWhiteSpace(error))
+            throw new ArgumentException("Erro não pode ser vazio.", nameof(error));
+
+        return new(false, error);
+    }
 }
 
 public class Result<T> : Result
@@ -33,8 +39,18 @@ public class Result<T> : Result
     }
 
     public static Result<T> Success(T value)
-        => new() { IsSuccess = true, Value = value };
+    {
+        if (value is null)
+            throw new ArgumentNullException(nameof(value));
+
+        return new(value, true, string.Empty);
+    }
 
     public static new Result<T> Failure(string error)
-        => new() { IsSuccess = false, Error = error };
+    {
+        if (string.IsNullOrWhiteSpace(error))
+            throw new ArgumentException("Erro não pode ser vazio.", nameof(error));
+
+        return new(default, false, error);
+    }
 }
