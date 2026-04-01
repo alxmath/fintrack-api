@@ -12,7 +12,7 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Transaction>> SearchAsync(
+    public async Task<(IReadOnlyList<Transaction> Items, int Total)> SearchAsync(
         int pageNumber,
         int pageSize,
         Guid? categoryId,
@@ -32,10 +32,14 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
         if (endDate.HasValue)
             query = query.Where(t => t.Date <= endDate);
 
-        return await query
+        var total = await query.CountAsync(cancellationToken);
+
+        var items = await query
             .OrderByDescending(t => t.Date)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
+
+        return (items, total);
     }
 }
