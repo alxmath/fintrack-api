@@ -18,6 +18,7 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString));
 
         services.AddScoped<ITransactionRepository, TransactionRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         services.AddScoped<CreateTransactionHandler>();
         services.AddScoped<GetTransactionsHandler>();
