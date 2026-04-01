@@ -131,12 +131,59 @@ Uso de `Directory.Packages.props` para centralizar versões de pacotes.
 
 ---
 
+
 ## 🧠 Padrões utilizados
 
 * Clean Architecture
 * Vertical Slice
 * CQRS (leve)
-* Result Pattern (em evolução)
+* Result Pattern (padronização de responses)
+
+---
+
+## 🔄 Result Pattern
+
+O projeto utiliza um padrão de retorno baseado em `Result<T>` para padronizar respostas da API.
+
+### Estrutura:
+
+* `IsSuccess`
+* `Error`
+* `Value`
+
+### Motivações:
+
+* Padronização do contrato da API
+* Redução de uso de exceptions como fluxo de controle
+* Melhor previsibilidade para testes e consumidores
+
+---
+
+## 🔌 Injeção de Dependência
+
+A configuração de DI segue separação por camada:
+
+### Application
+
+* Handlers (Commands/Queries)
+* Validators (FluentValidation)
+
+### Infrastructure
+
+* DbContext (EF Core)
+* Repositories
+* Providers (ex: DateTime)
+
+### API
+
+* Orquestração das dependências
+* Configuração do pipeline HTTP
+
+### Benefícios
+
+* Baixo acoplamento entre camadas
+* Melhor testabilidade
+* Facilidade de evolução
 
 ---
 
