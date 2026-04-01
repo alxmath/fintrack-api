@@ -11,5 +11,12 @@ public sealed class GetTransactionsValidator : AbstractValidator<GetTransactions
 
         RuleFor(x => x.PageSize)
             .InclusiveBetween(1, 100);
+
+        RuleFor(x => x)
+            .Must(x =>
+                !x.StartDate.HasValue ||
+                !x.EndDate.HasValue ||
+                x.StartDate <= x.EndDate)
+            .WithMessage("StartDate deve ser menor ou igual a EndDate");
     }
 }
