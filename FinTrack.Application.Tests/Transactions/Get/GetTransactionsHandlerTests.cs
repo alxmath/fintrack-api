@@ -30,6 +30,8 @@ public class GetTransactionsHandlerTests
                 categoryId: It.IsAny<Guid?>(),
                 startDate: It.IsAny<DateTime?>(),
                 endDate: It.IsAny<DateTime?>(),
+                orderBy: It.IsAny<string?>(),
+                desc: It.IsAny<bool>(),
                 cancellationToken: It.IsAny<CancellationToken>()))
             .ReturnsAsync((transactions, transactions.Count));
 
@@ -65,12 +67,14 @@ public class GetTransactionsHandlerTests
 
         repositoryMock
             .Setup(r => r.SearchAsync(
-                It.IsAny<int>(),
-                It.IsAny<int>(),
-                It.IsAny<Guid?>(),
-                It.IsAny<DateTime?>(),
-                It.IsAny<DateTime?>(),
-                It.IsAny<CancellationToken>()))
+                pageNumber: It.IsAny<int>(),
+                pageSize: It.IsAny<int>(),
+                categoryId: It.IsAny<Guid?>(),
+                startDate: It.IsAny<DateTime?>(),
+                endDate: It.IsAny<DateTime?>(),
+                orderBy: It.IsAny<string?>(),
+                desc: It.IsAny<bool>(),
+                cancellationToken: It.IsAny<CancellationToken>()))
             .ReturnsAsync((new List<Transaction>(), 0));
 
         validatorMock
@@ -111,6 +115,8 @@ public class GetTransactionsHandlerTests
                 categoryId: It.IsAny<Guid?>(),
                 startDate: It.IsAny<DateTime?>(),
                 endDate: It.IsAny<DateTime?>(),
+                orderBy: It.IsAny<string?>(),
+                desc: It.IsAny<bool>(),
                 cancellationToken: It.IsAny<CancellationToken>()))
             .ReturnsAsync((new List<Transaction>(), 0));
 
@@ -131,6 +137,8 @@ public class GetTransactionsHandlerTests
                 categoryId: It.IsAny<Guid?>(),
                 startDate: It.IsAny<DateTime?>(),
                 endDate: It.IsAny<DateTime?>(),
+                orderBy: It.IsAny<string?>(),
+                desc: It.IsAny<bool>(),
                 cancellationToken: It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -165,12 +173,14 @@ public class GetTransactionsHandlerTests
 
         repositoryMock.Verify(
             r => r.SearchAsync(
-                It.IsAny<int>(),
-                It.IsAny<int>(),
-                It.IsAny<Guid?>(),
-                It.IsAny<DateTime?>(),
-                It.IsAny<DateTime?>(),
-                It.IsAny<CancellationToken>()),
+                pageNumber: It.IsAny<int>(),
+                pageSize: It.IsAny<int>(),
+                categoryId: It.IsAny<Guid?>(),
+                startDate: It.IsAny<DateTime?>(),
+                endDate: It.IsAny<DateTime?>(),
+                orderBy: It.IsAny<string?>(),
+                desc: It.IsAny<bool>(),
+                cancellationToken: It.IsAny<CancellationToken>()),
             Times.Never);
     }
 }

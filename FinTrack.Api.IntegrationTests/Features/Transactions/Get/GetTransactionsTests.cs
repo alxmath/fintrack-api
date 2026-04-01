@@ -47,4 +47,82 @@ public class GetTransactionsTests : IntegrationTestBase
             x.Amount == 1000
         );
     }
+
+    [Fact]
+    public async Task Get_ShouldOrderByAmountAscending()
+    {
+        // Arrange
+        var categoryId = await CreateCategoryAsync("Test");
+
+        await Client.PostAsJsonAsync("/api/v1/transactions",
+            new CreateTransactionCommand("T1", 300, DateTime.UtcNow.AddSeconds(-3), categoryId));
+
+        await Client.PostAsJsonAsync("/api/v1/transactions",
+            new CreateTransactionCommand("T2", 100, DateTime.UtcNow.AddSeconds(-2), categoryId));
+
+        await Client.PostAsJsonAsync("/api/v1/transactions",
+            new CreateTransactionCommand("T3", 200, DateTime.UtcNow.AddSeconds(-1), categoryId));
+
+        // Act
+        var response = await Client.GetAsync("/api/v1/transactions?orderBy=amount&desc=false");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content
+            .ReadFromJsonAsync<Result<PagedResult<GetTransactionsResponse>>>();
+
+        content.Should().NotBeNull();
+        content.Value.Should().NotBeNull();
+        content!.IsSuccess.Should().BeTrue();
+
+        var items = content.Value.Items;
+
+        items.Should().HaveCount(3);
+
+        items[0].Amount.Should().Be(100);
+        items[1].Amount.Should().Be(200);
+        items[2].Amount.Should().Be(300);
+    }
+
+    [Fact]
+    public async Task Get_ShouldOrderByDateDescendingByDefault()
+    {
+        // Arrange
+        var categoryId = await CreateCategoryAsync("Test");
+
+        var older = DateTime.UtcNow.AddMinutes(-3);
+        var middle = DateTime.UtcNow.AddMinutes(-2);
+        var newer = DateTime.UtcNow.AddMinutes(-1);
+
+        await Client.PostAsJsonAsync("/api/v1/transactions",
+            new CreateTransactionCommand("Old", 100, older, categoryId));
+
+        await Client.PostAsJsonAsync("/api/v1/transactions",
+            new CreateTransactionCommand("Mid", 200, middle, categoryId));
+
+        await Client.PostAsJsonAsync("/api/v1/transactions",
+            new CreateTransactionCommand("New", 300, newer, categoryId));
+
+        // Act
+        var response = await Client.GetAsync("/api/v1/transactions");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content
+            .ReadFromJsonAsync<Result<PagedResult<GetTransactionsResponse>>>();
+
+        content.Should().NotBeNull();
+        content.Value.Should().NotBeNull();
+        content!.IsSuccess.Should().BeTrue();
+
+        var items = content.Value.Items;
+
+        items.Should().HaveCount(3);
+
+        items[0].Description.Should().Be("New");
+        items[1].Description.Should().Be("Mid");
+        items[2].Description.Should().Be("Old");
+    }
 }
