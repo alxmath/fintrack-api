@@ -1,7 +1,7 @@
 using FinTrack.Api.IntegrationTests.Infrastructure;
 using FinTrack.Application.Common.Results;
+using FinTrack.Application.Features.Transactions.Create;
 using FinTrack.Application.Features.Transactions.Get;
-using FinTrack.Application.Transactions.Create;
 using FluentAssertions;
 using System.Net.Http.Json;
 

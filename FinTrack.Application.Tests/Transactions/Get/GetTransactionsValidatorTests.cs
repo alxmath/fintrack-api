@@ -1,4 +1,4 @@
-using FinTrack.Application.Transactions.Get;
+using FinTrack.Application.Features.Transactions.Get;
 using FluentAssertions;
 
 namespace FinTrack.Application.Tests.Transactions.Get;

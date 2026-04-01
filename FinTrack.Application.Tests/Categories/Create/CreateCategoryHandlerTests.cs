@@ -29,7 +29,7 @@ public class CreateCategoryHandlerTests
         var command = new CreateCategoryCommand("");
 
         var validationResult = new FluentValidation.Results.ValidationResult(
-            new[] { new FluentValidation.Results.ValidationFailure("Name", "Nome inválido") }
+            [new FluentValidation.Results.ValidationFailure("Name", "Nome inválido")]
         );
 
         _validatorMock

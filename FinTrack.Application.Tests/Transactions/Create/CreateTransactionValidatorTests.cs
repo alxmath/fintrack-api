@@ -1,5 +1,5 @@
 using FinTrack.Application.Common.Abstractions;
-using FinTrack.Application.Transactions.Create;
+using FinTrack.Application.Features.Transactions.Create;
 using FluentAssertions;
 using Moq;
 
