@@ -12,7 +12,7 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Transaction>> GetPagedAsync(
+    public async Task<IReadOnlyList<Transaction>> SearchAsync(
         int pageNumber,
         int pageSize,
         Guid? categoryId,

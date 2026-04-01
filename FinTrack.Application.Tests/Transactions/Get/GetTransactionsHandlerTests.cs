@@ -26,7 +26,7 @@ public class GetTransactionsHandlerTests
         };
 
         repositoryMock
-            .Setup(r => r.GetPagedAsync(
+            .Setup(r => r.SearchAsync(
                 pageNumber: 1,
                 pageSize: 10,
                 categoryId: It.IsAny<Guid?>(),
@@ -62,7 +62,7 @@ public class GetTransactionsHandlerTests
         var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
 
         repositoryMock
-            .Setup(r => r.GetPagedAsync(
+            .Setup(r => r.SearchAsync(
                 pageNumber: It.IsAny<int>(),
                 pageSize: It.IsAny<int>(),
                 categoryId: It.IsAny<Guid?>(),
@@ -107,7 +107,7 @@ public class GetTransactionsHandlerTests
         var query = new GetTransactionsQuery { Page = 2, PageSize = 5 };
 
         repositoryMock
-            .Setup(r => r.GetPagedAsync(
+            .Setup(r => r.SearchAsync(
                 pageNumber: 2,
                 pageSize: 5,
                 categoryId: It.IsAny<Guid?>(),
@@ -121,7 +121,7 @@ public class GetTransactionsHandlerTests
 
         // Assert
         repositoryMock.Verify(
-            r => r.GetPagedAsync(
+            r => r.SearchAsync(
                 pageNumber: 2,
                 pageSize: 5,
                 categoryId: It.IsAny<Guid?>(),
@@ -160,7 +160,7 @@ public class GetTransactionsHandlerTests
         result.IsSuccess.Should().BeFalse();
 
         repositoryMock.Verify(
-            r => r.GetPagedAsync(
+            r => r.SearchAsync(
                 pageNumber: It.IsAny<int>(),
                 pageSize: It.IsAny<int>(),
                 categoryId: It.IsAny<Guid?>(),

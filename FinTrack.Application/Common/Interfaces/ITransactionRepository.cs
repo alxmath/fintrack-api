@@ -6,7 +6,7 @@ public interface ITransactionRepository
 {
     Task AddAsync(Transaction transaction, CancellationToken cancellationToken);
 
-    Task<IReadOnlyList<Transaction>> GetPagedAsync(
+    Task<IReadOnlyList<Transaction>> SearchAsync(
         int pageNumber, 
         int pageSize,
         Guid? categoryId,

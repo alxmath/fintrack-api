@@ -19,7 +19,7 @@ public sealed class GetTransactionsHandler(ITransactionRepository repository,
             return Result<IReadOnlyList<GetTransactionsResponse>>.Failure(error);
         }
 
-        var transactions = await repository.GetPagedAsync(
+        var transactions = await repository.SearchAsync(
             query.Page,
             query.PageSize,
             query.CategoryId,
