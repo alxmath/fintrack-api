@@ -11,7 +11,7 @@ public class GetTransactionsValidatorTests
         // Arrange
         var validator = new GetTransactionsValidator();
 
-        var query = new GetTransactionsQuery(1, 10);
+        var query = new GetTransactionsQuery { Page = 1, PageSize = 10 };
 
         // Act
         var result = validator.Validate(query);
@@ -26,14 +26,14 @@ public class GetTransactionsValidatorTests
         // Arrange
         var validator = new GetTransactionsValidator();
 
-        var query = new GetTransactionsQuery(0, 10);
+        var query = new GetTransactionsQuery { Page = 0, PageSize = 10 };
 
         // Act
         var result = validator.Validate(query);
 
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(e => e.PropertyName == "PageNumber");
+        result.Errors.Should().Contain(e => e.PropertyName == "Page");
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class GetTransactionsValidatorTests
     {
         var validator = new GetTransactionsValidator();
 
-        var query = new GetTransactionsQuery(1, 0);
+        var query = new GetTransactionsQuery { Page = 1, PageSize = 0 };
 
         var result = validator.Validate(query);
 
@@ -54,7 +54,7 @@ public class GetTransactionsValidatorTests
     {
         var validator = new GetTransactionsValidator();
 
-        var query = new GetTransactionsQuery(1, 200);
+        var query = new GetTransactionsQuery { Page = 1, PageSize = 200 };
 
         var result = validator.Validate(query);
 

@@ -6,7 +6,7 @@ public sealed class GetTransactionsValidator : AbstractValidator<GetTransactions
 {
     public GetTransactionsValidator()
     {
-        RuleFor(x => x.PageNumber)
+        RuleFor(x => x.Page)
             .GreaterThan(0);
 
         RuleFor(x => x.PageSize)

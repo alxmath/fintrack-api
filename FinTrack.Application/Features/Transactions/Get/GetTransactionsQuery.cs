@@ -1,5 +1,12 @@
 namespace FinTrack.Application.Features.Transactions.Get;
 
-public sealed record GetTransactionsQuery(
-    int PageNumber = 1, 
-    int PageSize = 10);
+public class GetTransactionsQuery
+{
+    public Guid? CategoryId { get; init; }
+
+    public DateTime? StartDate { get; init; }
+    public DateTime? EndDate { get; init; }
+
+    public int Page { get; init; } = 1;
+    public int PageSize { get; init; } = 10;
+}
