@@ -12,5 +12,7 @@ public interface ITransactionRepository
         Guid? categoryId,
         DateTime? startDate,
         DateTime? endDate,
+        string? orderBy,
+        bool desc,
         CancellationToken cancellationToken);
 }

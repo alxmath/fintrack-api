@@ -18,6 +18,8 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
         Guid? categoryId,
         DateTime? startDate,
         DateTime? endDate,
+        string? orderBy,
+        bool desc,
         CancellationToken cancellationToken)
     {
         var query = context.Transactions
@@ -32,10 +34,20 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
         if (endDate.HasValue)
             query = query.Where(t => t.Date <= endDate);
 
+        query = orderBy?.ToLower() switch
+        {
+            "amount" => desc
+                ? query.OrderByDescending(t => t.Amount)
+                : query.OrderBy(t => t.Amount),
+
+            _ => desc
+                ? query.OrderByDescending(t => t.Date)
+                : query.OrderBy(t => t.Date),
+        };
+
         var total = await query.CountAsync(cancellationToken);
 
         var items = await query
-            .OrderByDescending(t => t.Date)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
