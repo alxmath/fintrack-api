@@ -8,6 +8,9 @@ public interface ITransactionRepository
 
     Task<IReadOnlyList<Transaction>> GetPagedAsync(
         int pageNumber, 
-        int pageSize, 
+        int pageSize,
+        Guid? categoryId,
+        DateTime? startDate,
+        DateTime? endDate,
         CancellationToken cancellationToken);
 }

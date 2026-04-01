@@ -15,10 +15,24 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
     public async Task<IReadOnlyList<Transaction>> GetPagedAsync(
         int pageNumber,
         int pageSize,
+        Guid? categoryId,
+        DateTime? startDate,
+        DateTime? endDate,
         CancellationToken cancellationToken)
     {
-        return await context.Transactions
-            .AsNoTracking()
+        var query = context.Transactions
+            .AsNoTracking();
+
+        if (categoryId.HasValue)
+            query = query.Where(t => t.CategoryId == categoryId);
+
+        if (startDate.HasValue)
+            query = query.Where(t => t.Date >= startDate);
+
+        if (endDate.HasValue)
+            query = query.Where(t => t.Date <= endDate);
+
+        return await query
             .OrderByDescending(t => t.Date)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
