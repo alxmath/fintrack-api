@@ -19,11 +19,19 @@ public class TransactionsController(
         CancellationToken cancellationToken)
     {
         var result = await createHandler.Handle(command, cancellationToken);
-        return result.ToActionResult(); // quando implementar GetById, passar o id criado para o CreatedAtAction
+        
+        return result.ToActionResult(value =>
+            new CreatedAtActionResult(
+                actionName: nameof(GetById),
+                controllerName: "Transactions",
+                routeValues: new { id = value.Id },
+                value: result));
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetTransactions([FromQuery] GetTransactionsQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetTransactions(
+        [FromQuery] GetTransactionsQuery query, 
+        CancellationToken cancellationToken)
     {
         var result = await getHandler.Handle(query, cancellationToken);
 
@@ -31,7 +39,9 @@ public class TransactionsController(
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(
+        Guid id, 
+        CancellationToken cancellationToken)
     {
         var query = new GetTransactionByIdQuery(id);
 
