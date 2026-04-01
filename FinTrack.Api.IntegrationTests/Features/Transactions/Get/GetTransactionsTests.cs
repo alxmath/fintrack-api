@@ -19,7 +19,8 @@ public class GetTransactionsTests : IntegrationTestBase
         var request = new CreateTransactionCommand(
             "Salário",
             1000,
-            DateTime.UtcNow
+            DateTime.UtcNow,
+            Guid.NewGuid()
         );
 
         var postResponse = await Client.PostAsJsonAsync(

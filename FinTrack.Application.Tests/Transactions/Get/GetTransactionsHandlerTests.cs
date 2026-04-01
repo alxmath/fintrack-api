@@ -19,8 +19,10 @@ public class GetTransactionsHandlerTests
 
         var transactions = new List<Transaction>
         {
-            new("Salário", 100, DateTime.UtcNow),
-            new("Mercado", 50, DateTime.UtcNow.AddDays(-1))
+            new("Salário", 100, DateTime.UtcNow,
+            Guid.NewGuid()),
+            new("Mercado", 50, DateTime.UtcNow.AddDays(-1),
+            Guid.NewGuid())
         };
 
         repositoryMock

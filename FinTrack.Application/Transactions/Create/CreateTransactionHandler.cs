@@ -24,7 +24,8 @@ public class CreateTransactionHandler(
         var transaction = new Transaction(
             command.Description,
             command.Amount,
-            command.Date);
+            command.Date,
+            command.CategoryId);
 
         await repository.AddAsync(transaction, cancellationToken);
 

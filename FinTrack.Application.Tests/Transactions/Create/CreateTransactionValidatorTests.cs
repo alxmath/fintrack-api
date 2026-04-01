@@ -24,7 +24,8 @@ public class CreateTransactionValidatorTests
         var command = new CreateTransactionCommand(
             "Salário",
             1000,
-            fixedNow // exatamente igual → válido
+            fixedNow, // exatamente igual → válido
+            Guid.NewGuid()
         );
 
         // Act
@@ -51,7 +52,8 @@ public class CreateTransactionValidatorTests
         var command = new CreateTransactionCommand(
             "",
             100,
-            fixedNow
+            fixedNow, 
+            Guid.NewGuid()
         );
 
         // Act
@@ -79,7 +81,8 @@ public class CreateTransactionValidatorTests
         var command = new CreateTransactionCommand(
             "Teste",
             0,
-            fixedNow
+            fixedNow,
+            Guid.NewGuid()
         );
 
         // Act
@@ -107,7 +110,8 @@ public class CreateTransactionValidatorTests
         var command = new CreateTransactionCommand(
             "Teste",
             100,
-            fixedNow.AddSeconds(1) // futuro
+            fixedNow.AddSeconds(1),
+            Guid.NewGuid()
         );
 
         // Act

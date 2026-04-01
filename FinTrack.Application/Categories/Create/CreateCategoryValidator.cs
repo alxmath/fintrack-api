@@ -1,0 +1,13 @@
+using FluentValidation;
+
+namespace FinTrack.Application.Categories.Create;
+
+public class CreateCategoryValidator : AbstractValidator<CreateCategoryCommand>
+{
+    public CreateCategoryValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .MaximumLength(100);
+    }
+}

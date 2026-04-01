@@ -20,7 +20,8 @@ public class CreateTransactionHandlerTests
         var command = new CreateTransactionCommand(
             "Salário",
             1000,
-            DateTime.UtcNow
+            DateTime.UtcNow,
+            Guid.NewGuid()
         );
 
         validatorMock
@@ -57,7 +58,8 @@ public class CreateTransactionHandlerTests
         var command = new CreateTransactionCommand(
             "",
             0,
-            DateTime.UtcNow.AddDays(1)
+            DateTime.UtcNow.AddDays(1),
+            Guid.NewGuid()
         );
 
         var validationFailures = new List<ValidationFailure>
@@ -91,7 +93,7 @@ public class CreateTransactionHandlerTests
         var repositoryMock = new Mock<ITransactionRepository>();
         var validatorMock = new Mock<IValidator<CreateTransactionCommand>>();
 
-        var command = new CreateTransactionCommand("", 0, DateTime.UtcNow);
+        var command = new CreateTransactionCommand("", 0, DateTime.UtcNow, Guid.NewGuid());
 
         validatorMock
             .Setup(v => v.ValidateAsync(command, It.IsAny<CancellationToken>()))
