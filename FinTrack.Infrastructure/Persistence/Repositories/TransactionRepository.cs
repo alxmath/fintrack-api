@@ -54,4 +54,11 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
 
         return (items, total);
     }
+
+    public async Task<Transaction?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await context.Transactions
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+    }
 }

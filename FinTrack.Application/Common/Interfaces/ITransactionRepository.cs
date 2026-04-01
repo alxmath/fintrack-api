@@ -15,4 +15,6 @@ public interface ITransactionRepository
         string? orderBy,
         bool desc,
         CancellationToken cancellationToken);
+
+    Task<Transaction?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 }
