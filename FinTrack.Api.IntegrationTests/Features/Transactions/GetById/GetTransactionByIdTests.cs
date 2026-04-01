@@ -26,6 +26,10 @@ public class GetTransactionByIdTests : IntegrationTestBase
         var created = await createResponse.Content
             .ReadFromJsonAsync<Result<CreateTransactionResponse>>();
 
+        created.Should().NotBeNull();
+        created!.IsSuccess.Should().BeTrue();
+        created.Value.Should().NotBeNull();
+
         var id = created!.Value.Id;
 
         // Act
