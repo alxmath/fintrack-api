@@ -2,7 +2,7 @@ using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FluentValidation;
 
-namespace FinTrack.Application.Transactions.Get;
+namespace FinTrack.Application.Features.Transactions.Get;
 
 public sealed class GetTransactionsHandler(ITransactionRepository repository,
      IValidator<GetTransactionsQuery> validator)

@@ -3,7 +3,7 @@ using FinTrack.Application.Common.Results;
 using FinTrack.Domain.Entities;
 using FluentValidation;
 
-namespace FinTrack.Application.Categories.Create;
+namespace FinTrack.Application.Features.Categories.Create;
 
 public class CreateCategoryHandler(
     ICategoryRepository repository,

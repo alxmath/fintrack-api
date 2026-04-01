@@ -1,7 +1,7 @@
 using FinTrack.Application.Common.Abstractions;
 using FluentValidation;
 
-namespace FinTrack.Application.Transactions.Create;
+namespace FinTrack.Application.Features.Transactions.Create;
 
 public class CreateTransactionValidator : AbstractValidator<CreateTransactionCommand>
 {

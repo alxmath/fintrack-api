@@ -1,4 +1,4 @@
-namespace FinTrack.Application.Transactions.Create;
+namespace FinTrack.Application.Features.Transactions.Create;
 
 public class CreateTransactionResponse
 {

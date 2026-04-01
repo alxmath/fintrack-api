@@ -1,5 +1,6 @@
 using FinTrack.Api.Extensions;
-using FinTrack.Application.Transactions.Create;
+using FinTrack.Application.Features.Transactions.Create;
+using FinTrack.Application.Features.Transactions.Get;
 using FinTrack.Application.Transactions.Get;
 using Microsoft.AspNetCore.Mvc;
 

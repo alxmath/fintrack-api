@@ -1,19 +1,22 @@
 using FinTrack.Api.Extensions;
-using FinTrack.Application.Categories.Create;
+using FinTrack.Application.Features.Categories.Create;
+using FinTrack.Application.Features.Categories.Get;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinTrack.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class CategoriesController(CreateCategoryHandler handler) : ControllerBase
+public class CategoriesController(
+    CreateCategoryHandler createHandler,
+    GetCategoriesHandler getHandler) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Create(
         CreateCategoryCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await handler.Handle(command, cancellationToken);
+        var result = await createHandler.Handle(command, cancellationToken);
 
         return result.ToActionResult(value =>
             new CreatedAtActionResult(
@@ -30,5 +33,13 @@ public class CategoriesController(CreateCategoryHandler handler) : ControllerBas
     {
         // placeholder até implementar
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    {
+        var result = await getHandler.Handle(new GetCategoriesQuery(), cancellationToken);
+
+        return result.ToActionResult();
     }
 }

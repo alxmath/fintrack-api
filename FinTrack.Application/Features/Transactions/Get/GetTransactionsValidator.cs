@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace FinTrack.Application.Transactions.Get;
+namespace FinTrack.Application.Features.Transactions.Get;
 
 public sealed class GetTransactionsValidator : AbstractValidator<GetTransactionsQuery>
 {

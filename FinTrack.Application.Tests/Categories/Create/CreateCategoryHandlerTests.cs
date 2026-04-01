@@ -1,5 +1,5 @@
-using FinTrack.Application.Categories.Create;
 using FinTrack.Application.Common.Interfaces;
+using FinTrack.Application.Features.Categories.Create;
 using FinTrack.Domain.Entities;
 using FluentAssertions;
 using FluentValidation;

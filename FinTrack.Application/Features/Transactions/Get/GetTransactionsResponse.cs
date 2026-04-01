@@ -1,4 +1,4 @@
-namespace FinTrack.Application.Transactions.Get;
+namespace FinTrack.Application.Features.Transactions.Get;
 
 public sealed record GetTransactionsResponse(
     Guid Id,

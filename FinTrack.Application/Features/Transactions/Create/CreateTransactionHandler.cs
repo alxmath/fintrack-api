@@ -3,7 +3,7 @@ using FinTrack.Application.Common.Results;
 using FinTrack.Domain.Entities;
 using FluentValidation;
 
-namespace FinTrack.Application.Transactions.Create;
+namespace FinTrack.Application.Features.Transactions.Create;
 
 public class CreateTransactionHandler(
     ITransactionRepository repository,

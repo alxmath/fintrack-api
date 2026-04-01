@@ -1,8 +1,8 @@
-using FinTrack.Application.Categories.Create;
 using FinTrack.Application.Common.Abstractions;
 using FinTrack.Application.Common.Interfaces;
-using FinTrack.Application.Transactions.Create;
-using FinTrack.Application.Transactions.Get;
+using FinTrack.Application.Features.Categories.Create;
+using FinTrack.Application.Features.Transactions.Create;
+using FinTrack.Application.Features.Transactions.Get;
 using FinTrack.Infrastructure.Persistence;
 using FinTrack.Infrastructure.Persistence.Repositories;
 using FinTrack.Infrastructure.Services;

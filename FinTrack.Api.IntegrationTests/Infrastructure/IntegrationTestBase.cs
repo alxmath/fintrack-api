@@ -1,5 +1,5 @@
-using FinTrack.Application.Categories.Create;
 using FinTrack.Application.Common.Results;
+using FinTrack.Application.Features.Categories.Create;
 using FluentAssertions;
 using System.Net.Http.Json;
 

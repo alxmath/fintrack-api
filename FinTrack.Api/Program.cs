@@ -1,4 +1,4 @@
-using FinTrack.Application.Transactions.Create;
+using FinTrack.Application.Features.Transactions.Create;
 using FinTrack.Infrastructure;
 using FluentValidation;
 

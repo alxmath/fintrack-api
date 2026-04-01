@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace FinTrack.Application.Categories.Create;
+namespace FinTrack.Application.Features.Categories.Create;
 
 public class CreateCategoryValidator : AbstractValidator<CreateCategoryCommand>
 {

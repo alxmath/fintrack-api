@@ -1,5 +1,5 @@
 using FinTrack.Application.Common.Interfaces;
-using FinTrack.Application.Transactions.Get;
+using FinTrack.Application.Features.Transactions.Get;
 using FinTrack.Domain.Entities;
 using FluentAssertions;
 using FluentValidation;

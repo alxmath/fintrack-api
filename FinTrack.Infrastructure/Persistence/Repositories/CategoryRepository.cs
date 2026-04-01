@@ -17,4 +17,12 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
         return await context.Categories
             .AnyAsync(c => c.Name == name, cancellationToken);
     }
+
+    public async Task<List<Category>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        return await context.Categories
+            .AsNoTracking()
+            .OrderBy(c => c.Name)
+            .ToListAsync(cancellationToken);
+    }
 }
