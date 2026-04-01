@@ -1,0 +1,55 @@
+using FinTrack.Api.IntegrationTests.Infrastructure;
+using FinTrack.Application.Common.Results;
+using FinTrack.Application.Features.Categories.Get;
+using FluentAssertions;
+using System.Net.Http.Json;
+
+namespace FinTrack.Api.IntegrationTests.Features.Categories.Get;
+
+[Collection("IntegrationTests")]
+public class GetCategoriesTests : IntegrationTestBase
+{
+    public GetCategoriesTests(PostgreSqlContainerFixture fixture)
+        : base(fixture) { }
+
+    [Fact]
+    public async Task Get_ShouldReturnEmptyList_WhenNoCategoriesExist()
+    {
+        // Act
+        var response = await Client.GetAsync("/api/v1/categories");
+
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+
+        var result = await response.Content
+            .ReadFromJsonAsync<Result<List<CategoryResponse>>>();
+
+        result.Should().NotBeNull();
+        result!.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task Get_ShouldReturnCategories_WhenTheyExist()
+    {
+        // Arrange
+        await CreateCategoryAsync("Alimentação");
+        await CreateCategoryAsync("Salário");
+
+        // Act
+        var response = await Client.GetAsync("/api/v1/categories");
+
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+
+        var result = await response.Content
+            .ReadFromJsonAsync<Result<List<CategoryResponse>>>();
+
+        result.Should().NotBeNull();
+        result!.IsSuccess.Should().BeTrue();
+
+        result.Value.Should().HaveCount(2);
+        result.Value.Should().Contain(c => c.Name == "Alimentação");
+        result.Value.Should().Contain(c => c.Name == "Salário");
+    }
+}
