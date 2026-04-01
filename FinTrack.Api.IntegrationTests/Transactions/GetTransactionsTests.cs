@@ -7,19 +7,25 @@ namespace FinTrack.Api.IntegrationTests.Transactions;
 
 [Collection("IntegrationTests")]
 public class GetTransactionsTests
-    : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;
+    private readonly DatabaseReset _reset;
 
-    public GetTransactionsTests(CustomWebApplicationFactory factory)
+    public GetTransactionsTests(PostgreSqlContainerFixture fixture)
     {
+        var factory = new CustomWebApplicationFactory(fixture.ConnectionString);
         _client = factory.CreateClient();
+
+        _reset = new DatabaseReset(fixture.ConnectionString);
+        _reset.InitializeAsync().GetAwaiter().GetResult();
     }
 
     [Fact]
     public async Task Get_ShouldReturnCreatedTransaction()
     {
-        // Arrange (cria dado real)
+        // Arrange
+        await _reset.ResetAsync();
+
         var request = new CreateTransactionCommand(
             "Salário",
             1000,

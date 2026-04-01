@@ -1,4 +1,7 @@
 namespace FinTrack.Api.IntegrationTests;
 
-[CollectionDefinition("IntegrationTests", DisableParallelization = true)]
-public class IntegrationTestCollection { }
+[CollectionDefinition("IntegrationTests")]
+public class IntegrationTestCollection
+    : ICollectionFixture<PostgreSqlContainerFixture>
+{
+}

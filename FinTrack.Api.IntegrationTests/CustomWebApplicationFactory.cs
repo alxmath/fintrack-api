@@ -11,8 +11,12 @@ namespace FinTrack.Api.IntegrationTests;
 public class CustomWebApplicationFactory
     : WebApplicationFactory<Program>
 {
-    private const string _connectionString =
-        "Host=localhost;Port=5432;Database=fintrack_test;Username=postgres;Password=postgres";
+    private readonly string _connectionString;
+
+    public CustomWebApplicationFactory(string connectionString)
+    {
+        _connectionString = connectionString;
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -30,14 +34,12 @@ public class CustomWebApplicationFactory
 
         builder.ConfigureServices(services =>
         {
-            // Remove DbContext original
             var descriptor = services.SingleOrDefault(
                 d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
 
             if (descriptor != null)
                 services.Remove(descriptor);
 
-            // Registra DbContext de teste
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(_connectionString));
         });
@@ -47,13 +49,8 @@ public class CustomWebApplicationFactory
     {
         var host = base.CreateHost(builder);
 
-        using (var scope = host.Services.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-            db.Database.EnsureDeleted();
-            db.Database.Migrate();
-        }
+        using var scope = host.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         return host;
     }

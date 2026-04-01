@@ -7,37 +7,40 @@ namespace FinTrack.Api.IntegrationTests.Transactions;
 
 [Collection("IntegrationTests")]
 public class CreateTransactionTests
-    : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;
+    private readonly DatabaseReset _reset;
 
-    public CreateTransactionTests(CustomWebApplicationFactory factory)
+    public CreateTransactionTests(PostgreSqlContainerFixture fixture)
     {
+        var factory = new CustomWebApplicationFactory(fixture.ConnectionString);
         _client = factory.CreateClient();
+
+        _reset = new DatabaseReset(fixture.ConnectionString);
+        _reset.InitializeAsync().GetAwaiter().GetResult();
     }
 
     [Fact]
     public async Task Post_ShouldCreateTransaction()
     {
         // Arrange
+        await _reset.ResetAsync();
+
         var request = new CreateTransactionCommand(
             "Salário",
             1000,
             DateTime.UtcNow.AddSeconds(-1)
         );
 
-        // Act
         var postResponse = await _client.PostAsJsonAsync(
             "/api/v1/transactions", request);
 
-        // Assert (POST)
         postResponse.EnsureSuccessStatusCode();
 
-        // Assert (persistência real)
+        // Act
         var getResponse = await _client.GetAsync("/api/v1/transactions");
 
-        getResponse.EnsureSuccessStatusCode();
-
+        // Assert
         var content = await getResponse.Content
             .ReadFromJsonAsync<List<GetTransactionsResponse>>();
 
