@@ -30,10 +30,6 @@ public class CreateCategoryHandler(
 
         await repository.AddAsync(category, cancellationToken);
 
-        return Result<CreateCategoryResponse>.Success(new CreateCategoryResponse
-        {
-            Id = category.Id,
-            Nome = category.Name
-        });
+        return Result<CreateCategoryResponse>.Success(new CreateCategoryResponse(category.Id, category.Name));
     }
 }

@@ -15,9 +15,9 @@ public class CategoriesController(CreateCategoryHandler handler) : ControllerBas
         var result = await handler.Handle(command, cancellationToken);
 
         if (!result.IsSuccess)
-            return BadRequest(result.Error);
+            return BadRequest(result);
 
         var response = result.Value;
-        return CreatedAtAction(nameof(Create), new { id = response.Id }, response);
+        return CreatedAtAction(nameof(Create), new { id = result.Value.Id }, result);
     }
 }

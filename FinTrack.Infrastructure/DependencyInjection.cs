@@ -1,3 +1,4 @@
+using FinTrack.Application.Categories.Create;
 using FinTrack.Application.Common.Abstractions;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Transactions.Create;
@@ -22,6 +23,8 @@ public static class DependencyInjection
 
         services.AddScoped<CreateTransactionHandler>();
         services.AddScoped<GetTransactionsHandler>();
+
+        services.AddScoped<CreateCategoryHandler>();
 
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
 
