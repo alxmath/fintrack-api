@@ -125,4 +125,46 @@ public class GetTransactionsTests : IntegrationTestBase
         items[1].Description.Should().Be("Mid");
         items[2].Description.Should().Be("Old");
     }
+
+    [Fact]
+    public async Task Get_ShouldFallbackToDateDescending_WhenOrderByIsInvalid()
+    {
+        // Arrange
+        var categoryId = await CreateCategoryAsync("Test");
+
+        var older = DateTime.UtcNow.AddMinutes(-3);
+        var middle = DateTime.UtcNow.AddMinutes(-2);
+        var newer = DateTime.UtcNow.AddMinutes(-1);
+
+        await Client.PostAsJsonAsync("/api/v1/transactions",
+            new CreateTransactionCommand("Old", 100, older, categoryId));
+
+        await Client.PostAsJsonAsync("/api/v1/transactions",
+            new CreateTransactionCommand("Mid", 200, middle, categoryId));
+
+        await Client.PostAsJsonAsync("/api/v1/transactions",
+            new CreateTransactionCommand("New", 300, newer, categoryId));
+
+        // Act
+        var response = await Client.GetAsync("/api/v1/transactions?orderBy=invalido");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content
+            .ReadFromJsonAsync<Result<PagedResult<GetTransactionsResponse>>>();
+
+        content.Should().NotBeNull();
+        content.Value.Should().NotBeNull();
+        content!.IsSuccess.Should().BeTrue();
+
+        var items = content.Value.Items;
+
+        items.Should().HaveCount(3);
+
+        // fallback esperado: Date DESC
+        items[0].Description.Should().Be("New");
+        items[1].Description.Should().Be("Mid");
+        items[2].Description.Should().Be("Old");
+    }
 }
