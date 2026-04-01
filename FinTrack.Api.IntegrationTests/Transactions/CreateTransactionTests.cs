@@ -5,6 +5,7 @@ using System.Net.Http.Json;
 
 namespace FinTrack.Api.IntegrationTests.Transactions;
 
+[Collection("IntegrationTests")]
 public class CreateTransactionTests
     : IClassFixture<CustomWebApplicationFactory>
 {
