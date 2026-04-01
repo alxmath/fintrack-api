@@ -26,7 +26,13 @@ public class GetTransactionsHandlerTests
         };
 
         repositoryMock
-            .Setup(r => r.GetPagedAsync(1, 10, It.IsAny<CancellationToken>()))
+            .Setup(r => r.GetPagedAsync(
+                pageNumber: 1,
+                pageSize: 10,
+                categoryId: It.IsAny<Guid?>(),
+                startDate: It.IsAny<DateTime?>(),
+                endDate: It.IsAny<DateTime?>(),
+                cancellationToken: It.IsAny<CancellationToken>()))
             .ReturnsAsync(transactions);
 
         validatorMock
@@ -37,7 +43,7 @@ public class GetTransactionsHandlerTests
             repositoryMock.Object,
             validatorMock.Object);
 
-        var query = new GetTransactionsQuery(1, 10);
+        var query = new GetTransactionsQuery { Page = 1, PageSize = 10 };
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);
@@ -56,8 +62,14 @@ public class GetTransactionsHandlerTests
         var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
 
         repositoryMock
-            .Setup(r => r.GetPagedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<Transaction>());
+            .Setup(r => r.GetPagedAsync(
+                pageNumber: It.IsAny<int>(),
+                pageSize: It.IsAny<int>(),
+                categoryId: It.IsAny<Guid?>(),
+                startDate: It.IsAny<DateTime?>(),
+                endDate: It.IsAny<DateTime?>(),
+                cancellationToken: It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
 
         validatorMock
             .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
@@ -67,7 +79,7 @@ public class GetTransactionsHandlerTests
             repositoryMock.Object,
             validatorMock.Object);
 
-        var query = new GetTransactionsQuery(1, 10);
+        var query = new GetTransactionsQuery { Page = 1, PageSize = 10 };
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);
@@ -92,18 +104,30 @@ public class GetTransactionsHandlerTests
             repositoryMock.Object,
             validatorMock.Object);
 
-        var query = new GetTransactionsQuery(2, 5);
+        var query = new GetTransactionsQuery { Page = 2, PageSize = 5 };
 
         repositoryMock
-            .Setup(r => r.GetPagedAsync(2, 5, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<Transaction>());
+            .Setup(r => r.GetPagedAsync(
+                pageNumber: 2,
+                pageSize: 5,
+                categoryId: It.IsAny<Guid?>(),
+                startDate: It.IsAny<DateTime?>(),
+                endDate: It.IsAny<DateTime?>(),
+                cancellationToken: It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
 
         // Act
         await handler.Handle(query, CancellationToken.None);
 
         // Assert
         repositoryMock.Verify(
-            r => r.GetPagedAsync(2, 5, It.IsAny<CancellationToken>()),
+            r => r.GetPagedAsync(
+                pageNumber: 2,
+                pageSize: 5,
+                categoryId: It.IsAny<Guid?>(),
+                startDate: It.IsAny<DateTime?>(),
+                endDate: It.IsAny<DateTime?>(),
+                cancellationToken: It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -127,7 +151,7 @@ public class GetTransactionsHandlerTests
             repositoryMock.Object,
             validatorMock.Object);
 
-        var query = new GetTransactionsQuery(0, 10);
+        var query = new GetTransactionsQuery { Page = 0, PageSize = 10 };
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);
@@ -136,7 +160,13 @@ public class GetTransactionsHandlerTests
         result.IsSuccess.Should().BeFalse();
 
         repositoryMock.Verify(
-            r => r.GetPagedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
+            r => r.GetPagedAsync(
+                pageNumber: It.IsAny<int>(),
+                pageSize: It.IsAny<int>(),
+                categoryId: It.IsAny<Guid?>(),
+                startDate: It.IsAny<DateTime?>(),
+                endDate: It.IsAny<DateTime?>(),
+                cancellationToken: It.IsAny<CancellationToken>()),
             Times.Never);
     }
 }

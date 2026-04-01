@@ -26,13 +26,8 @@ public class TransactionsController(
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetTransactions(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10,
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetTransactions([FromQuery] GetTransactionsQuery query, CancellationToken cancellationToken)
     {
-        var query = new GetTransactionsQuery(pageNumber, pageSize);
-        
         var result = await getHandler.Handle(query, cancellationToken);
 
         return result.ToActionResult();

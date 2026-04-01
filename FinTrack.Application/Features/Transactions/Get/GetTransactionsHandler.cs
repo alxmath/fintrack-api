@@ -20,8 +20,11 @@ public sealed class GetTransactionsHandler(ITransactionRepository repository,
         }
 
         var transactions = await repository.GetPagedAsync(
-            query.PageNumber,
+            query.Page,
             query.PageSize,
+            query.CategoryId,
+            query.StartDate,
+            query.EndDate,
             cancellationToken);
 
         var response = transactions
