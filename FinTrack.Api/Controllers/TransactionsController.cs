@@ -17,12 +17,7 @@ public class TransactionsController(
         CancellationToken cancellationToken)
     {
         var result = await createHandler.Handle(command, cancellationToken);
-        return result.ToActionResult(value =>
-        new CreatedAtActionResult(
-            actionName: nameof(GetTransactions),
-            controllerName: "Transactions",
-            routeValues: null,
-            value: result));
+        return result.ToActionResult(); // quando implementar GetById, passar o id criado para o CreatedAtAction
     }
 
     [HttpGet]
