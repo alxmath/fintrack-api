@@ -1,9 +1,5 @@
 using FinTrack.Application.Common.Abstractions;
 using FinTrack.Application.Common.Interfaces;
-using FinTrack.Application.Features.Categories.Create;
-using FinTrack.Application.Features.Categories.Get;
-using FinTrack.Application.Features.Transactions.Create;
-using FinTrack.Application.Features.Transactions.Get;
 using FinTrack.Infrastructure.Persistence;
 using FinTrack.Infrastructure.Persistence.Repositories;
 using FinTrack.Infrastructure.Services;
@@ -14,20 +10,18 @@ namespace FinTrack.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        string connectionString)
     {
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(connectionString));
 
+        // Repositories
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
 
-        services.AddScoped<CreateTransactionHandler>();
-        services.AddScoped<GetTransactionsHandler>();
-
-        services.AddScoped<CreateCategoryHandler>();
-        services.AddScoped<GetCategoriesHandler>();
-
+        // Providers
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
 
         return services;
