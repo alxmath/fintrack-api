@@ -6,39 +6,28 @@ using System.Net.Http.Json;
 namespace FinTrack.Api.IntegrationTests.Transactions;
 
 [Collection("IntegrationTests")]
-public class GetTransactionsTests
+public class GetTransactionsTests : IntegrationTestBase
 {
-    private readonly HttpClient _client;
-    private readonly DatabaseReset _reset;
-
     public GetTransactionsTests(PostgreSqlContainerFixture fixture)
-    {
-        var factory = new CustomWebApplicationFactory(fixture.ConnectionString);
-        _client = factory.CreateClient();
-
-        _reset = new DatabaseReset(fixture.ConnectionString);
-        _reset.InitializeAsync().GetAwaiter().GetResult();
-    }
+         : base(fixture) { }
 
     [Fact]
     public async Task Get_ShouldReturnCreatedTransaction()
     {
         // Arrange
-        await _reset.ResetAsync();
-
         var request = new CreateTransactionCommand(
             "Salário",
             1000,
             DateTime.UtcNow
         );
 
-        var postResponse = await _client.PostAsJsonAsync(
+        var postResponse = await Client.PostAsJsonAsync(
             "/api/v1/transactions", request);
 
         postResponse.EnsureSuccessStatusCode();
 
         // Act
-        var response = await _client.GetAsync("/api/v1/transactions");
+        var response = await Client.GetAsync("/api/v1/transactions");
 
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();

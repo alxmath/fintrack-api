@@ -27,7 +27,6 @@ public class PostgreSqlContainerFixture : IAsyncLifetime
 
         await _container.StartAsync();
 
-        // 🔥 MIGRATE UMA ÚNICA VEZ
         var services = new ServiceCollection();
 
         services.AddDbContext<AppDbContext>(options =>

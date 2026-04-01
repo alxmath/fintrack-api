@@ -3,7 +3,6 @@ using Respawn;
 
 namespace FinTrack.Api.IntegrationTests;
 
-
 public class DatabaseReset
 {
     private readonly string _connectionString;
