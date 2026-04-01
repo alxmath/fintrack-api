@@ -2,6 +2,7 @@ using FinTrack.Application.Features.Categories.Create;
 using FinTrack.Application.Features.Categories.Get;
 using FinTrack.Application.Features.Transactions.Create;
 using FinTrack.Application.Features.Transactions.Get;
+using FinTrack.Application.Features.Transactions.GetById;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,8 @@ public static class DependencyInjection
         // Handlers
         services.AddScoped<CreateTransactionHandler>();
         services.AddScoped<GetTransactionsHandler>();
+        services.AddScoped<GetTransactionByIdHandler>();
+
         services.AddScoped<CreateCategoryHandler>();
         services.AddScoped<GetCategoriesHandler>();
 
