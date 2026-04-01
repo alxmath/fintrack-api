@@ -199,6 +199,76 @@ Utilizar `Directory.Packages.props` para centralizar versões de dependências.
 
 ---
 
+## 📅 2026-04-01
+
+### 🔄 Padronização de responses com Result<T>
+
+**Decisão:**
+Utilizar `Result<T>` como contrato padrão para todos os endpoints da API.
+
+**Motivação:**
+
+* Padronizar respostas da API
+* Evitar uso de exceptions como fluxo de controle
+* Melhorar previsibilidade em testes
+* Simplificar controllers
+
+**Alternativas consideradas:**
+
+* Retorno direto de DTOs (rejeitado por inconsistência)
+* Uso de exceptions para controle de fluxo (rejeitado por acoplamento e menor clareza)
+
+**Consequências:**
+
+* Controllers mais simples
+* Testes mais consistentes
+* Possibilidade de evoluir para tratamento mais avançado (ex: ProblemDetails)
+
+---
+
+### 🔌 Separação da Injeção de Dependência por camada
+
+**Decisão:**
+Separar configuração de DI entre Application e Infrastructure.
+
+**Motivação:**
+
+* Respeitar Clean Architecture (Dependency Rule)
+* Evitar acoplamento indevido entre camadas
+* Melhor organização do projeto
+
+**Estrutura adotada:**
+
+* Application → Handlers + Validators
+* Infrastructure → Repositories + DbContext + Providers
+* API → composição das dependências
+
+**Consequências:**
+
+* Maior clareza arquitetural
+* Melhor testabilidade
+* Facilidade de evolução futura
+
+---
+
+### 📂 Introdução de Categories com relacionamento
+
+**Decisão:**
+Adicionar entidade Category com relacionamento obrigatório em Transaction.
+
+**Motivação:**
+
+* Tornar o domínio mais realista
+* Garantir integridade referencial
+* Evoluir modelo de dados
+
+**Consequências:**
+
+* Ajustes nos testes de integração
+* Maior consistência do domínio
+
+---
+
 ## 📌 Diretriz geral
 
 As decisões arquiteturais devem priorizar:
@@ -213,9 +283,6 @@ Evitar overengineering é um princípio central do projeto.
 ---
 
 ## 🔮 Evolução planejada
-
-* Introdução de `Category` e relacionamento com `Transaction`
-* Padronização de responses (Result Pattern)
 * Introdução gradual de eventos de domínio
 * Evolução para cenários distribuídos e offline-first
 
