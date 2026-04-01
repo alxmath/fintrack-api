@@ -7,7 +7,7 @@ namespace FinTrack.Application.Features.Transactions.Get;
 public sealed class GetTransactionsHandler(ITransactionRepository repository,
      IValidator<GetTransactionsQuery> validator)
 {
-    public async Task<Result<IReadOnlyList<GetTransactionsResponse>>> Handle(
+    public async Task<Result<PagedResult<GetTransactionsResponse>>> Handle(
         GetTransactionsQuery query, 
         CancellationToken cancellationToken)
     {
@@ -16,10 +16,10 @@ public sealed class GetTransactionsHandler(ITransactionRepository repository,
         if (!validationResult.IsValid)
         {
             var error = validationResult.Errors.First().ErrorMessage;
-            return Result<IReadOnlyList<GetTransactionsResponse>>.Failure(error);
+            return Result<PagedResult<GetTransactionsResponse>>.Failure(error);
         }
 
-        var transactions = await repository.SearchAsync(
+        var (transactions, total) = await repository.SearchAsync(
             query.Page,
             query.PageSize,
             query.CategoryId,
@@ -27,7 +27,7 @@ public sealed class GetTransactionsHandler(ITransactionRepository repository,
             query.EndDate,
             cancellationToken);
 
-        var response = transactions
+        var items = transactions
             .Select(t => new GetTransactionsResponse(
                 t.Id,
                 t.Amount,
@@ -35,6 +35,14 @@ public sealed class GetTransactionsHandler(ITransactionRepository repository,
                 t.Date))
             .ToList();
 
-        return Result<IReadOnlyList<GetTransactionsResponse>>.Success(response);
+        var result = new PagedResult<GetTransactionsResponse>
+        {
+            Items = items,
+            Total = total,
+            Page = query.Page,
+            PageSize = query.PageSize
+        };
+
+        return Result<PagedResult<GetTransactionsResponse>>.Success(result);
     }
 }
