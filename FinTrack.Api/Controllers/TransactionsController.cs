@@ -11,6 +11,7 @@ public class TransactionsController(
     CreateTransactionHandler createHandler, 
     GetTransactionsHandler getHandler) : ControllerBase
 {
+    [HttpPost]
     public async Task<IActionResult> Create(
         CreateTransactionCommand command,
         CancellationToken cancellationToken)
@@ -19,6 +20,7 @@ public class TransactionsController(
         return result.ToActionResult();
     }
 
+    [HttpGet]
     public async Task<IActionResult> GetTransactions(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,

@@ -1,6 +1,7 @@
 using FinTrack.Application.Common.Abstractions;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Transactions.Create;
+using FinTrack.Application.Transactions.Get;
 using FinTrack.Infrastructure.Persistence;
 using FinTrack.Infrastructure.Persistence.Repositories;
 using FinTrack.Infrastructure.Services;
@@ -19,6 +20,7 @@ public static class DependencyInjection
         services.AddScoped<ITransactionRepository, TransactionRepository>();
 
         services.AddScoped<CreateTransactionHandler>();
+        services.AddScoped<GetTransactionsHandler>();
 
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
 
