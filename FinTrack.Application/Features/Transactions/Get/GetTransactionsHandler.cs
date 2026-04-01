@@ -25,6 +25,8 @@ public sealed class GetTransactionsHandler(ITransactionRepository repository,
             query.CategoryId,
             query.StartDate,
             query.EndDate,
+            query.OrderBy,
+            query.Desc,
             cancellationToken);
 
         var items = transactions
