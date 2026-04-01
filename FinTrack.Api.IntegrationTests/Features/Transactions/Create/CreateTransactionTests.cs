@@ -1,4 +1,5 @@
 using FinTrack.Api.IntegrationTests.Infrastructure;
+using FinTrack.Application.Common.Results;
 using FinTrack.Application.Transactions.Create;
 using FinTrack.Application.Transactions.Get;
 using FluentAssertions;
@@ -35,9 +36,10 @@ public class CreateTransactionTests : IntegrationTestBase
 
         // Assert
         var content = await getResponse.Content
-            .ReadFromJsonAsync<List<GetTransactionsResponse>>();
+            .ReadFromJsonAsync<Result<List<GetTransactionsResponse>>>();
 
-        content.Should().ContainSingle(x =>
+        content.Should().NotBeNull();
+        content.Value.Should().ContainSingle(x =>
             x.Description == "Salário" &&
             x.Amount == 1000
         );

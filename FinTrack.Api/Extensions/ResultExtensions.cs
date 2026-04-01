@@ -8,7 +8,7 @@ public static class ResultExtensions
     public static IActionResult ToActionResult<T>(this Result<T> result)
     {
         return result.IsSuccess
-            ? new OkObjectResult(result.Value)
-            : new BadRequestObjectResult(new { error = result.Error });
+            ? new OkObjectResult(result)
+            : new BadRequestObjectResult(result);
     }
 }
