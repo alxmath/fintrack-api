@@ -2,9 +2,11 @@ namespace FinTrack.Application.Common.Results;
 
 public class Result
 {
-    public bool IsSuccess { get; }
+    public bool IsSuccess { get; init; }
     public bool IsFailure => !IsSuccess;
-    public string Error { get; }
+    public string Error { get; init; } = string.Empty;
+
+    public Result() { }
 
     protected Result(bool isSuccess, string error)
     {
@@ -12,20 +14,27 @@ public class Result
         Error = error;
     }
 
-    public static Result Success() => new(true, string.Empty);
-    public static Result Failure(string error) => new(false, error);
+    public static Result Success() => new() { IsSuccess = true };
+
+    public static Result Failure(string error)
+        => new() { IsSuccess = false, Error = error };
 }
 
 public class Result<T> : Result
 {
-    public T Value { get; }
+    public T? Value { get; init; }
 
-    protected Result(T value, bool isSuccess, string error) : base(isSuccess, error)
+    public Result() { }
+
+    protected Result(T? value, bool isSuccess, string error)
+        : base(isSuccess, error)
     {
         Value = value;
     }
 
-    public static Result<T> Success(T value) => new(value, true, string.Empty);
+    public static Result<T> Success(T value)
+        => new() { IsSuccess = true, Value = value };
 
-    public static new Result<T> Failure(string error) => new(default!, false, error);
+    public static new Result<T> Failure(string error)
+        => new() { IsSuccess = false, Error = error };
 }
