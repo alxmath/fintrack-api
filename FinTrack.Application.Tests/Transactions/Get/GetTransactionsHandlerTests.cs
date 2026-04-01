@@ -19,10 +19,8 @@ public class GetTransactionsHandlerTests
 
         var transactions = new List<Transaction>
         {
-            new("Salário", 100, DateTime.UtcNow,
-            Guid.NewGuid()),
-            new("Mercado", 50, DateTime.UtcNow.AddDays(-1),
-            Guid.NewGuid())
+            new("Salário", 100, DateTime.UtcNow, Guid.NewGuid()),
+            new("Mercado", 50, DateTime.UtcNow.AddDays(-1), Guid.NewGuid())
         };
 
         repositoryMock
@@ -33,7 +31,7 @@ public class GetTransactionsHandlerTests
                 startDate: It.IsAny<DateTime?>(),
                 endDate: It.IsAny<DateTime?>(),
                 cancellationToken: It.IsAny<CancellationToken>()))
-            .ReturnsAsync(transactions);
+            .ReturnsAsync((transactions, transactions.Count));
 
         validatorMock
             .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
@@ -50,8 +48,12 @@ public class GetTransactionsHandlerTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(2);
-        result.Value.Should().Contain(x => x.Description == "Salário");
+
+        result.Value.Should().NotBeNull();
+        result.Value.Items.Should().HaveCount(2);
+        result.Value.Total.Should().Be(2);
+
+        result.Value.Items.Should().Contain(x => x.Description == "Salário");
     }
 
     [Fact]
@@ -63,13 +65,13 @@ public class GetTransactionsHandlerTests
 
         repositoryMock
             .Setup(r => r.SearchAsync(
-                pageNumber: It.IsAny<int>(),
-                pageSize: It.IsAny<int>(),
-                categoryId: It.IsAny<Guid?>(),
-                startDate: It.IsAny<DateTime?>(),
-                endDate: It.IsAny<DateTime?>(),
-                cancellationToken: It.IsAny<CancellationToken>()))
-            .ReturnsAsync([]);
+                It.IsAny<int>(),
+                It.IsAny<int>(),
+                It.IsAny<Guid?>(),
+                It.IsAny<DateTime?>(),
+                It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((new List<Transaction>(), 0));
 
         validatorMock
             .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
@@ -86,7 +88,9 @@ public class GetTransactionsHandlerTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEmpty();
+        result.Value.Should().NotBeNull();
+        result.Value.Items.Should().BeEmpty();
+        result.Value.Total.Should().Be(0);
     }
 
     [Fact]
@@ -100,12 +104,6 @@ public class GetTransactionsHandlerTests
             .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
 
-        var handler = new GetTransactionsHandler(
-            repositoryMock.Object,
-            validatorMock.Object);
-
-        var query = new GetTransactionsQuery { Page = 2, PageSize = 5 };
-
         repositoryMock
             .Setup(r => r.SearchAsync(
                 pageNumber: 2,
@@ -114,7 +112,13 @@ public class GetTransactionsHandlerTests
                 startDate: It.IsAny<DateTime?>(),
                 endDate: It.IsAny<DateTime?>(),
                 cancellationToken: It.IsAny<CancellationToken>()))
-            .ReturnsAsync([]);
+            .ReturnsAsync((new List<Transaction>(), 0));
+
+        var handler = new GetTransactionsHandler(
+            repositoryMock.Object,
+            validatorMock.Object);
+
+        var query = new GetTransactionsQuery { Page = 2, PageSize = 5 };
 
         // Act
         await handler.Handle(query, CancellationToken.None);
@@ -139,9 +143,9 @@ public class GetTransactionsHandlerTests
         var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
 
         var failures = new List<ValidationFailure>
-    {
-        new("PageNumber", "Inválido")
-    };
+        {
+            new("Page", "Inválido")
+        };
 
         validatorMock
             .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
@@ -161,12 +165,12 @@ public class GetTransactionsHandlerTests
 
         repositoryMock.Verify(
             r => r.SearchAsync(
-                pageNumber: It.IsAny<int>(),
-                pageSize: It.IsAny<int>(),
-                categoryId: It.IsAny<Guid?>(),
-                startDate: It.IsAny<DateTime?>(),
-                endDate: It.IsAny<DateTime?>(),
-                cancellationToken: It.IsAny<CancellationToken>()),
+                It.IsAny<int>(),
+                It.IsAny<int>(),
+                It.IsAny<Guid?>(),
+                It.IsAny<DateTime?>(),
+                It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()),
             Times.Never);
     }
 }

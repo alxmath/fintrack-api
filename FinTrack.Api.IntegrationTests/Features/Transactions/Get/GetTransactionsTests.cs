@@ -38,10 +38,11 @@ public class GetTransactionsTests : IntegrationTestBase
         response.IsSuccessStatusCode.Should().BeTrue();
 
         var content = await response.Content
-            .ReadFromJsonAsync<Result<List<GetTransactionsResponse>>>();
+            .ReadFromJsonAsync<Result<PagedResult<GetTransactionsResponse>>>();
 
         content.Should().NotBeNull();
-        content.Value.Should().ContainSingle(x =>
+        content.Value.Should().NotBeNull();
+        content.Value.Items.Should().ContainSingle(x =>
             x.Description == "Salário" &&
             x.Amount == 1000
         );

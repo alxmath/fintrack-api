@@ -23,7 +23,7 @@ public class CreateTransactionTests : IntegrationTestBase
             "Salário",
             1000,
             DateTime.UtcNow.AddSeconds(-1),
-            categoryId 
+            categoryId
         );
 
         var postResponse = await Client.PostAsJsonAsync(
@@ -36,12 +36,18 @@ public class CreateTransactionTests : IntegrationTestBase
 
         // Assert
         var content = await getResponse.Content
-            .ReadFromJsonAsync<Result<List<GetTransactionsResponse>>>();
+            .ReadFromJsonAsync<Result<PagedResult<GetTransactionsResponse>>>();
 
         content.Should().NotBeNull();
-        content.Value.Should().ContainSingle(x =>
+        content!.IsSuccess.Should().BeTrue();
+
+        content.Value.Should().NotBeNull();
+
+        content.Value.Items.Should().ContainSingle(x =>
             x.Description == "Salário" &&
             x.Amount == 1000
         );
+
+        content.Value.Total.Should().Be(1);
     }
 }
