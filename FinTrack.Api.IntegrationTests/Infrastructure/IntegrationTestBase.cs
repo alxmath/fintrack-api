@@ -1,3 +1,8 @@
+using FinTrack.Application.Categories.Create;
+using FinTrack.Application.Common.Results;
+using FluentAssertions;
+using System.Net.Http.Json;
+
 namespace FinTrack.Api.IntegrationTests.Infrastructure;
 
 public abstract class IntegrationTestBase : IAsyncLifetime
@@ -11,6 +16,24 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         Client = factory.CreateClient();
 
         _reset = new DatabaseReset(fixture.ConnectionString);
+    }
+
+    protected async Task<Guid> CreateCategoryAsync(string name = "Default")
+    {
+        var request = new CreateCategoryCommand(name);
+
+        var response = await Client.PostAsJsonAsync(
+            "/api/v1/categories", request);
+
+        response.EnsureSuccessStatusCode();
+
+        var result = await response.Content
+            .ReadFromJsonAsync<Result<CreateCategoryResponse>>();
+
+        result.Should().NotBeNull();
+        result!.IsSuccess.Should().BeTrue();
+
+        return result.Value!.Id;
     }
 
     public async Task InitializeAsync()
