@@ -1,7 +1,7 @@
 using Npgsql;
 using Respawn;
 
-namespace FinTrack.Api.IntegrationTests;
+namespace FinTrack.Api.IntegrationTests.Infrastructure;
 
 public class DatabaseReset
 {

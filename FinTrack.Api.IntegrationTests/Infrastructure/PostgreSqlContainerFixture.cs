@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
 
-namespace FinTrack.Api.IntegrationTests;
+namespace FinTrack.Api.IntegrationTests.Infrastructure;
 
 public class PostgreSqlContainerFixture : IAsyncLifetime
 {

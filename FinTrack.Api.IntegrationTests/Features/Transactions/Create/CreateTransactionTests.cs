@@ -1,9 +1,10 @@
+using FinTrack.Api.IntegrationTests.Infrastructure;
 using FinTrack.Application.Transactions.Create;
 using FinTrack.Application.Transactions.Get;
 using FluentAssertions;
 using System.Net.Http.Json;
 
-namespace FinTrack.Api.IntegrationTests.Transactions;
+namespace FinTrack.Api.IntegrationTests.Features.Transactions.Create;
 
 [Collection("IntegrationTests")]
 public class CreateTransactionTests : IntegrationTestBase

@@ -1,4 +1,4 @@
-namespace FinTrack.Api.IntegrationTests;
+namespace FinTrack.Api.IntegrationTests.Infrastructure;
 
 public abstract class IntegrationTestBase : IAsyncLifetime
 {
