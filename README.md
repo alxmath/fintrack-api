@@ -1,18 +1,32 @@
-# FinTrack API
+# 💰 FinTrack API
 
 ## 📌 Visão Geral
 
-O FinTrack API é um backend para gerenciamento financeiro pessoal, com foco em organização de transações, categorias e usuários.
+O **FinTrack API** é um backend para gerenciamento financeiro pessoal, com foco em organização de transações, categorias e usuários.
 
 O projeto foi concebido com ênfase em:
 
 * Arquitetura limpa e escalável
 * Separação de responsabilidades
-* Preparação para cenários offline-first (integração com app mobile)
+* Testes de integração realistas
+* Preparação para cenários **offline-first** (integração com app mobile)
+
+---
 
 ## 🎯 Objetivo
 
-Servir como base para estudo avançado de arquitetura de software, podendo evoluir para Trabalho de Conclusão de Curso (TCC), com foco em backend, design de sistemas e integração entre aplicações.
+Servir como base para:
+
+* Estudo avançado de **arquitetura de software**
+* Evolução para **Trabalho de Conclusão de Curso (TCC)**
+* Demonstração prática de:
+
+  * Modelagem de domínio
+  * Design de APIs
+  * Testes de integração com banco real
+  * Boas práticas de engenharia backend
+
+---
 
 ## 🧱 Arquitetura
 
@@ -20,37 +34,85 @@ O projeto adota uma abordagem híbrida baseada em:
 
 * Clean Architecture (separação de camadas)
 * Vertical Slice na camada Application
+* CQRS (leve)
 * Princípios de baixo acoplamento e alta coesão
 
 ### Estrutura de alto nível:
 
+```
 API → Application → Domain → Infrastructure
+```
+
+---
 
 ## 🛠️ Stack Tecnológica
 
-* .NET Web API
+* .NET 10 (ASP.NET Core)
 * Entity Framework Core
 * PostgreSQL
-* Docker (planejado)
-* JWT (autenticação)
+* Testcontainers (testes de integração)
+* Respawn (reset de dados em testes)
+* FluentValidation
+* xUnit + FluentAssertions
+* Docker (requisito para testes)
+
+---
+
+## 🧪 Testes
+
+O projeto utiliza **testes de integração com banco real**, com foco em confiabilidade e reprodutibilidade.
+
+### Estratégia:
+
+* PostgreSQL isolado via Testcontainers
+* Reset de dados com Respawn
+* Migrations executadas de forma controlada
+
+### Benefícios:
+
+* Evita dependência de banco local
+* Elimina flaky tests
+* Garante consistência entre ambiente local e CI
+
+---
 
 ## 📦 Estrutura do Projeto
 
+```
 src/
 
-* FinTrack.Api → Camada de entrada (HTTP)
-* FinTrack.Application → Casos de uso (Vertical Slice)
-* FinTrack.Domain → Regras de negócio
-* FinTrack.Infrastructure → Persistência e serviços externos
+FinTrack.Api                  → Camada de entrada (HTTP)
+FinTrack.Application          → Casos de uso (Vertical Slice)
+FinTrack.Domain               → Regras de negócio
+FinTrack.Infrastructure       → Persistência e integrações
 
-## 🚀 Roadmap Inicial
+tests/
 
-* [ ] Setup da solução e projetos
-* [ ] Configuração de DI
-* [ ] Primeiro caso de uso: CreateTransaction
-* [ ] Persistência com EF Core
-* [ ] Autenticação básica
-* [ ] Deploy inicial
+FinTrack.Api.IntegrationTests → Testes de integração
+FinTrack.Application.Tests    → Testes unitários
+```
+
+---
+
+## ⚙️ Como executar
+
+```bash
+dotnet restore
+dotnet build
+dotnet run
+```
+
+---
+
+## 🧪 Como executar os testes
+
+```bash
+dotnet test
+```
+
+⚠️ Requisito: Docker em execução (necessário para Testcontainers)
+
+---
 
 ## 🔍 Diretrizes
 
@@ -58,6 +120,8 @@ src/
 * Regras devem estar no Domain
 * Application orquestra os casos de uso
 * Infrastructure contém apenas implementações técnicas
+
+---
 
 ## 📱 Integração futura (Mobile)
 
@@ -67,6 +131,37 @@ O projeto prevê integração com aplicação Android (Kotlin), incluindo:
 * Estratégias de resolução de conflito
 * Evolução para comunicação assíncrona
 
+---
+
+## 🚀 Roadmap
+
+### ✔ Já implementado
+
+* Estrutura base do projeto
+* Arquitetura (Clean + Vertical Slice)
+* CRUD de transações
+* Testes de integração com banco real
+* Infraestrutura de testes isolada (Testcontainers + Respawn)
+
+---
+
+### 🚧 Em evolução
+
+* Entidade Category
+* Relacionamento entre entidades
+* Padronização de responses (Result Pattern)
+* Autenticação (JWT)
+
+---
+
+### 🔮 Futuro
+
+* Suporte offline-first
+* Sincronização entre dispositivos
+* Escalabilidade e mensageria
+
+---
+
 ## 📚 Uso acadêmico (TCC)
 
 Este projeto poderá ser utilizado como base para TCC, com foco em:
@@ -75,7 +170,16 @@ Este projeto poderá ser utilizado como base para TCC, com foco em:
 * Integração entre sistemas
 * Estratégias de sincronização de dados
 * Design de APIs escaláveis
+* Testes automatizados com ambiente real
+
+---
+
+## 📄 Documentação adicional
+
+* [Arquitetura](./docs/architecture.md)
+
+---
 
 ## 📌 Status
 
-Em desenvolvimento inicial (setup e definição arquitetural).
+🚧 Em desenvolvimento ativo, com foco em evolução incremental e qualidade arquitetural.
