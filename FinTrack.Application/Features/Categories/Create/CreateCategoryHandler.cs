@@ -16,13 +16,15 @@ public class CreateCategoryHandler(
         CancellationToken cancellationToken)
     {
         var validation = await ValidationHelper
-            .ValidateAsync<CreateCategoryCommand, CreateCategoryResponse>(
+            .ValidateAsync(
                 command,
                 validator,  
                 cancellationToken);
 
-        if (validation.IsFailure)
-            return validation;
+        if (validation is not null)
+            return Result<CreateCategoryResponse>.Failure(
+                validation.Error,
+                validation.ErrorCode);
 
         var exists = await repository.ExistsByNameAsync(command.Name, cancellationToken);
 

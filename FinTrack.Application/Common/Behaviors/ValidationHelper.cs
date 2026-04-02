@@ -6,21 +6,21 @@ namespace FinTrack.Application.Common.Behaviors;
 
 public static class ValidationHelper
 {
-    public static async Task<Result<TResponse>> ValidateAsync<TRequest, TResponse>(
+    public static async Task<Result?> ValidateAsync<TRequest>(
         TRequest request,
         IValidator<TRequest>? validator,
         CancellationToken cancellationToken)
     {
         if (validator is null)
-            return Result<TResponse>.Success(default!);
+            return null;
 
         var result = await validator.ValidateAsync(request, cancellationToken);
 
         if (result.IsValid)
-            return Result<TResponse>.Success(default!);
+            return null;
 
         var error = result.Errors.First().ErrorMessage;
 
-        return Result<TResponse>.Failure(error, General.Validation);
+        return Result.Failure(error, General.Validation);
     }
 }

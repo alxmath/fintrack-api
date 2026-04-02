@@ -15,13 +15,15 @@ public class CreateTransactionHandler(
         CancellationToken cancellationToken)
     {
         var validation = await ValidationHelper
-            .ValidateAsync<CreateTransactionCommand, CreateTransactionResponse>(
+            .ValidateAsync(
                 command,
                 validator,
                 cancellationToken);
 
-        if (validation.IsFailure)
-            return validation;
+        if (validation is not null)
+            return Result<CreateTransactionResponse>.Failure(
+                validation.Error,
+                validation.ErrorCode);
 
         var transaction = new Transaction(
             command.Description,

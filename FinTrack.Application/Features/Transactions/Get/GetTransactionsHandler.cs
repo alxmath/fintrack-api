@@ -13,13 +13,15 @@ public sealed class GetTransactionsHandler(ITransactionRepository repository,
         CancellationToken cancellationToken)
     {
         var validation = await ValidationHelper
-            .ValidateAsync<GetTransactionsQuery, PagedResult<GetTransactionsResponse>>(
+            .ValidateAsync(
                 query,
                 validator,
                 cancellationToken);
 
-        if (validation.IsFailure)
-            return validation;
+        if (validation is not null)
+            return Result<PagedResult<GetTransactionsResponse>>.Failure(
+                validation.Error,
+                validation.ErrorCode);
 
         var (transactions, total) = await repository.SearchAsync(
             query.Page,
