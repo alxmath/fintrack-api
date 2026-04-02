@@ -16,6 +16,7 @@ public static class ResultExtensions
             {
                 Errors.General.NotFound => new NotFoundObjectResult(result),
                 Errors.General.Validation => new BadRequestObjectResult(result),
+                Errors.General.Conflict => new ConflictObjectResult(result),
                 _ => new BadRequestObjectResult(result)
             };
         }
@@ -37,6 +38,7 @@ public static class ResultExtensions
             {
                 Errors.General.NotFound => new NotFoundObjectResult(result),
                 Errors.General.Validation => new BadRequestObjectResult(result),
+                Errors.General.Conflict => new ConflictObjectResult(result),
                 _ => new BadRequestObjectResult(result)
             };
         }
