@@ -48,7 +48,7 @@ public class CreateCategoryTests : IntegrationTestBase
         var response = await Client.PostAsJsonAsync(
             "/api/v1/categories", request);
 
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
 
         var result = await response.Content
             .ReadFromJsonAsync<Result<CreateCategoryResponse>>();
