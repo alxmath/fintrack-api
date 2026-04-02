@@ -1,3 +1,4 @@
+using FinTrack.Application.Common.Behaviors;
 using FinTrack.Application.Common.Errors;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
@@ -14,15 +15,14 @@ public class CreateCategoryHandler(
         CreateCategoryCommand command,
         CancellationToken cancellationToken)
     {
-        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        var validation = await ValidationHelper
+            .ValidateAsync<CreateCategoryCommand, CreateCategoryResponse>(
+                command,
+                validator,  
+                cancellationToken);
 
-        if (!validationResult.IsValid)
-        {
-            var error = validationResult.Errors.First().ErrorMessage;
-            return Result<CreateCategoryResponse>.Failure(
-                error,
-                Errors.General.Validation);
-        }
+        if (validation.IsFailure)
+            return validation;
 
         var exists = await repository.ExistsByNameAsync(command.Name, cancellationToken);
 

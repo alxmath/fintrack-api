@@ -1,4 +1,4 @@
-using FinTrack.Application.Common.Errors;
+using FinTrack.Application.Common.Behaviors;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FluentValidation;
@@ -12,15 +12,14 @@ public sealed class GetTransactionsHandler(ITransactionRepository repository,
         GetTransactionsQuery query, 
         CancellationToken cancellationToken)
     {
-        var validationResult = await validator.ValidateAsync(query, cancellationToken);
+        var validation = await ValidationHelper
+            .ValidateAsync<GetTransactionsQuery, PagedResult<GetTransactionsResponse>>(
+                query,
+                validator,
+                cancellationToken);
 
-        if (!validationResult.IsValid)
-        {
-            var error = validationResult.Errors.First().ErrorMessage;
-            return Result<PagedResult<GetTransactionsResponse>>.Failure(
-                error,
-                Errors.General.Validation);
-        }
+        if (validation.IsFailure)
+            return validation;
 
         var (transactions, total) = await repository.SearchAsync(
             query.Page,

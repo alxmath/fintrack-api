@@ -1,4 +1,4 @@
-using FinTrack.Application.Common.Errors;
+using FinTrack.Application.Common.Behaviors;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FinTrack.Domain.Entities;
@@ -14,15 +14,14 @@ public class CreateTransactionHandler(
         CreateTransactionCommand command, 
         CancellationToken cancellationToken)
     {
-        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        var validation = await ValidationHelper
+            .ValidateAsync<CreateTransactionCommand, CreateTransactionResponse>(
+                command,
+                validator,
+                cancellationToken);
 
-        if (!validationResult.IsValid)
-        {
-            var error = validationResult.Errors.First().ErrorMessage;
-            return Result<CreateTransactionResponse>.Failure(
-                error,
-                Errors.General.Validation);
-        }
+        if (validation.IsFailure)
+            return validation;
 
         var transaction = new Transaction(
             command.Description,
