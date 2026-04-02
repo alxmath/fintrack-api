@@ -1,3 +1,4 @@
+using FinTrack.Application.Common.Errors;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FinTrack.Domain.Entities;
@@ -18,13 +19,17 @@ public class CreateCategoryHandler(
         if (!validationResult.IsValid)
         {
             var error = validationResult.Errors.First().ErrorMessage;
-            return Result<CreateCategoryResponse>.Failure(error);
+            return Result<CreateCategoryResponse>.Failure(
+                error,
+                Errors.General.Validation);
         }
 
         var exists = await repository.ExistsByNameAsync(command.Name, cancellationToken);
 
         if (exists)
-            return Result<CreateCategoryResponse>.Failure("Categoria já existe");
+            return Result<CreateCategoryResponse>.Failure(
+                "Categoria já existe", 
+                Errors.General.Conflict);
 
         var category = new Category(command.Name);
 
