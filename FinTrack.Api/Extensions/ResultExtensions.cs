@@ -1,3 +1,4 @@
+using FinTrack.Application.Common.Errors;
 using FinTrack.Application.Common.Results;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +12,12 @@ public static class ResultExtensions
     {
         if (result.IsFailure)
         {
-            return new BadRequestObjectResult(result);
+            return result.ErrorCode switch
+            {
+                Errors.General.NotFound => new NotFoundObjectResult(result),
+                Errors.General.Validation => new BadRequestObjectResult(result),
+                _ => new BadRequestObjectResult(result)
+            };
         }
 
         if (onSuccess is not null)
@@ -27,7 +33,12 @@ public static class ResultExtensions
     {
         if (result.IsFailure)
         {
-            return new BadRequestObjectResult(result);
+            return result.ErrorCode switch
+            {
+                Errors.General.NotFound => new NotFoundObjectResult(result),
+                Errors.General.Validation => new BadRequestObjectResult(result),
+                _ => new BadRequestObjectResult(result)
+            };
         }
 
         return new OkObjectResult(result);
