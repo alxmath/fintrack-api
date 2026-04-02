@@ -1,3 +1,4 @@
+using FinTrack.Application.Common.Errors;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 
@@ -12,7 +13,9 @@ public class GetTransactionByIdHandler(ITransactionRepository repository)
         var transaction = await repository.GetByIdAsync(query.Id, cancellationToken);
         
         if (transaction is null)
-            return Result<GetTransactionByIdResponse>.Failure("Transação não encontrada");
+            return Result<GetTransactionByIdResponse>.Failure(
+                "Transação não encontrada",
+                Errors.General.NotFound);
 
         var response = new GetTransactionByIdResponse(
             transaction.Id,
