@@ -1,3 +1,4 @@
+using FinTrack.Application.Common.Errors;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FinTrack.Domain.Entities;
@@ -18,7 +19,9 @@ public class CreateTransactionHandler(
         if (!validationResult.IsValid)
         {
             var error = validationResult.Errors.First().ErrorMessage;
-            return Result<CreateTransactionResponse>.Failure(error);
+            return Result<CreateTransactionResponse>.Failure(
+                error,
+                Errors.General.Validation);
         }
 
         var transaction = new Transaction(
