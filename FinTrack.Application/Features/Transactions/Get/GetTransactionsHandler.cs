@@ -1,3 +1,4 @@
+using FinTrack.Application.Common.Errors;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FluentValidation;
@@ -16,7 +17,9 @@ public sealed class GetTransactionsHandler(ITransactionRepository repository,
         if (!validationResult.IsValid)
         {
             var error = validationResult.Errors.First().ErrorMessage;
-            return Result<PagedResult<GetTransactionsResponse>>.Failure(error);
+            return Result<PagedResult<GetTransactionsResponse>>.Failure(
+                error,
+                Errors.General.Validation);
         }
 
         var (transactions, total) = await repository.SearchAsync(
