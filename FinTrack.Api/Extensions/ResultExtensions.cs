@@ -1,4 +1,4 @@
-using FinTrack.Application.Common.Errors;
+using FinTrack.Api.Common.Errors;
 using FinTrack.Application.Common.Results;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,43 +6,18 @@ namespace FinTrack.Api.Extensions;
 
 public static class ResultExtensions
 {
-    public static IActionResult ToActionResult<T>(
-        this Result<T> result,
-        Func<T, IActionResult>? onSuccess = null)
+    public static IActionResult ToActionResult<T>(this Result<T> result)
     {
-        if (result.IsFailure)
+        if (result.IsSuccess)
         {
-            return result.ErrorCode switch
-            {
-                Errors.General.NotFound => new NotFoundObjectResult(result),
-                Errors.General.Validation => new BadRequestObjectResult(result),
-                Errors.General.Conflict => new ConflictObjectResult(result),
-                _ => new BadRequestObjectResult(result)
-            };
+            return new OkObjectResult(result.Value);
         }
 
-        if (onSuccess is not null)
+        var problem = ProblemDetailsMapper.Map(result.Error, result.ErrorCode);
+
+        return new ObjectResult(problem)
         {
-            return onSuccess(result.Value!);
-        }
-
-        return new OkObjectResult(result);
-    }
-
-    public static IActionResult ToActionResult(
-        this Result result)
-    {
-        if (result.IsFailure)
-        {
-            return result.ErrorCode switch
-            {
-                Errors.General.NotFound => new NotFoundObjectResult(result),
-                Errors.General.Validation => new BadRequestObjectResult(result),
-                Errors.General.Conflict => new ConflictObjectResult(result),
-                _ => new BadRequestObjectResult(result)
-            };
-        }
-
-        return new OkObjectResult(result);
+            StatusCode = problem.Status
+        };
     }
 }

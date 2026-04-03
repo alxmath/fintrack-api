@@ -18,12 +18,7 @@ public class CategoriesController(
     {
         var result = await createHandler.Handle(command, cancellationToken);
 
-        return result.ToActionResult(value =>
-            new CreatedAtActionResult(
-                actionName: nameof(GetById),
-                controllerName: "Categories",
-                routeValues: new { id = value.Id },
-                value: result));
+        return result.ToActionResult();
     }
 
     [HttpGet("{id:guid}")]
