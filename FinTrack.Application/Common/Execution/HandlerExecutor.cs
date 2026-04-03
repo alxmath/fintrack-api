@@ -1,25 +1,80 @@
-using FinTrack.Application.Common.Behaviors;
 using FinTrack.Application.Common.Results;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using static FinTrack.Application.Common.Errors.Errors;
 
 namespace FinTrack.Application.Common.Execution;
 
 public class HandlerExecutor
 {
+    private readonly ILogger<HandlerExecutor> _logger;
+
+    public HandlerExecutor(ILogger<HandlerExecutor> logger)
+    {
+        _logger = logger;
+    }
+
     public async Task<Result<object>> Execute<TRequest>(
         TRequest request,
         Func<Task<Result<object>>> handler,
         IValidator<TRequest>? validator,
         CancellationToken cancellationToken)
     {
-        var validation = await ValidationHelper
-            .ValidateAsync(request, validator, cancellationToken);
+        var requestName = typeof(TRequest).Name;
 
-        if (validation is not null)
-            return Result<object>.Failure(
-                validation.Error,
-                validation.ErrorCode);
+        _logger.LogInformation("Handling {Request}", requestName);
 
-        return await handler();
+        var stopwatch = Stopwatch.StartNew();
+
+        try
+        {
+            if (validator is not null)
+            {
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+                if (!validationResult.IsValid)
+                {
+                    _logger.LogWarning("Validation failed for {Request}", requestName);
+
+                    return Result<object>.Failure(
+                        validationResult.Errors.First().ErrorMessage,
+                        General.Validation);
+                }
+            }
+
+            var result = await handler();
+
+            stopwatch.Stop();
+
+            if (result.IsSuccess)
+            {
+                _logger.LogInformation(
+                    "Handled {Request} in {Elapsed}ms",
+                    requestName,
+                    stopwatch.ElapsedMilliseconds);
+            }
+            else
+            {
+                _logger.LogWarning(
+                    "Handled {Request} with failure in {Elapsed}ms: {Error}",
+                    requestName,
+                    stopwatch.ElapsedMilliseconds,
+                    result.Error);
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            stopwatch.Stop();
+
+            _logger.LogError(ex,
+                "Unhandled exception in {Request} after {Elapsed}ms",
+                requestName,
+                stopwatch.ElapsedMilliseconds);
+
+            throw;
+        }
     }
 }

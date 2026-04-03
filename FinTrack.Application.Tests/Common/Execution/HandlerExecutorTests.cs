@@ -3,6 +3,7 @@ using FinTrack.Application.Common.Results;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace FinTrack.Application.Tests.Common.Execution;
@@ -26,7 +27,8 @@ public class HandlerExecutorTests
                 new ValidationFailure("Field", "Validation error")
             ]));
 
-        var executor = new HandlerExecutor();
+        var executor = new HandlerExecutor(
+            new Mock<ILogger<HandlerExecutor>>().Object);
 
         var handlerCalled = false;
 
@@ -62,7 +64,8 @@ public class HandlerExecutorTests
             .Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult()); // válido
 
-        var executor = new HandlerExecutor();
+        var executor = new HandlerExecutor(
+            new Mock<ILogger<HandlerExecutor>>().Object);
 
         var handlerCalled = false;
 
@@ -91,7 +94,9 @@ public class HandlerExecutorTests
     {
         // Arrange
         var request = new FakeRequest();
-        var executor = new HandlerExecutor();
+
+        var executor = new HandlerExecutor(
+            new Mock<ILogger<HandlerExecutor>>().Object);
 
         var handlerCalled = false;
 
