@@ -23,7 +23,10 @@ public class HandlerExecutor
     {
         var requestName = typeof(TRequest).Name;
 
-        _logger.LogInformation("Handling {Request}", requestName);
+        _logger.LogInformation(
+            "Handling {Request} {@RequestData}",
+            requestName,
+            request);
 
         var stopwatch = Stopwatch.StartNew();
 
@@ -50,8 +53,9 @@ public class HandlerExecutor
             if (result.IsSuccess)
             {
                 _logger.LogInformation(
-                    "Handled {Request} in {Elapsed}ms",
+                    "Handled {Request} {@RequestData} in {Elapsed}ms",
                     requestName,
+                    request,
                     stopwatch.ElapsedMilliseconds);
             }
             else
@@ -70,8 +74,9 @@ public class HandlerExecutor
             stopwatch.Stop();
 
             _logger.LogError(ex,
-                "Unhandled exception in {Request} after {Elapsed}ms",
+                "Unhandled exception in {Request} {@RequestData} after {Elapsed}ms",
                 requestName,
+                request,
                 stopwatch.ElapsedMilliseconds);
 
             throw;
