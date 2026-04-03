@@ -6,9 +6,9 @@ namespace FinTrack.Application.Common.Execution;
 
 public class HandlerExecutor
 {
-    public async Task<Result<TResponse>> Execute<TRequest, TResponse>(
+    public async Task<Result<object>> Execute<TRequest>(
         TRequest request,
-        Func<Task<Result<TResponse>>> handler,
+        Func<Task<Result<object>>> handler,
         IValidator<TRequest>? validator,
         CancellationToken cancellationToken)
     {
@@ -16,7 +16,7 @@ public class HandlerExecutor
             .ValidateAsync(request, validator, cancellationToken);
 
         if (validation is not null)
-            return Result<TResponse>.Failure(
+            return Result<object>.Failure(
                 validation.Error,
                 validation.ErrorCode);
 

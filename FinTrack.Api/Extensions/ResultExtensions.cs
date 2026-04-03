@@ -6,7 +6,7 @@ namespace FinTrack.Api.Extensions;
 
 public static class ResultExtensions
 {
-    public static IActionResult ToActionResult<T>(this Result<T> result)
+    public static IActionResult ToActionResult(this Result<object> result)
     {
         if (result.IsSuccess)
         {

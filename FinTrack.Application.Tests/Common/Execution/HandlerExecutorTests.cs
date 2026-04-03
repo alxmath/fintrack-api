@@ -30,10 +30,10 @@ public class HandlerExecutorTests
 
         var handlerCalled = false;
 
-        Task<Result<string>> Handler()
+        Task<Result<object>> Handler()
         {
             handlerCalled = true;
-            return Task.FromResult(Result<string>.Success("ok"));
+            return Task.FromResult(Result<object>.Success("ok"));
         }
 
         // Act
@@ -66,10 +66,10 @@ public class HandlerExecutorTests
 
         var handlerCalled = false;
 
-        Task<Result<string>> Handler()
+        Task<Result<object>> Handler()
         {
             handlerCalled = true;
-            return Task.FromResult(Result<string>.Success("ok"));
+            return Task.FromResult(Result<object>.Success("ok"));
         }
 
         // Act
@@ -95,10 +95,10 @@ public class HandlerExecutorTests
 
         var handlerCalled = false;
 
-        Task<Result<string>> Handler()
+        Task<Result<object>> Handler()
         {
             handlerCalled = true;
-            return Task.FromResult(Result<string>.Success("ok"));
+            return Task.FromResult(Result<object>.Success("ok"));
         }
 
         // Act
@@ -110,6 +110,7 @@ public class HandlerExecutorTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be("ok");
         handlerCalled.Should().BeTrue();
     }
 }

@@ -17,20 +17,52 @@ public class Dispatcher
         _executor = executor;
     }
 
-    public async Task<Result<TResponse>> Send<TRequest, TResponse>(
-        TRequest request,
-        CancellationToken cancellationToken)
+    public async Task<Result<object>> Send(object request, CancellationToken cancellationToken)
     {
-        var handler = _serviceProvider
-            .GetRequiredService<IRequestHandler<TRequest, TResponse>>();
+        var requestType = request.GetType();
 
-        var validator = _serviceProvider
-            .GetService<IValidator<TRequest>>();
+        var handlerType = typeof(IRequestHandler<,>).MakeGenericType(
+            requestType,
+            GetResponseType(requestType));
+
+        dynamic handler = _serviceProvider.GetRequiredService(handlerType);
+
+        var validatorType = typeof(IValidator<>).MakeGenericType(requestType);
+        dynamic? validator = _serviceProvider.GetService(validatorType);
+
+        async Task<Result<object>> handlerDelegate()
+        {
+            var result = await handler.Handle((dynamic)request, cancellationToken);
+            return ConvertResult(result);
+        }
 
         return await _executor.Execute(
-            request,
-            () => handler.Handle(request, cancellationToken),
+            (dynamic)request,
+            (Func<Task<Result<object>>>)handlerDelegate,
             validator,
             cancellationToken);
+    }
+
+    private static Type GetResponseType(Type requestType)
+    {
+        var handlerInterface = requestType.Assembly
+            .GetTypes()
+            .SelectMany(t => t.GetInterfaces())
+            .First(i =>
+                i.IsGenericType &&
+                i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>) &&
+                i.GetGenericArguments()[0] == requestType);
+
+        return handlerInterface.GetGenericArguments()[1];
+    }
+
+    private static Result<object> ConvertResult(object result)
+    {
+        dynamic r = result;
+
+        if (r.IsSuccess)
+            return Result<object>.Success(r.Value);
+
+        return Result<object>.Failure(r.Error, r.ErrorCode);
     }
 }

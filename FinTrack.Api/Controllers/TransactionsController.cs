@@ -1,6 +1,5 @@
 using FinTrack.Api.Extensions;
 using FinTrack.Application.Common.Dispatching;
-using FinTrack.Application.Common.Results;
 using FinTrack.Application.Features.Transactions.Create;
 using FinTrack.Application.Features.Transactions.Get;
 using FinTrack.Application.Features.Transactions.GetById;
@@ -17,7 +16,7 @@ public class TransactionsController(Dispatcher dispatcher) : ControllerBase
         CreateTransactionCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await dispatcher.Send<CreateTransactionCommand, CreateTransactionResponse>(
+        var result = await dispatcher.Send(
             command,
             cancellationToken);
 
@@ -29,7 +28,7 @@ public class TransactionsController(Dispatcher dispatcher) : ControllerBase
         [FromQuery] GetTransactionsQuery query,
         CancellationToken cancellationToken)
     {
-        var result = await dispatcher.Send<GetTransactionsQuery, PagedResult<GetTransactionsResponse>>(
+        var result = await dispatcher.Send(
             query,
             cancellationToken);
 
@@ -43,7 +42,7 @@ public class TransactionsController(Dispatcher dispatcher) : ControllerBase
     {
         var query = new GetTransactionByIdQuery(id);
 
-        var result = await dispatcher.Send<GetTransactionByIdQuery, GetTransactionByIdResponse>(
+        var result = await dispatcher.Send(
             query,
             cancellationToken);
 

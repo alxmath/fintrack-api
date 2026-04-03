@@ -15,7 +15,7 @@ public class CategoriesController(Dispatcher dispatcher) : ControllerBase
         CreateCategoryCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await dispatcher.Send<CreateCategoryCommand, CreateCategoryResponse>(
+        var result = await dispatcher.Send(
             command,
             cancellationToken);
 
@@ -34,7 +34,7 @@ public class CategoriesController(Dispatcher dispatcher) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        var result = await dispatcher.Send<GetCategoriesQuery, List<GetCategoriesResponse>>(
+        var result = await dispatcher.Send(
             new GetCategoriesQuery(),
             cancellationToken);
 
