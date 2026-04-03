@@ -269,6 +269,56 @@ Adicionar entidade Category com relacionamento obrigatório em Transaction.
 
 ---
 
+## 📅 2026-04-03
+### 🌐 Padronização de erros com ProblemDetails
+
+Decisão:
+Utilizar ProblemDetails (RFC 7807) como formato padrão de erro HTTP.
+
+Motivação:
+
+Padronização do contrato da API
+Melhor integração com clientes
+Facilitar debugging e observabilidade
+
+Consequências:
+
+Controllers passaram a mapear Result<T> → HTTP
+Testes de integração passaram a validar estrutura de erro
+
+---
+
+### 🔁 Pipeline de validação (HandlerExecutor)
+
+Decisão:
+Centralizar validação em um executor ao invés de executar nos handlers.
+
+Motivação:
+
+Remover duplicação
+Garantir execução obrigatória da validação
+Melhor separação de responsabilidades
+
+Consequências:
+
+Handlers passaram a conter apenas regra de negócio
+Testes de validação migraram para o executor
+
+---
+
+### 🧹 Remoção de validação dos handlers
+
+Decisão:
+Handlers não devem mais executar validação.
+
+Motivação:
+
+* Reduzir acoplamento
+* Tornar handlers mais previsíveis
+* Melhor aderência ao princípio de responsabilidade única
+
+---
+
 ## 📌 Diretriz geral
 
 As decisões arquiteturais devem priorizar:
