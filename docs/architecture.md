@@ -66,6 +66,39 @@ Separação entre:
 
 ---
 
+## 🔁 Pipeline de execução (Application)
+
+O fluxo de execução segue o padrão:
+
+Controller → Executor → Handler
+
+
+### Responsabilidades
+
+* **Controller**
+  * Recebe requisição HTTP
+  * Delegação da execução
+
+* **Executor (HandlerExecutor)**
+  * Executa validação (FluentValidation)
+  * Interrompe fluxo em caso de erro
+
+* **Handler**
+  * Contém apenas regra de negócio
+  * Assume dados válidos
+
+### Motivação
+
+* Remover validação dos handlers
+* Reduzir boilerplate
+* Centralizar comportamento transversal
+
+### Trade-off
+
+* Leve aumento de abstração
+
+---
+
 ## 🧪 Estratégia de testes
 
 Os testes de integração são um ponto central do projeto.
@@ -157,6 +190,13 @@ O projeto utiliza um padrão de retorno baseado em `Result<T>` para padronizar r
 * Redução de uso de exceptions como fluxo de controle
 * Melhor previsibilidade para testes e consumidores
 
+### Integração com HTTP
+
+O Result<T> é convertido na camada API para:
+
+* Sucesso → 200 OK
+* Erro → ProblemDetails (RFC 7807)
+
 ---
 
 ## 🔌 Injeção de Dependência
@@ -200,10 +240,10 @@ A configuração de DI segue separação por camada:
 
 ## 🚧 Próximos passos arquiteturais
 
-* Introdução de Categories (relacionamento com Transactions)
-* Padronização de responses (Result Pattern)
-* Evolução do domínio
-* Possível suporte a offline-first (futuro)
+* Introdução de Dispatcher (remoção de dependência direta de handlers nos controllers)
+* Logging estruturado
+* Evolução de queries
+* Versionamento de API
 
 ---
 
