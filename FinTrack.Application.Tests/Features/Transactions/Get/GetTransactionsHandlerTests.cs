@@ -3,7 +3,7 @@ using FinTrack.Application.Features.Transactions.Get;
 using FluentAssertions;
 using Moq;
 
-namespace FinTrack.Application.Tests.Transactions.Get;
+namespace FinTrack.Application.Tests.Features.Transactions.Get;
 
 public class GetTransactionsHandlerTests
 {

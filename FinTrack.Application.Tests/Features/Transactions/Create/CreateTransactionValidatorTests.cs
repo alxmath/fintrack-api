@@ -3,7 +3,7 @@ using FinTrack.Application.Features.Transactions.Create;
 using FluentAssertions;
 using Moq;
 
-namespace FinTrack.Application.Tests.Transactions.Create;
+namespace FinTrack.Application.Tests.Features.Transactions.Create;
 
 public class CreateTransactionValidatorTests
 {

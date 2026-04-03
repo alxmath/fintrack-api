@@ -1,7 +1,7 @@
 using FinTrack.Application.Features.Transactions.Get;
 using FluentAssertions;
 
-namespace FinTrack.Application.Tests.Transactions.Get;
+namespace FinTrack.Application.Tests.Features.Transactions.Get;
 
 public class GetTransactionsValidatorTests
 {

@@ -4,7 +4,7 @@ using FinTrack.Domain.Entities;
 using FluentAssertions;
 using Moq;
 
-namespace FinTrack.Application.Tests.Transactions.Create;
+namespace FinTrack.Application.Tests.Features.Transactions.Create;
 
 public class CreateTransactionHandlerTests
 {

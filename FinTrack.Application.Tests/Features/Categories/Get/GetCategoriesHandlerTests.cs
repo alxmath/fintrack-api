@@ -4,7 +4,7 @@ using FinTrack.Domain.Entities;
 using FluentAssertions;
 using Moq;
 
-namespace FinTrack.Application.Tests.Categories.Get;
+namespace FinTrack.Application.Tests.Features.Categories.Get;
 
 public class GetCategoriesHandlerTests
 {
