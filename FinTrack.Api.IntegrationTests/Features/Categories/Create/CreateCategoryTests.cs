@@ -2,6 +2,7 @@ using FinTrack.Api.IntegrationTests.Infrastructure;
 using FinTrack.Application.Common.Results;
 using FinTrack.Application.Features.Categories.Create;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -48,7 +49,15 @@ public class CreateCategoryTests : IntegrationTestBase
         var response = await Client.PostAsJsonAsync(
             "/api/v1/categories", request);
 
-        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        //response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+
+        var problem = await response.Content
+            .ReadFromJsonAsync<ProblemDetails>();
+
+        problem.Should().NotBeNull();
+        problem!.Title.Should().Be("Conflict");
+        problem.Status.Should().Be(409);
+        problem.Detail.Should().Contain("Category");
 
         var result = await response.Content
             .ReadFromJsonAsync<Result<CreateCategoryResponse>>();

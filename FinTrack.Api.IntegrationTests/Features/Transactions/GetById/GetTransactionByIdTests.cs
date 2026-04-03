@@ -3,6 +3,7 @@ using FinTrack.Application.Common.Results;
 using FinTrack.Application.Features.Transactions.Create;
 using FinTrack.Application.Features.Transactions.GetById;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -58,6 +59,14 @@ public class GetTransactionByIdTests : IntegrationTestBase
         var response = await Client.GetAsync($"/api/v1/transactions/{id}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        //response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        var problem = await response.Content
+            .ReadFromJsonAsync<ProblemDetails>();
+
+        problem.Should().NotBeNull();
+        problem!.Title.Should().Be("Resource not found");
+        problem.Status.Should().Be(404);
+        problem.Detail.Should().Contain("Transaction");
     }
 }
