@@ -1,30 +1,15 @@
-using FinTrack.Application.Common.Behaviors;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FinTrack.Domain.Entities;
-using FluentValidation;
 
 namespace FinTrack.Application.Features.Transactions.Create;
 
-public class CreateTransactionHandler(
-    ITransactionRepository repository,
-    IValidator<CreateTransactionCommand> validator)
+public class CreateTransactionHandler(ITransactionRepository repository)
 {
     public async Task<Result<CreateTransactionResponse>> Handle(
-        CreateTransactionCommand command, 
+        CreateTransactionCommand command,
         CancellationToken cancellationToken)
     {
-        var validation = await ValidationHelper
-            .ValidateAsync(
-                command,
-                validator,
-                cancellationToken);
-
-        if (validation is not null)
-            return Result<CreateTransactionResponse>.Failure(
-                validation.Error,
-                validation.ErrorCode);
-
         var transaction = new Transaction(
             command.Description,
             command.Amount,

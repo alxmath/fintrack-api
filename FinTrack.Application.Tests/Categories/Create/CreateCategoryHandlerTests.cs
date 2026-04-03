@@ -2,7 +2,6 @@ using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Features.Categories.Create;
 using FinTrack.Domain.Entities;
 using FluentAssertions;
-using FluentValidation;
 using Moq;
 
 namespace FinTrack.Application.Tests.Categories.Create;
@@ -10,15 +9,13 @@ namespace FinTrack.Application.Tests.Categories.Create;
 public class CreateCategoryHandlerTests
 {
     private readonly Mock<ICategoryRepository> _repositoryMock = new();
-    private readonly Mock<IValidator<CreateCategoryCommand>> _validatorMock = new();
 
     private readonly CreateCategoryHandler _handler;
 
     public CreateCategoryHandlerTests()
     {
         _handler = new CreateCategoryHandler(
-            _repositoryMock.Object,
-            _validatorMock.Object
+            _repositoryMock.Object
         );
     }
 
@@ -31,10 +28,6 @@ public class CreateCategoryHandlerTests
         var validationResult = new FluentValidation.Results.ValidationResult(
             [new FluentValidation.Results.ValidationFailure("Name", "Nome inválido")]
         );
-
-        _validatorMock
-            .Setup(v => v.ValidateAsync(command, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(validationResult);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -49,10 +42,6 @@ public class CreateCategoryHandlerTests
     {
         // Arrange
         var command = new CreateCategoryCommand("Alimentação");
-
-        _validatorMock
-            .Setup(v => v.ValidateAsync(command, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new FluentValidation.Results.ValidationResult());
 
         _repositoryMock
             .Setup(r => r.ExistsByNameAsync(command.Name, It.IsAny<CancellationToken>()))
@@ -71,10 +60,6 @@ public class CreateCategoryHandlerTests
     {
         // Arrange
         var command = new CreateCategoryCommand("Alimentação");
-
-        _validatorMock
-            .Setup(v => v.ValidateAsync(command, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new FluentValidation.Results.ValidationResult());
 
         _repositoryMock
             .Setup(r => r.ExistsByNameAsync(command.Name, It.IsAny<CancellationToken>()))

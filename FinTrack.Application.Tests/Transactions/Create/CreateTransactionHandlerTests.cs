@@ -15,7 +15,6 @@ public class CreateTransactionHandlerTests
     {
         // Arrange
         var repositoryMock = new Mock<ITransactionRepository>();
-        var validatorMock = new Mock<IValidator<CreateTransactionCommand>>();
 
         var command = new CreateTransactionCommand(
             "Salário",
@@ -24,17 +23,12 @@ public class CreateTransactionHandlerTests
             Guid.NewGuid()
         );
 
-        validatorMock
-            .Setup(v => v.ValidateAsync(command, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ValidationResult());
-
         repositoryMock
             .Setup(r => r.AddAsync(It.IsAny<Transaction>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         var handler = new CreateTransactionHandler(
-            repositoryMock.Object,
-            validatorMock.Object);
+            repositoryMock.Object);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -74,8 +68,7 @@ public class CreateTransactionHandlerTests
             .ReturnsAsync(new ValidationResult(validationFailures));
 
         var handler = new CreateTransactionHandler(
-            repositoryMock.Object,
-            validatorMock.Object);
+            repositoryMock.Object);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -103,8 +96,7 @@ public class CreateTransactionHandlerTests
                 [new ValidationFailure("Description", "Erro")]));
 
         var handler = new CreateTransactionHandler(
-            repositoryMock.Object,
-            validatorMock.Object);
+            repositoryMock.Object);
 
         await handler.Handle(command, CancellationToken.None);
 

@@ -4,7 +4,6 @@ using FinTrack.Application.Features.Transactions.Create;
 using FinTrack.Application.Features.Transactions.GetById;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using System.Net.Http.Json;
 
 namespace FinTrack.Api.IntegrationTests.Features.Transactions.GetById;

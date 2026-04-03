@@ -1,6 +1,5 @@
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Features.Transactions.Get;
-using FinTrack.Domain.Entities;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
@@ -15,7 +14,6 @@ public class GetTransactionsHandlerTests
     {
         // Arrange
         var repositoryMock = new Mock<ITransactionRepository>();
-        var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
 
         var category = new CategoryDto(Guid.NewGuid(), "Mercado");
 
@@ -37,13 +35,7 @@ public class GetTransactionsHandlerTests
                 cancellationToken: It.IsAny<CancellationToken>()))
             .ReturnsAsync((transactions, transactions.Count));
 
-        validatorMock
-            .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ValidationResult());
-
-        var handler = new GetTransactionsHandler(
-            repositoryMock.Object,
-            validatorMock.Object);
+        var handler = new GetTransactionsHandler(repositoryMock.Object);
 
         var query = new GetTransactionsQuery { Page = 1, PageSize = 10 };
 
@@ -84,9 +76,7 @@ public class GetTransactionsHandlerTests
             .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
 
-        var handler = new GetTransactionsHandler(
-            repositoryMock.Object,
-            validatorMock.Object);
+        var handler = new GetTransactionsHandler(repositoryMock.Object);
 
         var query = new GetTransactionsQuery { Page = 1, PageSize = 10 };
 
@@ -123,9 +113,7 @@ public class GetTransactionsHandlerTests
                 cancellationToken: It.IsAny<CancellationToken>()))
             .ReturnsAsync((new List<GetTransactionsResponse>(), 0));
 
-        var handler = new GetTransactionsHandler(
-            repositoryMock.Object,
-            validatorMock.Object);
+        var handler = new GetTransactionsHandler(repositoryMock.Object);
 
         var query = new GetTransactionsQuery { Page = 2, PageSize = 5 };
 
@@ -162,9 +150,7 @@ public class GetTransactionsHandlerTests
             .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult(failures));
 
-        var handler = new GetTransactionsHandler(
-            repositoryMock.Object,
-            validatorMock.Object);
+        var handler = new GetTransactionsHandler(repositoryMock.Object);
 
         var query = new GetTransactionsQuery { Page = 0, PageSize = 10 };
 
