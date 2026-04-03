@@ -21,7 +21,7 @@ public class GetCategoriesTests : IntegrationTestBase
         response.IsSuccessStatusCode.Should().BeTrue();
 
         var result = await response.Content
-            .ReadFromJsonAsync<List<CategoryResponse>>();
+            .ReadFromJsonAsync<List<GetCategoriesResponse>>();
 
         result.Should().NotBeNull();
         result.Should().BeEmpty();
@@ -41,7 +41,7 @@ public class GetCategoriesTests : IntegrationTestBase
         response.IsSuccessStatusCode.Should().BeTrue();
 
         var result = await response.Content
-            .ReadFromJsonAsync<List<CategoryResponse>>();
+            .ReadFromJsonAsync<List<GetCategoriesResponse>>();
 
         result.Should().NotBeNull();
 

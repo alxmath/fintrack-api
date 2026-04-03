@@ -1,4 +1,7 @@
+using FinTrack.Application.Common.Dispatching;
 using FinTrack.Application.Common.Execution;
+using FinTrack.Application.Common.Interfaces;
+using FinTrack.Application.Common.Results;
 using FinTrack.Application.Features.Categories.Create;
 using FinTrack.Application.Features.Categories.Get;
 using FinTrack.Application.Features.Transactions.Create;
@@ -21,7 +24,16 @@ public static class DependencyInjection
         services.AddScoped<CreateCategoryHandler>();
         services.AddScoped<GetCategoriesHandler>();
 
+        services.AddScoped<Dispatcher>();
         services.AddScoped<HandlerExecutor>();
+
+        services.AddScoped<IRequestHandler<CreateTransactionCommand, CreateTransactionResponse>, CreateTransactionHandler>();
+        services.AddScoped<IRequestHandler<GetTransactionsQuery, PagedResult<GetTransactionsResponse>>, GetTransactionsHandler>();
+        services.AddScoped<IRequestHandler<GetTransactionByIdQuery, GetTransactionByIdResponse>, GetTransactionByIdHandler>();
+
+        services.AddScoped<IRequestHandler<CreateCategoryCommand, CreateCategoryResponse>, CreateCategoryHandler>();
+        services.AddScoped<IRequestHandler<GetCategoriesQuery, List<GetCategoriesResponse>>, GetCategoriesHandler>();
+
 
         // Validators
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
