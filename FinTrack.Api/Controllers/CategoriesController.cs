@@ -1,6 +1,8 @@
 using FinTrack.Api.Extensions;
+using FinTrack.Application.Common.Execution;
 using FinTrack.Application.Features.Categories.Create;
 using FinTrack.Application.Features.Categories.Get;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinTrack.Api.Controllers;
@@ -9,14 +11,20 @@ namespace FinTrack.Api.Controllers;
 [Route("api/v1/[controller]")]
 public class CategoriesController(
     CreateCategoryHandler createHandler,
-    GetCategoriesHandler getHandler) : ControllerBase
+    GetCategoriesHandler getHandler,
+    IValidator<CreateCategoryCommand> validator,
+    HandlerExecutor executor) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Create(
         CreateCategoryCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await createHandler.Handle(command, cancellationToken);
+        var result = await executor.Execute(
+            command,
+            () => createHandler.Handle(command, cancellationToken),
+            validator,
+            cancellationToken);
 
         return result.ToActionResult();
     }

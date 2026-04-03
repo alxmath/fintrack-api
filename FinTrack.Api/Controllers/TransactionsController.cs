@@ -1,8 +1,11 @@
 using FinTrack.Api.Extensions;
+using FinTrack.Application.Common.Execution;
 using FinTrack.Application.Features.Transactions.Create;
 using FinTrack.Application.Features.Transactions.Get;
 using FinTrack.Application.Features.Transactions.GetById;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace FinTrack.Api.Controllers;
 
@@ -11,15 +14,22 @@ namespace FinTrack.Api.Controllers;
 public class TransactionsController(
     CreateTransactionHandler createHandler, 
     GetTransactionsHandler getHandler,
-    GetTransactionByIdHandler getByIdHandler) : ControllerBase
+    GetTransactionByIdHandler getByIdHandler,
+    IValidator<CreateTransactionCommand> createValidator,
+    IValidator<GetTransactionsQuery> getValidator,
+    HandlerExecutor executor) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Create(
         CreateTransactionCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await createHandler.Handle(command, cancellationToken);
-        
+        var result = await executor.Execute(
+            command,
+            () => createHandler.Handle(command, cancellationToken),
+            createValidator,
+            cancellationToken);
+
         return result.ToActionResult();
     }
 
@@ -28,7 +38,11 @@ public class TransactionsController(
         [FromQuery] GetTransactionsQuery query, 
         CancellationToken cancellationToken)
     {
-        var result = await getHandler.Handle(query, cancellationToken);
+        var result = await executor.Execute(
+            query,
+            () => getHandler.Handle(query, cancellationToken),
+            getValidator,
+            cancellationToken);
 
         return result.ToActionResult();
     }
