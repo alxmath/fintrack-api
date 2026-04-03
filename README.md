@@ -88,6 +88,38 @@ FinTrack.Application.Tests → Testes unitários
 
 ---
 
+## 📡 Padrão de respostas HTTP
+
+A API utiliza dois níveis de padronização:
+
+### ✔ Sucesso
+
+Retorno direto do conteúdo (`200 OK`):
+
+```json
+{
+  "id": "...",
+  "name": "Mercado"
+}
+```
+
+❌ Erro (RFC 7807 - ProblemDetails)
+
+```json
+{
+  "type": "https://httpstatuses.com/400",
+  "title": "Validation error",
+  "status": 400,
+  "detail": "Name is required"
+}
+```
+Motivo
+* Padronização do contrato HTTP
+* Melhor integração com frontend
+* Melhor observabilidade e debugging
+
+---
+
 ## ⚙️ Como executar
 
 ```bash
@@ -110,7 +142,8 @@ dotnet test
 * Application orquestra os casos de uso
 * Domain contém regras de negócio
 * Infrastructure contém apenas implementações técnicas
-* Todos endpoints retornam Result<T> como contrato padrão
+* Application utiliza Result<T>
+* API converte Result<T> para HTTP (ProblemDetails quando erro)
 
 ---
 
