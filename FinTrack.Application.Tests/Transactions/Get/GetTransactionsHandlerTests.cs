@@ -1,8 +1,6 @@
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Features.Transactions.Get;
 using FluentAssertions;
-using FluentValidation;
-using FluentValidation.Results;
 using Moq;
 
 namespace FinTrack.Application.Tests.Transactions.Get;
@@ -57,8 +55,6 @@ public class GetTransactionsHandlerTests
     {
         // Arrange
         var repositoryMock = new Mock<ITransactionRepository>();
-        var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
-
 
         repositoryMock
             .Setup(r => r.SearchAsync(
@@ -71,10 +67,6 @@ public class GetTransactionsHandlerTests
                 desc: It.IsAny<bool>(),
                 cancellationToken: It.IsAny<CancellationToken>()))
             .ReturnsAsync((new List<GetTransactionsResponse>(), 0));
-
-        validatorMock
-            .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ValidationResult());
 
         var handler = new GetTransactionsHandler(repositoryMock.Object);
 
@@ -95,11 +87,6 @@ public class GetTransactionsHandlerTests
     {
         // Arrange
         var repositoryMock = new Mock<ITransactionRepository>();
-        var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
-
-        validatorMock
-            .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ValidationResult());
 
         repositoryMock
             .Setup(r => r.SearchAsync(
@@ -132,44 +119,5 @@ public class GetTransactionsHandlerTests
                 desc: It.IsAny<bool>(),
                 cancellationToken: It.IsAny<CancellationToken>()),
             Times.Once);
-    }
-
-    [Fact]
-    public async Task Handle_ShouldReturnFailure_WhenValidationFails()
-    {
-        // Arrange
-        var repositoryMock = new Mock<ITransactionRepository>();
-        var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
-
-        var failures = new List<ValidationFailure>
-        {
-            new("Page", "Inválido")
-        };
-
-        validatorMock
-            .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ValidationResult(failures));
-
-        var handler = new GetTransactionsHandler(repositoryMock.Object);
-
-        var query = new GetTransactionsQuery { Page = 0, PageSize = 10 };
-
-        // Act
-        var result = await handler.Handle(query, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-
-        repositoryMock.Verify(
-            r => r.SearchAsync(
-                pageNumber: It.IsAny<int>(),
-                pageSize: It.IsAny<int>(),
-                categoryId: It.IsAny<Guid?>(),
-                startDate: It.IsAny<DateTime?>(),
-                endDate: It.IsAny<DateTime?>(),
-                orderBy: It.IsAny<string?>(),
-                desc: It.IsAny<bool>(),
-                cancellationToken: It.IsAny<CancellationToken>()),
-            Times.Never);
     }
 }

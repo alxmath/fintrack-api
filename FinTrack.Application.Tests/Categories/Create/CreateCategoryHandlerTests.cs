@@ -14,27 +14,7 @@ public class CreateCategoryHandlerTests
 
     public CreateCategoryHandlerTests()
     {
-        _handler = new CreateCategoryHandler(
-            _repositoryMock.Object
-        );
-    }
-
-    [Fact]
-    public async Task Handle_ShouldReturnFailure_WhenValidationFails()
-    {
-        // Arrange
-        var command = new CreateCategoryCommand("");
-
-        var validationResult = new FluentValidation.Results.ValidationResult(
-            [new FluentValidation.Results.ValidationFailure("Name", "Nome inválido")]
-        );
-
-        // Act
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Nome inválido");
+        _handler = new CreateCategoryHandler(_repositoryMock.Object);
     }
 
     [Fact]

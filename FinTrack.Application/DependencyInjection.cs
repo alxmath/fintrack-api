@@ -1,3 +1,4 @@
+using FinTrack.Application.Common.Execution;
 using FinTrack.Application.Features.Categories.Create;
 using FinTrack.Application.Features.Categories.Get;
 using FinTrack.Application.Features.Transactions.Create;
@@ -19,6 +20,8 @@ public static class DependencyInjection
 
         services.AddScoped<CreateCategoryHandler>();
         services.AddScoped<GetCategoriesHandler>();
+
+        services.AddScoped<HandlerExecutor>();
 
         // Validators
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
