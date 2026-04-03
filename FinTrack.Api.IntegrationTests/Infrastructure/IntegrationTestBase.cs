@@ -1,4 +1,3 @@
-using FinTrack.Application.Common.Results;
 using FinTrack.Application.Features.Categories.Create;
 using FluentAssertions;
 using System.Net.Http.Json;
@@ -28,12 +27,11 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content
-            .ReadFromJsonAsync<Result<CreateCategoryResponse>>();
+            .ReadFromJsonAsync<CreateCategoryResponse>();
 
         result.Should().NotBeNull();
-        result!.IsSuccess.Should().BeTrue();
 
-        return result.Value!.Id;
+        return result!.Id;
     }
 
     public async Task InitializeAsync()

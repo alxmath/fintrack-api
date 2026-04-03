@@ -1,5 +1,4 @@
 using FinTrack.Api.IntegrationTests.Infrastructure;
-using FinTrack.Application.Common.Results;
 using FinTrack.Application.Features.Transactions.Create;
 using FinTrack.Application.Features.Transactions.GetById;
 using FluentAssertions;
@@ -25,13 +24,12 @@ public class GetTransactionByIdTests : IntegrationTestBase
             new CreateTransactionCommand("Test", 100, DateTime.UtcNow, categoryId));
 
         var created = await createResponse.Content
-            .ReadFromJsonAsync<Result<CreateTransactionResponse>>();
+            .ReadFromJsonAsync<CreateTransactionResponse>();
 
         created.Should().NotBeNull();
-        created!.IsSuccess.Should().BeTrue();
-        created.Value.Should().NotBeNull();
+        created.Id.Should().NotBeEmpty();
 
-        var id = created!.Value.Id;
+        var id = created.Id;
 
         // Act
         var response = await Client.GetAsync($"/api/v1/transactions/{id}");
@@ -40,12 +38,11 @@ public class GetTransactionByIdTests : IntegrationTestBase
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content
-            .ReadFromJsonAsync<Result<GetTransactionByIdResponse>>();
+            .ReadFromJsonAsync<GetTransactionByIdResponse>();
 
         result.Should().NotBeNull();
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().NotBeNull();
-        result.Value.Id.Should().Be(id);
+        result.Id.Should().NotBeEmpty();
+        result.Id.Should().Be(id);
     }
 
     [Fact]

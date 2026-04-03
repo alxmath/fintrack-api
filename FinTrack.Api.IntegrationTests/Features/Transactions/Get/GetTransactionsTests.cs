@@ -38,11 +38,10 @@ public class GetTransactionsTests : IntegrationTestBase
         response.IsSuccessStatusCode.Should().BeTrue();
 
         var content = await response.Content
-            .ReadFromJsonAsync<Result<PagedResult<GetTransactionsResponse>>>();
+            .ReadFromJsonAsync<PagedResult<GetTransactionsResponse>>();
 
         content.Should().NotBeNull();
-        content.Value.Should().NotBeNull();
-        content.Value.Items.Should().ContainSingle(x =>
+        content.Items.Should().ContainSingle(x =>
             x.Description == "Salário" &&
             x.Amount == 1000
         );
@@ -70,13 +69,12 @@ public class GetTransactionsTests : IntegrationTestBase
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content
-            .ReadFromJsonAsync<Result<PagedResult<GetTransactionsResponse>>>();
+            .ReadFromJsonAsync<PagedResult<GetTransactionsResponse>>();
 
         content.Should().NotBeNull();
-        content.Value.Should().NotBeNull();
-        content!.IsSuccess.Should().BeTrue();
+        content.Items.Should().NotBeNull();
 
-        var items = content.Value.Items;
+        var items = content.Items;
 
         items.Should().HaveCount(3);
 
@@ -111,13 +109,12 @@ public class GetTransactionsTests : IntegrationTestBase
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content
-            .ReadFromJsonAsync<Result<PagedResult<GetTransactionsResponse>>>();
+            .ReadFromJsonAsync<PagedResult<GetTransactionsResponse>>();
 
         content.Should().NotBeNull();
-        content.Value.Should().NotBeNull();
-        content!.IsSuccess.Should().BeTrue();
+        content.Items.Should().NotBeNull();
 
-        var items = content.Value.Items;
+        var items = content.Items;
 
         items.Should().HaveCount(3);
 
@@ -152,13 +149,12 @@ public class GetTransactionsTests : IntegrationTestBase
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content
-            .ReadFromJsonAsync<Result<PagedResult<GetTransactionsResponse>>>();
+            .ReadFromJsonAsync<PagedResult<GetTransactionsResponse>>();
 
         content.Should().NotBeNull();
-        content.Value.Should().NotBeNull();
-        content!.IsSuccess.Should().BeTrue();
+        content.Items.Should().NotBeNull();
 
-        var items = content.Value.Items;
+        var items = content.Items;
 
         items.Should().HaveCount(3);
 
@@ -182,11 +178,11 @@ public class GetTransactionsTests : IntegrationTestBase
 
         // Assert
         var content = await response.Content
-            .ReadFromJsonAsync<Result<PagedResult<GetTransactionsResponse>>>();
+            .ReadFromJsonAsync<PagedResult<GetTransactionsResponse>>();
 
         content.Should().NotBeNull();
-        content.Value.Should().NotBeNull();
-        content.Value.Items.Should().ContainSingle(x =>
+        content.Items.Should().NotBeNull();
+        content.Items.Should().ContainSingle(x =>
             x.Category.Name == "Alimentação"
         );
     }

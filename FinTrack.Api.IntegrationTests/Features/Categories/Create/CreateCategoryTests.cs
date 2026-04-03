@@ -1,5 +1,4 @@
 using FinTrack.Api.IntegrationTests.Infrastructure;
-using FinTrack.Application.Common.Results;
 using FinTrack.Application.Features.Categories.Create;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -31,12 +30,11 @@ public class CreateCategoryTests : IntegrationTestBase
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content
-            .ReadFromJsonAsync<Result<CreateCategoryResponse>>();
+            .ReadFromJsonAsync<CreateCategoryResponse>();
 
         result.Should().NotBeNull();
-        result.IsSuccess.Should().BeTrue();
-        result.Value?.Id.Should().NotBeEmpty();
-        result.Value?.Nome.Should().Be("Alimentação");
+        result.Id.Should().NotBeEmpty();
+        result.Nome.Should().Be("Alimentação");
     }
 
     [Fact]

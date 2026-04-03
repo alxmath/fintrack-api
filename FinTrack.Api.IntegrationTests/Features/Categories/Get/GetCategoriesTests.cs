@@ -1,5 +1,4 @@
 using FinTrack.Api.IntegrationTests.Infrastructure;
-using FinTrack.Application.Common.Results;
 using FinTrack.Application.Features.Categories.Get;
 using FluentAssertions;
 using System.Net.Http.Json;
@@ -22,11 +21,10 @@ public class GetCategoriesTests : IntegrationTestBase
         response.IsSuccessStatusCode.Should().BeTrue();
 
         var result = await response.Content
-            .ReadFromJsonAsync<Result<List<CategoryResponse>>>();
+            .ReadFromJsonAsync<List<CategoryResponse>>();
 
         result.Should().NotBeNull();
-        result!.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEmpty();
+        result.Should().BeEmpty();
     }
 
     [Fact]
@@ -43,13 +41,12 @@ public class GetCategoriesTests : IntegrationTestBase
         response.IsSuccessStatusCode.Should().BeTrue();
 
         var result = await response.Content
-            .ReadFromJsonAsync<Result<List<CategoryResponse>>>();
+            .ReadFromJsonAsync<List<CategoryResponse>>();
 
         result.Should().NotBeNull();
-        result!.IsSuccess.Should().BeTrue();
 
-        result.Value.Should().HaveCount(2);
-        result.Value.Should().Contain(c => c.Name == "Alimentação");
-        result.Value.Should().Contain(c => c.Name == "Salário");
+        result.Should().HaveCount(2);
+        result.Should().Contain(c => c.Name == "Alimentação");
+        result.Should().Contain(c => c.Name == "Salário");
     }
 }

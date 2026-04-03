@@ -36,18 +36,15 @@ public class CreateTransactionTests : IntegrationTestBase
 
         // Assert
         var content = await getResponse.Content
-            .ReadFromJsonAsync<Result<PagedResult<GetTransactionsResponse>>>();
+            .ReadFromJsonAsync<PagedResult<GetTransactionsResponse>>();
 
         content.Should().NotBeNull();
-        content!.IsSuccess.Should().BeTrue();
 
-        content.Value.Should().NotBeNull();
-
-        content.Value.Items.Should().ContainSingle(x =>
+        content.Items.Should().ContainSingle(x =>
             x.Description == "Salário" &&
             x.Amount == 1000
         );
 
-        content.Value.Total.Should().Be(1);
+        content.Total.Should().Be(1);
     }
 }
