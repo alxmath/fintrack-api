@@ -6,11 +6,15 @@ namespace FinTrack.Api.Extensions;
 
 public static class ResultExtensions
 {
-    public static IActionResult ToActionResult(this Result<object> result)
+    public static IActionResult ToActionResult(
+       this Result<object> result,
+       Func<object, IActionResult>? onSuccess = null)
     {
-        if (result.IsSuccess)
+        if (result.Value is not null && result.IsSuccess)
         {
-            return new OkObjectResult(result.Value);
+            return onSuccess != null
+                ? onSuccess(result.Value)
+                : new OkObjectResult(result.Value);
         }
 
         var problem = ProblemDetailsMapper.Map(result.Error, result.ErrorCode);

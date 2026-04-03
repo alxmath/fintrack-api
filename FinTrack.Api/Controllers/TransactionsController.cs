@@ -20,7 +20,11 @@ public class TransactionsController(Dispatcher dispatcher) : ControllerBase
             command,
             cancellationToken);
 
-        return result.ToActionResult();
+        return result.ToActionResult(value =>
+             CreatedAtAction(
+                 nameof(GetById),
+                 new { id = ((CreateTransactionResponse)value).Id },
+                 value));
     }
 
     [HttpGet]

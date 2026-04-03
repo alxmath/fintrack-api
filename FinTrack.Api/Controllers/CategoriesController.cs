@@ -2,6 +2,7 @@ using FinTrack.Api.Extensions;
 using FinTrack.Application.Common.Dispatching;
 using FinTrack.Application.Features.Categories.Create;
 using FinTrack.Application.Features.Categories.Get;
+using FinTrack.Application.Features.Transactions.Get;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinTrack.Api.Controllers;
@@ -19,7 +20,11 @@ public class CategoriesController(Dispatcher dispatcher) : ControllerBase
             command,
             cancellationToken);
 
-        return result.ToActionResult();
+        return result.ToActionResult(value =>
+            CreatedAtAction(
+                nameof(GetById),
+                new { id = ((CreateCategoryResponse)value).Id },
+                value));
     }
 
     [HttpGet("{id:guid}")]
