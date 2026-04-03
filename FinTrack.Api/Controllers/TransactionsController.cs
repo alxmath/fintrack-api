@@ -5,7 +5,6 @@ using FinTrack.Application.Features.Transactions.Get;
 using FinTrack.Application.Features.Transactions.GetById;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace FinTrack.Api.Controllers;
 

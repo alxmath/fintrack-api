@@ -10,7 +10,7 @@ public static class ResultExtensions
     {
         if (result.IsSuccess)
         {
-            return new OkObjectResult(result);
+            return new OkObjectResult(result.Value);
         }
 
         var problem = ProblemDetailsMapper.Map(result.Error, result.ErrorCode);
