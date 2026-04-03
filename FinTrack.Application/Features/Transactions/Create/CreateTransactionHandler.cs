@@ -5,6 +5,7 @@ using FinTrack.Domain.Entities;
 namespace FinTrack.Application.Features.Transactions.Create;
 
 public class CreateTransactionHandler(ITransactionRepository repository)
+    : IRequestHandler<CreateTransactionCommand, CreateTransactionResponse>
 {
     public async Task<Result<CreateTransactionResponse>> Handle(
         CreateTransactionCommand command,

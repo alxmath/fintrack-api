@@ -6,6 +6,7 @@ using FinTrack.Domain.Entities;
 namespace FinTrack.Application.Features.Categories.Create;
 
 public class CreateCategoryHandler(ICategoryRepository repository)
+    : IRequestHandler<CreateCategoryCommand, CreateCategoryResponse>
 {
     public async Task<Result<CreateCategoryResponse>> Handle(
         CreateCategoryCommand command,

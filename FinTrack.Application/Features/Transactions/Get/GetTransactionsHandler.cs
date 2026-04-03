@@ -4,6 +4,7 @@ using FinTrack.Application.Common.Results;
 namespace FinTrack.Application.Features.Transactions.Get;
 
 public sealed class GetTransactionsHandler(ITransactionRepository repository)
+    : IRequestHandler<GetTransactionsQuery, PagedResult<GetTransactionsResponse>>
 {
     public async Task<Result<PagedResult<GetTransactionsResponse>>> Handle(
         GetTransactionsQuery query, 

@@ -5,6 +5,7 @@ using FinTrack.Application.Common.Results;
 namespace FinTrack.Application.Features.Transactions.GetById;
 
 public class GetTransactionByIdHandler(ITransactionRepository repository)
+    : IRequestHandler<GetTransactionByIdQuery, GetTransactionByIdResponse>
 {
     public async Task<Result<GetTransactionByIdResponse>> Handle(
         GetTransactionByIdQuery query,
