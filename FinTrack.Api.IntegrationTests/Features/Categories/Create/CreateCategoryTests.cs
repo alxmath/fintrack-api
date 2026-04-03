@@ -42,29 +42,23 @@ public class CreateCategoryTests : IntegrationTestBase
     [Fact]
     public async Task Post_ShouldReturnError_WhenCategoryAlreadyExists()
     {
+        // Arrange
         var request = new CreateCategoryCommand("Alimentação");
 
         await Client.PostAsJsonAsync("/api/v1/categories", request);
 
+        // Act
         var response = await Client.PostAsJsonAsync(
             "/api/v1/categories", request);
 
-        //response.StatusCode.Should().Be(HttpStatusCode.Conflict);
-
+        // Assert
         var problem = await response.Content
             .ReadFromJsonAsync<ProblemDetails>();
 
         problem.Should().NotBeNull();
         problem!.Title.Should().Be("Conflict");
         problem.Status.Should().Be(409);
-        problem.Detail.Should().Contain("Category");
-
-        var result = await response.Content
-            .ReadFromJsonAsync<Result<CreateCategoryResponse>>();
-
-        result.Should().NotBeNull();
-        result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Categoria já existe");
+        problem.Detail.Should().Contain("Categoria já existe");
     }
 
     [Fact]

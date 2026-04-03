@@ -8,7 +8,7 @@ public static class ProblemDetailsMapper
     {
         return errorCode switch
         {
-            "Validation" => new ProblemDetails
+            "VALIDATION_ERROR" => new ProblemDetails
             {
                 Title = "Validation error",
                 Detail = error,
@@ -16,7 +16,7 @@ public static class ProblemDetailsMapper
                 Type = "https://httpstatuses.com/400"
             },
 
-            "NotFound" => new ProblemDetails
+            "NOT_FOUND" => new ProblemDetails
             {
                 Title = "Resource not found",
                 Detail = error,
@@ -24,7 +24,7 @@ public static class ProblemDetailsMapper
                 Type = "https://httpstatuses.com/404"
             },
 
-            "Conflict" => new ProblemDetails
+            "CONFLICT" => new ProblemDetails
             {
                 Title = "Conflict",
                 Detail = error,

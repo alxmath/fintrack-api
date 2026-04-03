@@ -67,6 +67,6 @@ public class GetTransactionByIdTests : IntegrationTestBase
         problem.Should().NotBeNull();
         problem!.Title.Should().Be("Resource not found");
         problem.Status.Should().Be(404);
-        problem.Detail.Should().Contain("Transaction");
+        problem.Detail.Should().Contain("Transação não encontrada");
     }
 }
