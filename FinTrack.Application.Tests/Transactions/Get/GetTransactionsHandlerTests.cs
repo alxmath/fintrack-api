@@ -17,10 +17,12 @@ public class GetTransactionsHandlerTests
         var repositoryMock = new Mock<ITransactionRepository>();
         var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
 
-        var transactions = new List<Transaction>
+        var category = new CategoryDto(Guid.NewGuid(), "Mercado");
+
+        var transactions = new List<GetTransactionsResponse>
         {
-            new("Salário", 100, DateTime.UtcNow, Guid.NewGuid()),
-            new("Mercado", 50, DateTime.UtcNow.AddDays(-1), Guid.NewGuid())
+            new(Guid.NewGuid(), 100, "Mercado", DateTime.UtcNow, category),
+            new(Guid.NewGuid(), 50,"Mercado", DateTime.UtcNow.AddDays(-1), category)
         };
 
         repositoryMock
@@ -55,7 +57,7 @@ public class GetTransactionsHandlerTests
         result.Value.Items.Should().HaveCount(2);
         result.Value.Total.Should().Be(2);
 
-        result.Value.Items.Should().Contain(x => x.Description == "Salário");
+        result.Value.Items.Should().Contain(x => x.Description == "Mercado");
     }
 
     [Fact]
@@ -64,6 +66,7 @@ public class GetTransactionsHandlerTests
         // Arrange
         var repositoryMock = new Mock<ITransactionRepository>();
         var validatorMock = new Mock<IValidator<GetTransactionsQuery>>();
+
 
         repositoryMock
             .Setup(r => r.SearchAsync(
@@ -75,7 +78,7 @@ public class GetTransactionsHandlerTests
                 orderBy: It.IsAny<string?>(),
                 desc: It.IsAny<bool>(),
                 cancellationToken: It.IsAny<CancellationToken>()))
-            .ReturnsAsync((new List<Transaction>(), 0));
+            .ReturnsAsync((new List<GetTransactionsResponse>(), 0));
 
         validatorMock
             .Setup(v => v.ValidateAsync(It.IsAny<GetTransactionsQuery>(), It.IsAny<CancellationToken>()))
@@ -118,7 +121,7 @@ public class GetTransactionsHandlerTests
                 orderBy: It.IsAny<string?>(),
                 desc: It.IsAny<bool>(),
                 cancellationToken: It.IsAny<CancellationToken>()))
-            .ReturnsAsync((new List<Transaction>(), 0));
+            .ReturnsAsync((new List<GetTransactionsResponse>(), 0));
 
         var handler = new GetTransactionsHandler(
             repositoryMock.Object,

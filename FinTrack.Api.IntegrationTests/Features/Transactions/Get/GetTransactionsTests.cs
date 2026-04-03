@@ -167,4 +167,27 @@ public class GetTransactionsTests : IntegrationTestBase
         items[1].Description.Should().Be("Mid");
         items[2].Description.Should().Be("Old");
     }
+
+    [Fact]
+    public async Task Get_ShouldReturnCategoryData()
+    {
+        // Arrange
+        var categoryId = await CreateCategoryAsync("Alimentação");
+
+        await Client.PostAsJsonAsync("/api/v1/transactions",
+            new CreateTransactionCommand("Mercado", 50, DateTime.UtcNow, categoryId));
+
+        // Act
+        var response = await Client.GetAsync("/api/v1/transactions");
+
+        // Assert
+        var content = await response.Content
+            .ReadFromJsonAsync<Result<PagedResult<GetTransactionsResponse>>>();
+
+        content.Should().NotBeNull();
+        content.Value.Should().NotBeNull();
+        content.Value.Items.Should().ContainSingle(x =>
+            x.Category.Name == "Alimentação"
+        );
+    }
 }

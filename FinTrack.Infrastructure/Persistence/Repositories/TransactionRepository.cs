@@ -1,4 +1,5 @@
 using FinTrack.Application.Common.Interfaces;
+using FinTrack.Application.Features.Transactions.Get;
 using FinTrack.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,7 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<(IReadOnlyList<Transaction> Items, int Total)> SearchAsync(
+    public async Task<(IReadOnlyList<GetTransactionsResponse> Items, int Total)> SearchAsync(
         int pageNumber,
         int pageSize,
         Guid? categoryId,
@@ -23,6 +24,7 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
         CancellationToken cancellationToken)
     {
         var query = context.Transactions
+            .Include(t => t.Category)
             .AsNoTracking();
 
         if (categoryId.HasValue)
@@ -50,6 +52,16 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
         var items = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
+             .Select(t => new GetTransactionsResponse(
+                t.Id,
+                t.Amount,
+                t.Description,
+                t.Date,
+                new CategoryDto(
+                    t.Category.Id,
+                    t.Category.Name
+                )
+            ))
             .ToListAsync(cancellationToken);
 
         return (items, total);
