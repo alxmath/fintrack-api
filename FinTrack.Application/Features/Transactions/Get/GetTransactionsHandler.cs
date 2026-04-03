@@ -38,7 +38,11 @@ public sealed class GetTransactionsHandler(ITransactionRepository repository,
                 t.Id,
                 t.Amount,
                 t.Description,
-                t.Date))
+                t.Date,
+                new CategoryDto(
+                    t.Category.Id,
+                    t.Category.Name
+                )))
             .ToList();
 
         var result = new PagedResult<GetTransactionsResponse>
