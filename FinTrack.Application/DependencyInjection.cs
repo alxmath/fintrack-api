@@ -4,6 +4,7 @@ using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FinTrack.Application.Features.Categories.Create;
 using FinTrack.Application.Features.Categories.Get;
+using FinTrack.Application.Features.Categories.GetById;
 using FinTrack.Application.Features.Transactions.Create;
 using FinTrack.Application.Features.Transactions.Get;
 using FinTrack.Application.Features.Transactions.GetById;
@@ -23,6 +24,7 @@ public static class DependencyInjection
 
         services.AddScoped<CreateCategoryHandler>();
         services.AddScoped<GetCategoriesHandler>();
+        services.AddScoped<GetCategoryByIdHandler>();
 
         services.AddScoped<Dispatcher>();
         services.AddScoped<HandlerExecutor>();
@@ -33,6 +35,7 @@ public static class DependencyInjection
 
         services.AddScoped<IRequestHandler<CreateCategoryCommand, CreateCategoryResponse>, CreateCategoryHandler>();
         services.AddScoped<IRequestHandler<GetCategoriesQuery, List<GetCategoriesResponse>>, GetCategoriesHandler>();
+        services.AddScoped<IRequestHandler<GetCategoryByIdQuery, GetCategoryByIdResponse>, GetCategoryByIdHandler>();
 
 
         // Validators
