@@ -34,7 +34,7 @@ public class CreateCategoryTests : IntegrationTestBase
 
         result.Should().NotBeNull();
         result.Id.Should().NotBeEmpty();
-        result.Nome.Should().Be("Alimentação");
+        result.Name.Should().Be("Alimentação");
     }
 
     [Fact]

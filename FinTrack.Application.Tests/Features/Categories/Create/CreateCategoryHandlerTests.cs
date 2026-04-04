@@ -51,7 +51,7 @@ public class CreateCategoryHandlerTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();
-        result.Value.Nome.Should().Be("Alimentação");
+        result.Value.Name.Should().Be("Alimentação");
 
         _repositoryMock.Verify(r =>
             r.AddAsync(It.IsAny<Category>(), It.IsAny<CancellationToken>()),
