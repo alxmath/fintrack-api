@@ -1,3 +1,4 @@
+using FinTrack.Application.Common.Observability;
 using FinTrack.Application.Common.Results;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -28,16 +29,24 @@ public class HandlerExecutor
             requestName,
             request);
 
+        using var activity = ActivitySources.Source.StartActivity(
+            typeof(TRequest).Name,
+            ActivityKind.Internal);
+
         var stopwatch = Stopwatch.StartNew();
 
         try
         {
+            activity?.SetTag("request.type", typeof(TRequest).Name);
+
             if (validator is not null)
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
                 if (!validationResult.IsValid)
                 {
+                    activity?.SetTag("validation.failed", true);
+
                     _logger.LogWarning("Validation failed for {Request}", requestName);
 
                     var errors = validationResult.Errors
@@ -56,6 +65,9 @@ public class HandlerExecutor
             var result = await handler();
 
             stopwatch.Stop();
+
+            activity?.SetTag("execution.time.ms", stopwatch.ElapsedMilliseconds);
+            activity?.SetTag("result.success", result.IsSuccess);
 
             if (result.IsSuccess)
             {
@@ -79,6 +91,10 @@ public class HandlerExecutor
         catch (Exception ex)
         {
             stopwatch.Stop();
+
+            activity?.SetTag("error", true);
+            activity?.SetTag("exception.message", ex.Message);
+            activity?.SetTag("exception.type", ex.GetType().Name);
 
             _logger.LogError(ex,
                 "Unhandled exception in {Request} {@RequestData} after {Elapsed}ms",
