@@ -14,6 +14,7 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
     }
 
     public async Task<(IReadOnlyList<GetTransactionsResponse> Items, int Total)> SearchAsync(
+        Guid userId,
         int pageNumber,
         int pageSize,
         Guid? categoryId,
@@ -24,6 +25,7 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
         CancellationToken cancellationToken)
     {
         var query = context.Transactions
+            .Where(t => t.UserId == userId)
             .Include(t => t.Category)
             .AsNoTracking();
 
@@ -67,10 +69,10 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
         return (items, total);
     }
 
-    public async Task<Transaction?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Transaction?> GetByIdAsync(Guid id, Guid userId, CancellationToken cancellationToken)
     {
         return await context.Transactions
             .AsNoTracking()
-            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId, cancellationToken);
     }
 }

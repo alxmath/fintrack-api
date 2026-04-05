@@ -12,24 +12,25 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> ExistsByNameAsync(string name, CancellationToken cancellationToken)
+    public async Task<bool> ExistsByNameAsync(string name, Guid userId, CancellationToken cancellationToken)
     {
         return await context.Categories
-            .AnyAsync(c => c.Name == name, cancellationToken);
+            .AnyAsync(c => c.Name == name && c.UserId == userId, cancellationToken);
     }
 
-    public async Task<List<Category>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<List<Category>> GetAllAsync(Guid userId, CancellationToken cancellationToken)
     {
         return await context.Categories
             .AsNoTracking()
+            .Where(c => c.UserId == userId)
             .OrderBy(c => c.Name)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Category?> GetByIdAsync(Guid id, Guid userId, CancellationToken cancellationToken)
     {
         return await context.Categories
             .AsNoTracking()
-            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId, cancellationToken);
     }
 }

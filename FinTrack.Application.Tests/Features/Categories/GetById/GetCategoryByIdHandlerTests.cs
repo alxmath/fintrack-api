@@ -10,12 +10,15 @@ namespace FinTrack.Application.Tests.Features.Categories.GetById;
 public class GetCategoryByIdHandlerTests
 {
     private readonly Mock<ICategoryRepository> _repositoryMock;
+    private readonly Mock<IUserContext> _userContextMock = new();
     private readonly GetCategoryByIdHandler _handler;
 
     public GetCategoryByIdHandlerTests()
     {
         _repositoryMock = new Mock<ICategoryRepository>();
-        _handler = new GetCategoryByIdHandler(_repositoryMock.Object);
+        _handler = new GetCategoryByIdHandler(
+            _repositoryMock.Object,
+            _userContextMock.Object);
     }
 
     [Fact]
@@ -24,13 +27,17 @@ public class GetCategoryByIdHandlerTests
         // Arrange
         var id = Guid.NewGuid();
 
-        var category = new Category("Alimentação");
+        var category = new Category("Alimentação", Guid.NewGuid());
         typeof(Category).GetProperty(nameof(Category.Id))!
             .SetValue(category, id);
 
         _repositoryMock
-            .Setup(r => r.GetByIdAsync(id, It.IsAny<CancellationToken>()))
+            .Setup(r => r.GetByIdAsync(id, It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(category);
+
+        _userContextMock
+           .Setup(uc => uc.UserId)
+           .Returns(Guid.NewGuid());
 
         var query = new GetCategoryByIdQuery(id);
 
@@ -51,8 +58,12 @@ public class GetCategoryByIdHandlerTests
         var id = Guid.NewGuid();
 
         _repositoryMock
-            .Setup(r => r.GetByIdAsync(id, It.IsAny<CancellationToken>()))
+            .Setup(r => r.GetByIdAsync(id, It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Category?)null);
+
+        _userContextMock
+           .Setup(uc => uc.UserId)
+           .Returns(Guid.NewGuid());
 
         var query = new GetCategoryByIdQuery(id);
 

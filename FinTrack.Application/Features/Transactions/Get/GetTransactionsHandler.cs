@@ -3,14 +3,18 @@ using FinTrack.Application.Common.Results;
 
 namespace FinTrack.Application.Features.Transactions.Get;
 
-public sealed class GetTransactionsHandler(ITransactionRepository repository)
+public sealed class GetTransactionsHandler(ITransactionRepository repository,
+    IUserContext userContext)
     : IRequestHandler<GetTransactionsQuery, PagedResult<GetTransactionsResponse>>
 {
     public async Task<Result<PagedResult<GetTransactionsResponse>>> Handle(
         GetTransactionsQuery query, 
         CancellationToken cancellationToken)
     {
+        var userId = userContext.UserId;
+
         var (transactions, total) = await repository.SearchAsync(
+            userId,
             query.Page,
             query.PageSize,
             query.CategoryId,

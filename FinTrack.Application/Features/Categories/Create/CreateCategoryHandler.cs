@@ -5,15 +5,19 @@ using FinTrack.Domain.Entities;
 
 namespace FinTrack.Application.Features.Categories.Create;
 
-public class CreateCategoryHandler(ICategoryRepository repository)
+public class CreateCategoryHandler(
+    ICategoryRepository repository,
+    IUserContext userContext)
     : IRequestHandler<CreateCategoryCommand, CreateCategoryResponse>
 {
     public async Task<Result<CreateCategoryResponse>> Handle(
         CreateCategoryCommand command,
         CancellationToken cancellationToken)
     {
+        var userId = userContext.UserId;
+
         var exists = await repository
-            .ExistsByNameAsync(command.Name, cancellationToken);
+            .ExistsByNameAsync(command.Name, userId, cancellationToken);
 
         if (exists)
             return Result<CreateCategoryResponse>.Failure(
@@ -23,7 +27,7 @@ public class CreateCategoryHandler(ICategoryRepository repository)
                 },
                 Errors.General.Conflict);
 
-        var category = new Category(command.Name);
+        var category = new Category(command.Name, userId);
 
         await repository.AddAsync(category, cancellationToken);
 

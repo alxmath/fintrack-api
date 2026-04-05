@@ -9,12 +9,15 @@ namespace FinTrack.Application.Tests.Features.Categories.Create;
 public class CreateCategoryHandlerTests
 {
     private readonly Mock<ICategoryRepository> _repositoryMock = new();
+    private readonly Mock<IUserContext> _userContextMock = new();
 
     private readonly CreateCategoryHandler _handler;
 
     public CreateCategoryHandlerTests()
     {
-        _handler = new CreateCategoryHandler(_repositoryMock.Object);
+        _handler = new CreateCategoryHandler(
+            _repositoryMock.Object,
+            _userContextMock.Object);
     }
 
     [Fact]
@@ -24,8 +27,15 @@ public class CreateCategoryHandlerTests
         var command = new CreateCategoryCommand("Alimentação");
 
         _repositoryMock
-            .Setup(r => r.ExistsByNameAsync(command.Name, It.IsAny<CancellationToken>()))
+            .Setup(r => r.ExistsByNameAsync(
+                command.Name,
+                It.IsAny<Guid>(),
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
+
+        _userContextMock
+            .Setup(uc => uc.UserId)
+            .Returns(Guid.NewGuid());
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -43,8 +53,15 @@ public class CreateCategoryHandlerTests
         var command = new CreateCategoryCommand("Alimentação");
 
         _repositoryMock
-            .Setup(r => r.ExistsByNameAsync(command.Name, It.IsAny<CancellationToken>()))
+            .Setup(r => r.ExistsByNameAsync(
+                command.Name,
+                It.IsAny<Guid>(),
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
+
+        _userContextMock
+            .Setup(uc => uc.UserId)
+            .Returns(Guid.NewGuid());
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);

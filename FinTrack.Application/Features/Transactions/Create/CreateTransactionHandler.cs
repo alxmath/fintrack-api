@@ -19,7 +19,8 @@ public class CreateTransactionHandler(
             command.Description,
             command.Amount,
             command.Date,
-            command.CategoryId);
+            command.CategoryId,
+            userId);
 
         // TODO: salvar userId na entidade
 

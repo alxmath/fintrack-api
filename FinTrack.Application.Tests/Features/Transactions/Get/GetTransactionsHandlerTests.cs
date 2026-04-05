@@ -7,6 +7,8 @@ namespace FinTrack.Application.Tests.Features.Transactions.Get;
 
 public class GetTransactionsHandlerTests
 {
+    private readonly Mock<IUserContext> _userContextMock = new();
+
     [Fact]
     public async Task Handle_ShouldReturnTransactions_WhenDataExists()
     {
@@ -23,6 +25,7 @@ public class GetTransactionsHandlerTests
 
         repositoryMock
             .Setup(r => r.SearchAsync(
+                userId: It.IsAny<Guid>(),
                 pageNumber: 1,
                 pageSize: 10,
                 categoryId: It.IsAny<Guid?>(),
@@ -33,7 +36,11 @@ public class GetTransactionsHandlerTests
                 cancellationToken: It.IsAny<CancellationToken>()))
             .ReturnsAsync((transactions, transactions.Count));
 
-        var handler = new GetTransactionsHandler(repositoryMock.Object);
+        _userContextMock
+          .Setup(uc => uc.UserId)
+          .Returns(Guid.NewGuid());
+
+        var handler = new GetTransactionsHandler(repositoryMock.Object, _userContextMock.Object);
 
         var query = new GetTransactionsQuery { Page = 1, PageSize = 10 };
 
@@ -58,6 +65,7 @@ public class GetTransactionsHandlerTests
 
         repositoryMock
             .Setup(r => r.SearchAsync(
+                userId: It.IsAny<Guid>(),
                 pageNumber: It.IsAny<int>(),
                 pageSize: It.IsAny<int>(),
                 categoryId: It.IsAny<Guid?>(),
@@ -68,7 +76,11 @@ public class GetTransactionsHandlerTests
                 cancellationToken: It.IsAny<CancellationToken>()))
             .ReturnsAsync((new List<GetTransactionsResponse>(), 0));
 
-        var handler = new GetTransactionsHandler(repositoryMock.Object);
+        _userContextMock
+          .Setup(uc => uc.UserId)
+          .Returns(Guid.NewGuid());
+
+        var handler = new GetTransactionsHandler(repositoryMock.Object, _userContextMock.Object);
 
         var query = new GetTransactionsQuery { Page = 1, PageSize = 10 };
 
@@ -90,6 +102,7 @@ public class GetTransactionsHandlerTests
 
         repositoryMock
             .Setup(r => r.SearchAsync(
+                userId: It.IsAny<Guid>(),
                 pageNumber: 2,
                 pageSize: 5,
                 categoryId: It.IsAny<Guid?>(),
@@ -100,7 +113,11 @@ public class GetTransactionsHandlerTests
                 cancellationToken: It.IsAny<CancellationToken>()))
             .ReturnsAsync((new List<GetTransactionsResponse>(), 0));
 
-        var handler = new GetTransactionsHandler(repositoryMock.Object);
+        _userContextMock
+          .Setup(uc => uc.UserId)
+          .Returns(Guid.NewGuid());
+
+        var handler = new GetTransactionsHandler(repositoryMock.Object, _userContextMock.Object);
 
         var query = new GetTransactionsQuery { Page = 2, PageSize = 5 };
 
@@ -110,6 +127,7 @@ public class GetTransactionsHandlerTests
         // Assert
         repositoryMock.Verify(
             r => r.SearchAsync(
+                userId: It.IsAny<Guid>(),
                 pageNumber: 2,
                 pageSize: 5,
                 categoryId: It.IsAny<Guid?>(),

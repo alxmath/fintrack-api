@@ -4,14 +4,17 @@ using FinTrack.Application.Common.Results;
 
 namespace FinTrack.Application.Features.Transactions.GetById;
 
-public class GetTransactionByIdHandler(ITransactionRepository repository)
+public class GetTransactionByIdHandler(
+    ITransactionRepository repository,
+    IUserContext userContext)
     : IRequestHandler<GetTransactionByIdQuery, GetTransactionByIdResponse>
 {
     public async Task<Result<GetTransactionByIdResponse>> Handle(
         GetTransactionByIdQuery query,
         CancellationToken cancellationToken)
     {
-        var transaction = await repository.GetByIdAsync(query.Id, cancellationToken);
+        var userId = userContext.UserId;
+        var transaction = await repository.GetByIdAsync(query.Id, userId, cancellationToken);
         
         if (transaction is null)
             return Result<GetTransactionByIdResponse>.Failure(

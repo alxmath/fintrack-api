@@ -8,6 +8,7 @@ public interface ITransactionRepository
     Task AddAsync(Transaction transaction, CancellationToken cancellationToken);
 
     Task<(IReadOnlyList<GetTransactionsResponse> Items, int Total)> SearchAsync(
+        Guid userId,
         int pageNumber, 
         int pageSize,
         Guid? categoryId,
@@ -17,5 +18,5 @@ public interface ITransactionRepository
         bool desc,
         CancellationToken cancellationToken);
 
-    Task<Transaction?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<Transaction?> GetByIdAsync(Guid id, Guid userId, CancellationToken cancellationToken);
 }

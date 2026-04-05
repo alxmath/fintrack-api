@@ -6,9 +6,11 @@ public class Category
     public string Name { get; private set; } = string.Empty;
     public bool IsActive { get; private set; }
 
+    public Guid UserId { get; private set; }
+
     private Category() { }
 
-    public Category(string name)
+    public Category(string name, Guid userId)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Nome da categoria é obrigatório.", nameof(name));
@@ -16,8 +18,12 @@ public class Category
         if (name.Length > 100)
             throw new ArgumentException("Nome da categoria deve ter no máximo 100 caracteres.", nameof(name));
 
+        if (userId == Guid.Empty)
+            throw new ArgumentException("Usuário inválido.", nameof(userId));
+
         Id = Guid.NewGuid();
         Name = name;
+        UserId = userId;
         IsActive = true;
     }
 }

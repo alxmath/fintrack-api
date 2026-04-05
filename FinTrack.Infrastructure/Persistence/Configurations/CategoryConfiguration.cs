@@ -16,5 +16,10 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
             .IsRequired()
             .HasMaxLength(100);
 
+        builder.Property(x => x.UserId)
+            .IsRequired();
+
+        builder.HasIndex(x => new { x.UserId, x.Name })
+            .IsUnique();
     }
 }
