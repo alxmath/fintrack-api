@@ -3,12 +3,14 @@ using FinTrack.Application.Common.Dispatching;
 using FinTrack.Application.Features.Categories.Create;
 using FinTrack.Application.Features.Categories.Get;
 using FinTrack.Application.Features.Categories.GetById;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinTrack.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
+[Authorize]
 public class CategoriesController(Dispatcher dispatcher) : ControllerBase
 {
     [HttpPost]

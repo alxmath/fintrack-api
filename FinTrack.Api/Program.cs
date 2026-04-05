@@ -1,7 +1,12 @@
+using FinTrack.Api.Common.Auth;
 using FinTrack.Api.Common.Middlewares;
 using FinTrack.Application;
+using FinTrack.Application.Common.Interfaces;
 using FinTrack.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +31,33 @@ if (string.IsNullOrWhiteSpace(connectionString))
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(connectionString);
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUserContext, UserContext>();
+builder.Services.AddScoped<JwtTokenService>();
+
+var key = builder.Configuration["Jwt:Key"]!;
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+    };
+});
+
+
 var app = builder.Build();
 
 //-----------------
@@ -40,6 +72,7 @@ app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -3,12 +3,14 @@ using FinTrack.Application.Common.Dispatching;
 using FinTrack.Application.Features.Transactions.Create;
 using FinTrack.Application.Features.Transactions.Get;
 using FinTrack.Application.Features.Transactions.GetById;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinTrack.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
+[Authorize]
 public class TransactionsController(Dispatcher dispatcher) : ControllerBase
 {
     [HttpPost]
