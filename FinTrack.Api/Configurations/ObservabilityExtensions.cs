@@ -1,3 +1,4 @@
+using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -15,6 +16,8 @@ public static class ObservabilityExtensions
                     .SetResourceBuilder(ResourceBuilder.CreateDefault()
                         .AddService("FinTrack.Api"))
 
+                    .SetSampler(new AlwaysOnSampler()) // ESSENCIAL
+
                     .AddAspNetCoreInstrumentation(options =>
                     {
                         options.RecordException = true;
@@ -27,7 +30,12 @@ public static class ObservabilityExtensions
                     .AddOtlpExporter(options =>
                     {
                         options.Endpoint = new Uri("http://localhost:4317");
-                    });
+                        options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+
+                        options.ExportProcessorType = ExportProcessorType.Simple;
+                    })
+
+                    .AddConsoleExporter(); // manter pra debug
             });
 
         return services;
