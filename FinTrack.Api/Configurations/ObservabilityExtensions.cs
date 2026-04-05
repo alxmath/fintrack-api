@@ -24,7 +24,10 @@ public static class ObservabilityExtensions
 
                     .AddSource("FinTrack.Application")
 
-                    .AddConsoleExporter();
+                    .AddOtlpExporter(options =>
+                    {
+                        options.Endpoint = new Uri("http://localhost:4317");
+                    });
             });
 
         return services;
