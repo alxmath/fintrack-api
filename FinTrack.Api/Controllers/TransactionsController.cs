@@ -20,7 +20,7 @@ public class TransactionsController(Dispatcher dispatcher) : ControllerBase
             command,
             cancellationToken);
 
-        return result.ToActionResult(value =>
+        return result.ToActionResult(HttpContext, value =>
              CreatedAtAction(
                  nameof(GetById),
                  new { id = ((CreateTransactionResponse)value).Id },
@@ -36,7 +36,7 @@ public class TransactionsController(Dispatcher dispatcher) : ControllerBase
             query,
             cancellationToken);
 
-        return result.ToActionResult();
+        return result.ToActionResult(HttpContext);
     }
 
     [HttpGet("{id:guid}")]
@@ -50,6 +50,6 @@ public class TransactionsController(Dispatcher dispatcher) : ControllerBase
             query,
             cancellationToken);
 
-        return result.ToActionResult();
+        return result.ToActionResult(HttpContext);
     }
 }

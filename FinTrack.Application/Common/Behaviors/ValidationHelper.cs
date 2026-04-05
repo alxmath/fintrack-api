@@ -19,8 +19,11 @@ public static class ValidationHelper
         if (result.IsValid)
             return null;
 
-        var error = result.Errors.First().ErrorMessage;
+        var errors = new Dictionary<string, string[]>
+        {
+            { "Name", new[] { result.Errors.First().ErrorMessage } }
+        };
 
-        return Result.Failure(error, General.Validation);
+        return Result.Failure(errors, General.Validation);
     }
 }

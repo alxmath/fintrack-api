@@ -15,7 +15,10 @@ public class GetTransactionByIdHandler(ITransactionRepository repository)
         
         if (transaction is null)
             return Result<GetTransactionByIdResponse>.Failure(
-                "Transação não encontrada",
+                new Dictionary<string, string[]>
+                {
+                    { "Name", ["Transação não encontrada"] }
+                },
                 Errors.General.NotFound);
 
         var response = new GetTransactionByIdResponse(

@@ -4,30 +4,31 @@ public class Result
 {
     public bool IsSuccess { get; init; }
     public bool IsFailure => !IsSuccess;
-    public string Error { get; init; } = string.Empty;
     public string ErrorCode { get; init; } = string.Empty;
+
+    public Dictionary<string, string[]> Errors { get; init; } = [];
 
     public Result() { }
 
-    protected Result(bool isSuccess, string error, string errorCode)
+    protected Result(bool isSuccess, string errorCode, Dictionary<string, string[]>? errors = null)
     {
         IsSuccess = isSuccess;
-        Error = error;
         ErrorCode = errorCode;
+        Errors = errors ?? [];
     }
 
     public static Result Success()
-        => new(true, string.Empty, string.Empty);
+        => new(true, string.Empty);
 
-    public static Result Failure(string error, string errorCode)
+    public static Result Failure(Dictionary<string, string[]> errors, string errorCode)
     {
-        if (string.IsNullOrWhiteSpace(error))
-            throw new ArgumentException("Erro não pode ser vazio.", nameof(error));
+        if (errors == null || errors.Count == 0)
+            throw new ArgumentException("Errors não pode ser vazio.", nameof(errors));
 
         if (string.IsNullOrWhiteSpace(errorCode))
             throw new ArgumentException("Código de erro não pode ser vazio.", nameof(errorCode));   
 
-        return new(false, error, errorCode);
+        return new(false, errorCode, errors);
     }
 }
 
@@ -37,8 +38,12 @@ public class Result<T> : Result
 
     public Result() { }
 
-    protected Result(T? value, bool isSuccess, string error, string errorCode)
-        : base(isSuccess, error, errorCode)
+    protected Result(
+        T? value, 
+        bool isSuccess, 
+        string errorCode,
+        Dictionary<string, string[]>? errors = null)
+        : base(isSuccess, errorCode, errors)
     {
         Value = value;
     }
@@ -48,17 +53,17 @@ public class Result<T> : Result
         if (value is null)
             throw new ArgumentNullException(nameof(value));
 
-        return new(value, true, string.Empty, string.Empty);
+        return new(value, true, string.Empty);
     }
 
-    public static new Result<T> Failure(string error, string errorCode)
+    public static new Result<T> Failure(Dictionary<string, string[]> errors, string errorCode)
     {
-        if (string.IsNullOrWhiteSpace(error))
-            throw new ArgumentException("Erro não pode ser vazio.", nameof(error));
+        if (errors == null || errors.Count == 0)
+            throw new ArgumentException("Erro não pode ser vazio.", nameof(errors));
 
         if (string.IsNullOrWhiteSpace(errorCode))
             throw new ArgumentException("Código de erro não pode ser vazio.", nameof(errorCode));
 
-        return new(default, false, error, errorCode);
+        return new(default, false, errorCode, errors);
     }
 }

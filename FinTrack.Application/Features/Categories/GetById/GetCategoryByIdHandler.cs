@@ -15,7 +15,10 @@ public class GetCategoryByIdHandler(ICategoryRepository repository)
 
         if (category is null)
             return Result<GetCategoryByIdResponse>.Failure(
-                "Categoria não encontrada",
+                new Dictionary<string, string[]>
+                {
+                    { "Name", ["Categoria não encontrada"] }
+                },
                 Errors.General.NotFound);
 
         var response = new GetCategoryByIdResponse(category.Id, category.Name);

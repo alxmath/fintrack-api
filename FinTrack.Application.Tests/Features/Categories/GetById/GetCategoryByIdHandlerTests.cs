@@ -9,13 +9,13 @@ namespace FinTrack.Application.Tests.Features.Categories.GetById;
 
 public class GetCategoryByIdHandlerTests
 {
-    private readonly Mock<ICategoryRepository> repositoryMock;
-    private readonly GetCategoryByIdHandler handler;
+    private readonly Mock<ICategoryRepository> _repositoryMock;
+    private readonly GetCategoryByIdHandler _handler;
 
     public GetCategoryByIdHandlerTests()
     {
-        repositoryMock = new Mock<ICategoryRepository>();
-        handler = new GetCategoryByIdHandler(repositoryMock.Object);
+        _repositoryMock = new Mock<ICategoryRepository>();
+        _handler = new GetCategoryByIdHandler(_repositoryMock.Object);
     }
 
     [Fact]
@@ -28,14 +28,14 @@ public class GetCategoryByIdHandlerTests
         typeof(Category).GetProperty(nameof(Category.Id))!
             .SetValue(category, id);
 
-        repositoryMock
+        _repositoryMock
             .Setup(r => r.GetByIdAsync(id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(category);
 
         var query = new GetCategoryByIdQuery(id);
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -50,18 +50,19 @@ public class GetCategoryByIdHandlerTests
         // Arrange
         var id = Guid.NewGuid();
 
-        repositoryMock
+        _repositoryMock
             .Setup(r => r.GetByIdAsync(id, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Category?)null);
 
         var query = new GetCategoryByIdQuery(id);
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Categoria não encontrada");
+        result.Errors.Should().ContainKey("Name");
+        result.Errors["Name"].Should().Contain("Categoria não encontrada");
         result.ErrorCode.Should().Be(Errors.General.NotFound);
     }
 }

@@ -20,7 +20,7 @@ public class CategoriesController(Dispatcher dispatcher) : ControllerBase
             command,
             cancellationToken);
 
-        return result.ToActionResult(value =>
+        return result.ToActionResult(HttpContext, value =>
             CreatedAtAction(
                 nameof(GetById),
                 new { id = ((CreateCategoryResponse)value).Id },
@@ -36,7 +36,7 @@ public class CategoriesController(Dispatcher dispatcher) : ControllerBase
             new GetCategoryByIdQuery(id),
             cancellationToken);
 
-        return result.ToActionResult();
+        return result.ToActionResult(HttpContext);
     }
 
     [HttpGet]
@@ -46,6 +46,6 @@ public class CategoriesController(Dispatcher dispatcher) : ControllerBase
             new GetCategoriesQuery(),
             cancellationToken);
 
-        return result.ToActionResult();
+        return result.ToActionResult(HttpContext);
     }
 }

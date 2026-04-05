@@ -32,7 +32,8 @@ public class CreateCategoryHandlerTests
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Categoria já existe");
+        result.Errors.Should().ContainKey("Name");
+        result.Errors["Name"].Should().Contain("Categoria já existe");
     }
 
     [Fact]

@@ -24,7 +24,7 @@ public class HandlerExecutorTests
             .Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult(
             [
-                new ValidationFailure("Field", "Validation error")
+                new ValidationFailure("Name", "Name is required")
             ]));
 
         var executor = new HandlerExecutor(
@@ -47,7 +47,8 @@ public class HandlerExecutorTests
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Validation error");
+        result.Errors.Should().ContainKey("Name");
+        result.Errors["Name"].Should().Contain("Name is required");
 
         handlerCalled.Should().BeFalse();
     }

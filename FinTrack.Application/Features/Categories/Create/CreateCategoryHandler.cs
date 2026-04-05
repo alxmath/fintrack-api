@@ -17,7 +17,10 @@ public class CreateCategoryHandler(ICategoryRepository repository)
 
         if (exists)
             return Result<CreateCategoryResponse>.Failure(
-                "Categoria já existe",
+                new Dictionary<string, string[]>
+                {
+                    { "Name", ["Categoria já existe"] }
+                },
                 Errors.General.Conflict);
 
         var category = new Category(command.Name);

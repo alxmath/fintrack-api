@@ -63,6 +63,6 @@ public class Dispatcher
         if (r.IsSuccess)
             return Result<object>.Success(r.Value);
 
-        return Result<object>.Failure(r.Error, r.ErrorCode);
+        return Result<object>.Failure(r.Errors, r.ErrorCode);
     }
 }

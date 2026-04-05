@@ -40,8 +40,15 @@ public class HandlerExecutor
                 {
                     _logger.LogWarning("Validation failed for {Request}", requestName);
 
+                    var errors = validationResult.Errors
+                        .GroupBy(e => e.PropertyName)
+                        .ToDictionary(
+                            g => g.Key,
+                            g => g.Select(e => e.ErrorMessage).ToArray()
+                        );
+
                     return Result<object>.Failure(
-                        validationResult.Errors.First().ErrorMessage,
+                        errors,
                         General.Validation);
                 }
             }
@@ -64,7 +71,7 @@ public class HandlerExecutor
                     "Handled {Request} with failure in {Elapsed}ms: {Error}",
                     requestName,
                     stopwatch.ElapsedMilliseconds,
-                    result.Error);
+                    result.Errors);
             }
 
             return result;
