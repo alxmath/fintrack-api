@@ -9,7 +9,8 @@ O projeto foi concebido com ênfase em:
 * Arquitetura limpa e escalável
 * Separação de responsabilidades
 * Testes de integração realistas
-* Preparação para cenários **offline-first** (integração com app mobile)
+* Segurança e isolamento de dados por usuário
+* Preparação para cenários **offline-first**
 
 ---
 
@@ -22,79 +23,111 @@ Servir como base para:
 * Demonstração prática de:
 
   * Modelagem de domínio
-  * Design de APIs
-  * Testes de integração com banco real
-  * Boas práticas de engenharia backend
+  * Design de APIs REST
+  * Autenticação com JWT
+  * Multi-tenant (isolamento por usuário)
+  * Testes com banco real
 
 ---
 
 ## 🧱 Arquitetura
 
-O projeto adota uma abordagem híbrida baseada em:
+O projeto adota:
 
-* Clean Architecture (separação de camadas)
-* Vertical Slice na camada Application
+* Clean Architecture
+* Vertical Slice Architecture
 * CQRS (leve)
-* Result Pattern (padronização de responses)
+* Result Pattern
 
-### Estrutura de alto nível:
+Estrutura:
 
-```
 API → Application → Domain → Infrastructure
-```
+
+---
+
+## 🔁 Pipeline de execução
+
+Controller → Dispatcher → HandlerExecutor → Handler
+
+### Responsabilidades
+
+Controller
+- Recebe requisição HTTP
+- Define resposta HTTP
+
+Dispatcher
+- Resolve handler via DI
+- Resolve validator automaticamente
+
+HandlerExecutor
+- Executa validação
+- Logging estruturado
+- Controle de fluxo
+
+Handler
+- Contém regra de negócio
+
+---
+
+## 🔐 Autenticação
+
+A API utiliza JWT (Bearer Token).
+
+Fluxo:
+
+1. POST /api/v1/auth/login
+2. Recebe access_token
+3. Envia no header:
+
+Authorization: Bearer {token}
+
+Observações:
+
+- Rotas protegidas exigem autenticação
+- Usuário acessado via IUserContext
+
+---
+
+## 🧠 Multi-tenant
+
+Estratégia:
+
+- Cada entidade possui UserId
+- Queries filtram por usuário
+
+Benefícios:
+
+- Isolamento de dados
+- Segurança
+- Base para SaaS
 
 ---
 
 ## 🛠️ Stack Tecnológica
 
-* .NET 10 (ASP.NET Core)
-* Entity Framework Core
-* PostgreSQL
-* Testcontainers (testes de integração)
-* Respawn (reset de dados em testes)
-* FluentValidation
-* xUnit + FluentAssertions
-* Docker (requisito para testes)
+- .NET
+- ASP.NET Core
+- Entity Framework Core
+- PostgreSQL
+- FluentValidation
+- Serilog
+- Testcontainers
+- Respawn
+- xUnit + FluentAssertions
 
 ---
 
 ## 🧪 Testes
 
-O projeto utiliza **testes de integração com banco real**, com foco em confiabilidade e reprodutibilidade.
-
-### Estratégia:
-
-* PostgreSQL isolado via Testcontainers
-* Reset de dados com Respawn
-* Migrations executadas de forma controlada
+- Banco real com Testcontainers
+- Reset com Respawn
+- Testes autenticados com JWT
 
 ---
 
-## 📦 Estrutura do Projeto
+## 📡 Padrão de respostas
 
-```
-src/
-
-FinTrack.Api → Camada de entrada (HTTP)
-FinTrack.Application → Casos de uso (Vertical Slice)
-FinTrack.Domain → Regras de negócio
-FinTrack.Infrastructure → Persistência e integrações
-
-tests/
-
-FinTrack.Api.IntegrationTests → Testes de integração
-FinTrack.Application.Tests → Testes unitários
-```
-
----
-
-## 📡 Padrão de respostas HTTP
-
-A API utiliza dois níveis de padronização:
-
-### ✔ Sucesso
-
-Retorno direto do conteúdo (`200 OK`):
+### Sucesso
 
 ```json
 {
@@ -103,82 +136,81 @@ Retorno direto do conteúdo (`200 OK`):
 }
 ```
 
-❌ Erro (RFC 7807 - ProblemDetails)
-
+### Erro
 ```json
 {
   "type": "https://httpstatuses.com/400",
   "title": "Validation error",
   "status": 400,
-  "detail": "Name is required"
+  "errors": {
+    "name": ["Name is required"]
+  },
+  "traceId": "..."
 }
 ```
-Motivo
-* Padronização do contrato HTTP
-* Melhor integração com frontend
-* Melhor observabilidade e debugging
 
 ---
 
-## ⚙️ Como executar
+## ⚙️ Execução
 
-```bash
-dotnet restore
-dotnet build
-dotnet run
 ```
-🧪 Como executar os testes
-
-```bash
-dotnet test
+dotnet restore  
+dotnet build  
+dotnet run  
 ```
 
-⚠️ Requisito: Docker em execução (necessário para Testcontainers)
+### Testes
+
+```
+dotnet test  
+```
+
+⚠️ Requer Docker
 
 ---
 
-🔍 Diretrizes
-* Controllers devem ser finos (sem regra de negócio)
-* Application orquestra os casos de uso
-* Domain contém regras de negócio
-* Infrastructure contém apenas implementações técnicas
-* Application utiliza Result<T>
-* API converte Result<T> para HTTP (ProblemDetails quando erro)
+## 📦 Estrutura
 
----
+src/
+  Api
+  Application
+  Domain
+  Infrastructure
 
-## 📱 Integração futura (Mobile)
-
-O projeto prevê integração com aplicação Android (Kotlin), incluindo:
-
-* Sincronização offline-first
-* Estratégias de resolução de conflito
-* Evolução para comunicação assíncrona
+tests/
+  IntegrationTests
+  UnitTests
 
 ---
 
 ## 🚀 Roadmap
-✔ Já implementado
-* Estrutura base do projeto
-* Arquitetura (Clean + Vertical Slice)
-* CRUD de transações
-* Entidade Category e relacionamento com Transaction
-* Padronização de responses com Result<T>
-* Testes de integração com banco real
+
+✔ Implementado
+
+- Arquitetura base
+- CRUD
+- Result Pattern
+- ProblemDetails estruturado
+- JWT
+- Multi-tenant
+- Testes de integração
+
+🚧 Em evolução
+
+- Filtros avançados
+- Observabilidade
+- Refresh token
 
 ---
 
-### 🚧 Em evolução
-* Filtros e paginação em Transactions
-* Autenticação (JWT)
+## 📄 Documentação
 
----
-
-## 📄 Documentação adicional
-* [Arquitetura](./docs/architecture.md)
+- architecture.md
+- application-flow.md
+- decisions.md
 
 ---
 
 ## 📌 Status
 
-🚧 Em desenvolvimento ativo, com foco em evolução *incremental e qualidade arquitetural.
+🚧 Em evolução com foco em qualidade arquitetural
