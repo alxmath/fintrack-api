@@ -1,0 +1,4 @@
+###
+# Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json

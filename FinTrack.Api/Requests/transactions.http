@@ -1,0 +1,17 @@
+###
+# Criar transação
+POST {{baseUrl}}/transactions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "amount": 100.50,
+  "description": "Supermercado",
+  "categoryId": "51e43257-7c25-4812-9d26-32ed6dc30509",
+  "date": "2026-04-05"
+}
+
+###
+# Listar transações
+GET {{baseUrl}}/transactions?page=1&pageSize=10
+Authorization: Bearer {{token}}

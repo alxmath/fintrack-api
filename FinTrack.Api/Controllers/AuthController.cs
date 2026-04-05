@@ -11,7 +11,7 @@ public class AuthController(JwtTokenService tokenService) : ControllerBase
     public IActionResult Login()
     {
         // fake user (por enquanto)
-        var userId = Guid.NewGuid();
+        Guid userId = Guid.Parse("b6e6a299-96a4-4de8-aa51-9e5041ade373");
 
         var token = tokenService.GenerateToken(userId);
 
