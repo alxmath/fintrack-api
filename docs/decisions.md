@@ -319,6 +319,54 @@ Motivação:
 
 ---
 
+## 📅 2026-04-05
+
+### 🔐 Autenticação com JWT
+
+Decisão:
+Utilizar JWT para autenticação.
+
+Motivação:
+- Stateless
+- Escalável
+- Padrão de mercado
+
+Consequências:
+- Introdução de IUserContext
+- Testes autenticados
+
+---
+
+### 🧠 Multi-tenant por UserId
+
+Decisão:
+Isolar dados por usuário.
+
+Motivação:
+- Segurança
+- Preparação para SaaS
+
+Consequências:
+- Alteração nas entidades
+- Filtros nos repositórios
+
+---
+
+### 🔁 Dispatcher custom
+
+Decisão:
+Introduzir Dispatcher.
+
+Motivação:
+- Desacoplamento
+- Pipeline centralizado
+
+Consequências:
+- Uso de reflection
+- Possível otimização futura
+
+---
+
 ## 📌 Diretriz geral
 
 As decisões arquiteturais devem priorizar:
