@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Solution Items/">
+    <File Path="docker-compose.jaeger.yml" />
     <File Path="docker-compose.yml" />
   </Folder>
   <Folder Name="/src/">
