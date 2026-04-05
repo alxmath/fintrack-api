@@ -1,5 +1,6 @@
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
+using FinTrack.Application.Common.Utils;
 using FinTrack.Domain.Entities;
 
 namespace FinTrack.Application.Features.Transactions.Create;
@@ -15,12 +16,14 @@ public class CreateTransactionHandler(
     {
         var userId = userContext.UserId;
 
+        var date = DateTimeUtils.ToUtc(command.Date);
+
         var transaction = new Transaction(
-            command.Description,
-            command.Amount,
-            command.Date,
-            command.CategoryId,
-            userId);
+            description: command.Description,
+            amount: command.Amount,
+            date: date,
+            categoryId: command.CategoryId,
+            userId: userId);
 
         // TODO: salvar userId na entidade
 
