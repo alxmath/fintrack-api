@@ -13,6 +13,7 @@ public class CreateTransactionHandlerTests
     {
         // Arrange
         var repositoryMock = new Mock<ITransactionRepository>();
+        var userContextMock = new Mock<IUserContext>();
 
         var command = new CreateTransactionCommand(
             "Salário",
@@ -25,8 +26,10 @@ public class CreateTransactionHandlerTests
             .Setup(r => r.AddAsync(It.IsAny<Transaction>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
+        userContextMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
+
         var handler = new CreateTransactionHandler(
-            repositoryMock.Object);
+            repositoryMock.Object, userContextMock.Object);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);

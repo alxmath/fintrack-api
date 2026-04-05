@@ -35,7 +35,16 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserContext>();
 builder.Services.AddScoped<JwtTokenService>();
 
-var key = builder.Configuration["Jwt:Key"]!;
+builder.Services.Configure<JwtOptions>(
+    builder.Configuration.GetSection("Jwt"));
+
+var jwtKey = builder.Configuration["Jwt:Key"]!;
+
+if (string.IsNullOrWhiteSpace(jwtKey))
+    throw new InvalidOperationException("JWT Key não configurada.");
+
+if (jwtKey.Length < 32)
+    throw new InvalidOperationException("JWT Key deve ter no mínimo 32 caracteres.");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -53,7 +62,7 @@ builder.Services.AddAuthentication(options =>
 
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
 });
 

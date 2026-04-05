@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -5,13 +6,15 @@ using System.Text;
 
 namespace FinTrack.Api.Common.Auth;
 
-public class JwtTokenService(IConfiguration configuration)
+public class JwtTokenService(IOptions<JwtOptions> options)
 {
+    private readonly JwtOptions _options = options.Value;
+
     public string GenerateToken(Guid userId)
     {
-        var key = configuration["Jwt:Key"]!;
-        var issuer = configuration["Jwt:Issuer"]!;
-        var audience = configuration["Jwt:Audience"]!;
+        var key = _options.Key;
+        var issuer = _options.Issuer;
+        var audience = _options.Audience;
 
         var claims = new[]
         {
