@@ -5,6 +5,8 @@ using FinTrack.Application.Common.Interfaces;
 using FinTrack.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 using System.Text;
 
@@ -65,6 +67,29 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
 });
+
+//-----------------
+// OpenTelemetry
+//-----------------
+
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracing =>
+    {
+        tracing
+            .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                .AddService("FinTrack.Api"))
+
+            .AddAspNetCoreInstrumentation(options =>
+            {
+                options.RecordException = true;
+            })
+
+            .AddHttpClientInstrumentation()
+
+            .AddSource("FinTrack.Application")
+
+            .AddConsoleExporter(); // debug inicial
+    });
 
 
 var app = builder.Build();
