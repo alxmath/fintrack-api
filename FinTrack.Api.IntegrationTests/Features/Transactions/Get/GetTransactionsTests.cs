@@ -17,6 +17,8 @@ public class GetTransactionsTests : IntegrationTestBase
     public async Task Get_ShouldReturnCreatedTransaction()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var categoryId = await CreateCategoryAsync("Salário");
 
         var request = new CreateTransactionCommand(
@@ -51,6 +53,8 @@ public class GetTransactionsTests : IntegrationTestBase
     public async Task Get_ShouldOrderByAmountAscending()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var categoryId = await CreateCategoryAsync("Test");
 
         await Client.PostAsJsonAsync("/api/v1/transactions",
@@ -87,6 +91,8 @@ public class GetTransactionsTests : IntegrationTestBase
     public async Task Get_ShouldOrderByDateDescendingByDefault()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var categoryId = await CreateCategoryAsync("Test");
 
         var older = DateTime.UtcNow.AddMinutes(-3);
@@ -127,6 +133,8 @@ public class GetTransactionsTests : IntegrationTestBase
     public async Task Get_ShouldFallbackToDateDescending_WhenOrderByIsInvalid()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var categoryId = await CreateCategoryAsync("Test");
 
         var older = DateTime.UtcNow.AddMinutes(-3);
@@ -168,6 +176,8 @@ public class GetTransactionsTests : IntegrationTestBase
     public async Task Get_ShouldReturnCategoryData()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var categoryId = await CreateCategoryAsync("Alimentação");
 
         await Client.PostAsJsonAsync("/api/v1/transactions",

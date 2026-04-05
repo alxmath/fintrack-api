@@ -18,6 +18,8 @@ public class GetCategoryByIdTests : IntegrationTestBase
     public async Task GetById_ShouldReturnCategory_WhenExists()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var createResponse = await Client.PostAsJsonAsync(
             "/api/v1/categories",
             new CreateCategoryCommand("Transporte"));
@@ -45,6 +47,8 @@ public class GetCategoryByIdTests : IntegrationTestBase
     public async Task GetById_ShouldReturn404_WhenCategoryDoesNotExist()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var id = Guid.NewGuid();
 
         // Act
@@ -64,6 +68,8 @@ public class GetCategoryByIdTests : IntegrationTestBase
     public async Task Post_Then_GetById_ShouldReturnCreatedCategory()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var command = new CreateCategoryCommand("Saúde");
 
         // Act (POST)

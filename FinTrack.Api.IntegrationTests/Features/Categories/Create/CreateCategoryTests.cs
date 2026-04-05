@@ -17,6 +17,8 @@ public class CreateCategoryTests : IntegrationTestBase
     public async Task Post_ShouldCreateCategory()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var request = new CreateCategoryCommand("Alimentação");
 
         // Act
@@ -41,6 +43,8 @@ public class CreateCategoryTests : IntegrationTestBase
     public async Task Post_ShouldReturnError_WhenCategoryAlreadyExists()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var request = new CreateCategoryCommand("Alimentação");
 
         await Client.PostAsJsonAsync("/api/v1/categories", request);
@@ -63,6 +67,8 @@ public class CreateCategoryTests : IntegrationTestBase
     public async Task Post_ShouldReturn409_WhenCategoryAlreadyExists()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var request = new CreateCategoryCommand("Alimentação");
 
         await Client.PostAsJsonAsync("/api/v1/categories", request);
@@ -72,5 +78,18 @@ public class CreateCategoryTests : IntegrationTestBase
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+    }
+
+    [Fact]
+    public async Task Post_ShouldReturn401_WhenNotAuthenticated()
+    {
+        // Arrange
+        var request = new CreateCategoryCommand("Teste");
+
+        // Act
+        var response = await Client.PostAsJsonAsync("/api/v1/categories", request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }

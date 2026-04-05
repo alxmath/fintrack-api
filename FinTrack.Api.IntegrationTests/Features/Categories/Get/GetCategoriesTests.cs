@@ -15,6 +15,8 @@ public class GetCategoriesTests : IntegrationTestBase
     public async Task Get_ShouldReturnEmptyList_WhenNoCategoriesExist()
     {
         // Act
+        await AuthHelper.AuthenticateAsync(Client);
+
         var response = await Client.GetAsync("/api/v1/categories");
 
         // Assert
@@ -31,6 +33,8 @@ public class GetCategoriesTests : IntegrationTestBase
     public async Task Get_ShouldReturnCategories_WhenTheyExist()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         await CreateCategoryAsync("Alimentação");
         await CreateCategoryAsync("Salário");
 

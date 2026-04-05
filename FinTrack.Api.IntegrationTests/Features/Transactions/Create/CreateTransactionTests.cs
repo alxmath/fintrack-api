@@ -17,6 +17,8 @@ public class CreateTransactionTests : IntegrationTestBase
     public async Task Post_ShouldCreateTransaction()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var categoryId = await CreateCategoryAsync("Salário");
 
         var request = new CreateTransactionCommand(

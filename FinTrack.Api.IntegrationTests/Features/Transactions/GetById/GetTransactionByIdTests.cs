@@ -17,6 +17,8 @@ public class GetTransactionByIdTests : IntegrationTestBase
     public async Task GetById_ShouldReturnTransaction_WhenExists()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var categoryId = await CreateCategoryAsync("Test");
 
         var createResponse = await Client.PostAsJsonAsync(
@@ -49,6 +51,8 @@ public class GetTransactionByIdTests : IntegrationTestBase
     public async Task GetById_ShouldReturn404_WhenTransactionDoesNotExist()
     {
         // Arrange
+        await AuthHelper.AuthenticateAsync(Client);
+
         var id = Guid.NewGuid();
 
         // Act

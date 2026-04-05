@@ -17,7 +17,7 @@ public class AuthController(JwtTokenService tokenService) : ControllerBase
 
         return Ok(new
         {
-            access_token = token
+            AccessToken = token
         });
     }
 }
