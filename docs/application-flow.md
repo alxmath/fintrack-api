@@ -1,45 +1,54 @@
 # 🔄 Fluxo de execução da Application
 
-## Visão geral
+## 📌 Visão geral
 
-O fluxo de execução de uma requisição segue o padrão:
-
-Controller → Executor → Handler
+Controller → Dispatcher → HandlerExecutor → Handler
 
 ---
 
-## Etapas
+## 🧱 Etapas
 
-### 1. Controller
+### Controller
 
-Recebe requisição HTTP e delega execução.
-
-### 2. Executor
-
-Responsável por:
-
-* Executar validação (FluentValidation)
-* Interromper fluxo em caso de erro
-
-### 3. Handler
-
-Responsável por:
-
-* Executar regra de negócio
-* Persistência via repositórios
+- Recebe requisição HTTP
+- Chama Dispatcher
 
 ---
 
-## Benefícios
+### Dispatcher
 
-* Separação clara de responsabilidades
-* Redução de boilerplate
-* Maior previsibilidade
+- Resolve handler via DI
+- Resolve validator automaticamente
 
 ---
 
-## Evolução futura
+### HandlerExecutor
 
-Este fluxo será evoluído para:
+- Executa validação
+- Interrompe fluxo em erro
+- Logging estruturado
+- Mede tempo de execução
 
-Controller → Dispatcher → Executor → Handler
+---
+
+### Handler
+
+- Executa regra de negócio
+- Acessa repositórios
+- Retorna Result<T>
+
+---
+
+## 🎯 Benefícios
+
+- Separação de responsabilidades
+- Pipeline reutilizável
+- Código limpo
+- Testabilidade
+
+---
+
+## 🔐 Integração com autenticação
+
+- IUserContext fornece UserId
+- Sem acoplamento com HTTP
