@@ -10,6 +10,7 @@ public class JwtTokenService(IOptions<JwtOptions> options)
 {
     private readonly JwtOptions _options = options.Value;
 
+
     public string GenerateToken(Guid userId)
     {
         var key = _options.Key;
