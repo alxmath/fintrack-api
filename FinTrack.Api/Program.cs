@@ -18,6 +18,11 @@ builder.Services
     .AddJwtAuthentication(builder.Configuration)
     .AddObservability();
 
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
+
 var app = builder.Build();
 
 app.UseApiPipeline();
