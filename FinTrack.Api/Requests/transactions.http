@@ -14,4 +14,4 @@ Content-Type: application/json
 ###
 # Listar transações
 GET {{baseUrl}}/transactions?page=1&pageSize=10
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImI2ZTZhMjk5LTk2YTQtNGRlOC1hYTUxLTllNTA0MWFkZTM3MyIsImV4cCI6MTc3NTUwMTYwMCwiaXNzIjoiRmluVHJhY2suQXBpIiwiYXVkIjoiRmluVHJhY2suQ2xpZW50In0.wTDtnuRXPRkiTLsT0Lz1iuFFREu_AgXDQ6B3V25InQ8
+Authorization: Bearer {{token}}
