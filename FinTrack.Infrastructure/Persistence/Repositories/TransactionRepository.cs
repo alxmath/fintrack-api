@@ -1,6 +1,7 @@
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Features.Transactions.Get;
 using FinTrack.Domain.Entities;
+using FinTrack.Infrastructure.Persistence.Queries;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinTrack.Infrastructure.Persistence.Repositories;
@@ -24,47 +25,34 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
         bool desc,
         CancellationToken cancellationToken)
     {
-        var query = context.Transactions
-            .Where(t => t.UserId == userId)
-            //.Include(t => t.Category)
-            .AsNoTracking();
-
-        if (categoryId.HasValue)
-            query = query.Where(t => t.CategoryId == categoryId);
-
-        if (startDate.HasValue)
-            query = query.Where(t => t.Date >= startDate);
-
-        if (endDate.HasValue)
-            query = query.Where(t => t.Date <= endDate);
-
-        query = orderBy?.ToLower() switch
+        var compiledQuery = (orderBy?.ToLower(), desc) switch
         {
-            "amount" => desc
-                ? query.OrderByDescending(t => t.Amount)
-                : query.OrderBy(t => t.Amount),
-
-            _ => desc
-                ? query.OrderByDescending(t => t.Date)
-                : query.OrderBy(t => t.Date),
+            ("amount", true) => TransactionQueries.GetByAmountDesc,
+            ("amount", false) => TransactionQueries.GetByAmountAsc,
+            ("date", true) => TransactionQueries.GetByDateDesc,
+            ("date", false) => TransactionQueries.GetByDateAsc,
+            _ => TransactionQueries.GetByDateDesc
         };
 
-        var total = await query.CountAsync(cancellationToken);
+        var skip = (pageNumber - 1) * pageSize;
 
-        var items = await query
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-             .Select(t => new GetTransactionsResponse(
-                t.Id,
-                t.Amount,
-                t.Description,
-                t.Date,
-                new CategoryDto(
-                    t.Category.Id,
-                    t.Category.Name
-                )
-            ))
+        var items = await compiledQuery(
+                context,
+                userId,
+                categoryId,
+                startDate,
+                endDate,
+                skip,
+                pageSize)
             .ToListAsync(cancellationToken);
+
+        var total = await context.Transactions
+            .Where(t =>
+                t.UserId == userId &&
+                (!categoryId.HasValue || t.CategoryId == categoryId) &&
+                (!startDate.HasValue || t.Date >= startDate) &&
+                (!endDate.HasValue || t.Date <= endDate))
+            .CountAsync(cancellationToken);
 
         return (items, total);
     }
