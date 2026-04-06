@@ -1,7 +1,5 @@
 using FinTrack.Application.Common.Observability;
 using FinTrack.Application.Common.Results;
-using static FinTrack.Application.Common.Errors.Errors;
-using FluentValidation;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
