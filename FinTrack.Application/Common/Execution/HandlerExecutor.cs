@@ -7,7 +7,6 @@ using System.Diagnostics;
 
 namespace FinTrack.Application.Common.Execution;
 
-
 public class HandlerExecutor
 {
     private readonly ILogger<HandlerExecutor> _logger;

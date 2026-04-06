@@ -12,6 +12,7 @@ public static class ApplicationBuilderExtensions
         }
 
         app.UseMiddleware<CorrelationIdMiddleware>();
+        app.UseMiddleware<ObservabilityMiddleware>();
 
         app.UseHttpsRedirection();
 
