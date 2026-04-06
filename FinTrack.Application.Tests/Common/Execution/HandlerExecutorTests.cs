@@ -1,8 +1,6 @@
 using FinTrack.Application.Common.Execution;
 using FinTrack.Application.Common.Results;
 using FluentAssertions;
-using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -13,22 +11,27 @@ public class HandlerExecutorTests
     public class FakeRequest { }
 
     [Fact]
-    public async Task Execute_ShouldReturnFailure_WhenValidationFails()
+    public async Task Execute_ShouldReturnFailure_WhenStepReturnsFailure()
     {
         // Arrange
         var request = new FakeRequest();
 
-        var validator = new Mock<IValidator<FakeRequest>>();
+        var step = new Mock<IExecutionStep>();
 
-        validator
-            .Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ValidationResult(
-            [
-                new ValidationFailure("Name", "Name is required")
-            ]));
+        step.Setup(s => s.Execute(
+                request,
+                It.IsAny<CancellationToken>(),
+                It.IsAny<Func<Task<Result<object>>>>()))
+            .ReturnsAsync(Result<object>.Failure(
+                new Dictionary<string, string[]>
+                {
+                { "Name", ["Name is required"] }
+                },
+                "ValidationError"));
 
         var executor = new HandlerExecutor(
-            new Mock<ILogger<HandlerExecutor>>().Object);
+            new Mock<ILogger<HandlerExecutor>>().Object,
+            [step.Object]);
 
         var handlerCalled = false;
 
@@ -42,62 +45,34 @@ public class HandlerExecutorTests
         var result = await executor.Execute(
             request,
             Handler,
-            validator.Object,
+            null,
             CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Errors.Should().ContainKey("Name");
-        result.Errors["Name"].Should().Contain("Name is required");
 
         handlerCalled.Should().BeFalse();
     }
 
     [Fact]
-    public async Task Execute_ShouldCallHandler_WhenValidationPasses()
+    public async Task Execute_ShouldCallHandler_WhenStepCallsNext()
     {
         // Arrange
         var request = new FakeRequest();
 
-        var validator = new Mock<IValidator<FakeRequest>>();
+        var step = new Mock<IExecutionStep>();
 
-        validator
-            .Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ValidationResult()); // válido
-
-        var executor = new HandlerExecutor(
-            new Mock<ILogger<HandlerExecutor>>().Object);
-
-        var handlerCalled = false;
-
-        Task<Result<object>> Handler()
-        {
-            handlerCalled = true;
-            return Task.FromResult(Result<object>.Success("ok"));
-        }
-
-        // Act
-        var result = await executor.Execute(
-            request,
-            Handler,
-            validator.Object,
-            CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().Be("ok");
-
-        handlerCalled.Should().BeTrue();
-    }
-
-    [Fact]
-    public async Task Execute_ShouldCallHandler_WhenValidatorIsNull()
-    {
-        // Arrange
-        var request = new FakeRequest();
+        step.Setup(s => s.Execute(
+                request,
+                It.IsAny<CancellationToken>(),
+                It.IsAny<Func<Task<Result<object>>>>()))
+            .Returns((object req, CancellationToken ct, Func<Task<Result<object>>> next)
+                => next());
 
         var executor = new HandlerExecutor(
-            new Mock<ILogger<HandlerExecutor>>().Object);
+            new Mock<ILogger<HandlerExecutor>>().Object,
+            [step.Object]);
 
         var handlerCalled = false;
 
@@ -117,6 +92,39 @@ public class HandlerExecutorTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be("ok");
+
+        handlerCalled.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Execute_ShouldCallHandler_WhenNoSteps()
+    {
+        // Arrange
+        var request = new FakeRequest();
+
+        var executor = new HandlerExecutor(
+            new Mock<ILogger<HandlerExecutor>>().Object,
+            []);
+
+        var handlerCalled = false;
+
+        Task<Result<object>> Handler()
+        {
+            handlerCalled = true;
+            return Task.FromResult(Result<object>.Success("ok"));
+        }
+
+        // Act
+        var result = await executor.Execute(
+            request,
+            Handler,
+            null,
+            CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be("ok");
+
         handlerCalled.Should().BeTrue();
     }
 }
