@@ -26,7 +26,7 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
     {
         var query = context.Transactions
             .Where(t => t.UserId == userId)
-            .Include(t => t.Category)
+            //.Include(t => t.Category)
             .AsNoTracking();
 
         if (categoryId.HasValue)
