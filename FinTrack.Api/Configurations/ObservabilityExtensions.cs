@@ -1,3 +1,4 @@
+using FinTrack.Application.Common.Observability;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -25,7 +26,8 @@ public static class ObservabilityExtensions
 
                     .AddHttpClientInstrumentation()
 
-                    .AddSource("FinTrack.Application")
+                    .AddSource(ActivitySources.Application)
+                    .AddSource(ActivitySources.Infrastructure)
 
                     .AddOtlpExporter(options =>
                     {

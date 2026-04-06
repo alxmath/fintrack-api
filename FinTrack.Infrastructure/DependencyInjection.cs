@@ -1,5 +1,6 @@
 using FinTrack.Application.Common.Abstractions;
 using FinTrack.Application.Common.Interfaces;
+using FinTrack.Infrastructure.Observability.Interceptors;
 using FinTrack.Infrastructure.Persistence;
 using FinTrack.Infrastructure.Persistence.Repositories;
 using FinTrack.Infrastructure.Services;
@@ -14,8 +15,16 @@ public static class DependencyInjection
         this IServiceCollection services,
         string connectionString)
     {
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(connectionString));
+        services.AddSingleton<TracingDbCommandInterceptor>();
+
+        services.AddDbContext<AppDbContext>((sp, options) =>
+        {
+            var interceptor = sp.GetRequiredService<TracingDbCommandInterceptor>();
+
+            options
+                .UseNpgsql(connectionString)
+                .AddInterceptors(interceptor);
+        });
 
         // Repositories
         services.AddScoped<ITransactionRepository, TransactionRepository>();

@@ -1,11 +1,12 @@
 using FinTrack.Application.Common.Observability;
 using FinTrack.Application.Common.Results;
+using static FinTrack.Application.Common.Errors.Errors;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using static FinTrack.Application.Common.Errors.Errors;
 
 namespace FinTrack.Application.Common.Execution;
+
 
 public class HandlerExecutor
 {
@@ -22,23 +23,26 @@ public class HandlerExecutor
         IValidator<TRequest>? validator,
         CancellationToken cancellationToken)
     {
-        var requestName = typeof(TRequest).Name;
+        var rawName = typeof(TRequest).Name;
+        var requestName = rawName.Replace("Query", "").Replace("Command", "");
+
+        using var activity = ActivitySources.ApplicationSource.StartActivity(
+            requestName,
+            ActivityKind.Internal);
+
+        activity?.SetTag("app.request.name", requestName);
+        activity?.SetTag("app.request.type", typeof(TRequest).FullName);
 
         _logger.LogInformation(
             "Handling {Request} {@RequestData}",
             requestName,
             request);
 
-        using var activity = ActivitySources.Source.StartActivity(
-            typeof(TRequest).Name,
-            ActivityKind.Internal);
-
         var stopwatch = Stopwatch.StartNew();
 
         try
         {
-            activity?.SetTag("request.type", typeof(TRequest).Name);
-
+            // Validation
             if (validator is not null)
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -46,6 +50,7 @@ public class HandlerExecutor
                 if (!validationResult.IsValid)
                 {
                     activity?.SetTag("validation.failed", true);
+                    activity?.SetStatus(ActivityStatusCode.Error);
 
                     _logger.LogWarning("Validation failed for {Request}", requestName);
 
@@ -56,12 +61,11 @@ public class HandlerExecutor
                             g => g.Select(e => e.ErrorMessage).ToArray()
                         );
 
-                    return Result<object>.Failure(
-                        errors,
-                        General.Validation);
+                    return Result<object>.Failure(errors, General.Validation);
                 }
             }
 
+            // Execute handler
             var result = await handler();
 
             stopwatch.Stop();
@@ -71,14 +75,17 @@ public class HandlerExecutor
 
             if (result.IsSuccess)
             {
+                activity?.SetStatus(ActivityStatusCode.Ok);
+
                 _logger.LogInformation(
-                    "Handled {Request} {@RequestData} in {Elapsed}ms",
+                    "Handled {Request} in {Elapsed}ms",
                     requestName,
-                    request,
                     stopwatch.ElapsedMilliseconds);
             }
             else
             {
+                activity?.SetStatus(ActivityStatusCode.Error);
+
                 _logger.LogWarning(
                     "Handled {Request} with failure in {Elapsed}ms: {Error}",
                     requestName,
@@ -92,14 +99,15 @@ public class HandlerExecutor
         {
             stopwatch.Stop();
 
-            activity?.SetTag("error", true);
+            activity?.SetStatus(ActivityStatusCode.Error);
+
+            activity?.SetTag("exception.type", ex.GetType().FullName);
             activity?.SetTag("exception.message", ex.Message);
-            activity?.SetTag("exception.type", ex.GetType().Name);
+            activity?.SetTag("exception.stacktrace", ex.StackTrace);
 
             _logger.LogError(ex,
-                "Unhandled exception in {Request} {@RequestData} after {Elapsed}ms",
+                "Unhandled exception in {Request} after {Elapsed}ms",
                 requestName,
-                request,
                 stopwatch.ElapsedMilliseconds);
 
             throw;
