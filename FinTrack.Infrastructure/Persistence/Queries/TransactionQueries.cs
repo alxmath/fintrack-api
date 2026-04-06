@@ -122,7 +122,7 @@ public static class TransactionQueries
                     (!categoryId.HasValue || t.CategoryId == categoryId) &&
                     (!startDate.HasValue || t.Date >= startDate) &&
                     (!endDate.HasValue || t.Date <= endDate))
-                .OrderByDescending(t => t.Amount)
+                .OrderBy(t => t.Amount)
                 .Skip(skip)
                 .Take(take)
                 .Select(t => new GetTransactionsResponse(
