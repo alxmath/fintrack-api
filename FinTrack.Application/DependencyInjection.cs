@@ -1,5 +1,6 @@
 using FinTrack.Application.Common.Dispatching;
 using FinTrack.Application.Common.Execution;
+using FinTrack.Application.Common.Execution.Steps;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FinTrack.Application.Features.Categories.Create;
@@ -28,6 +29,7 @@ public static class DependencyInjection
 
         services.AddScoped<Dispatcher>();
         services.AddScoped<HandlerExecutor>();
+        services.AddScoped<IExecutionStep, ValidationStep>();
 
         services.AddScoped<IRequestHandler<CreateTransactionCommand, CreateTransactionResponse>, CreateTransactionHandler>();
         services.AddScoped<IRequestHandler<GetTransactionsQuery, PagedResult<GetTransactionsResponse>>, GetTransactionsHandler>();
