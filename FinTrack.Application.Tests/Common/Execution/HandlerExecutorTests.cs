@@ -45,7 +45,6 @@ public class HandlerExecutorTests
         var result = await executor.Execute(
             request,
             Handler,
-            null,
             CancellationToken.None);
 
         // Assert
@@ -86,7 +85,6 @@ public class HandlerExecutorTests
         var result = await executor.Execute(
             request,
             Handler,
-            null,
             CancellationToken.None);
 
         // Assert
@@ -118,7 +116,6 @@ public class HandlerExecutorTests
         var result = await executor.Execute(
             request,
             Handler,
-            null,
             CancellationToken.None);
 
         // Assert
