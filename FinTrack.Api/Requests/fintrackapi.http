@@ -1,0 +1,97 @@
+@baseUrl = https://localhost:7098/api/v1
+
+##################################################
+
+# AUTH
+
+##################################################
+
+### Login
+
+# @name login
+
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+"email": "[user@test.com](mailto:user@test.com)",
+"password": "123456"
+}
+
+### Capturar token
+
+@token = {{login.response.body.$.accessToken}}
+
+##################################################
+
+# CATEGORIES
+
+##################################################
+
+@categoryId = 51e05e33-ccca-430c-999a-a30fb94acc36
+
+### Criar categoria
+
+POST {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+"name": "Manutenção"
+}
+
+### Listar categorias
+
+GET {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+
+### Buscar categoria por ID
+
+GET {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{token}}
+
+##################################################
+
+# TRANSACTIONS
+
+##################################################
+
+@transactionId = 9127d0ac-3b4e-477c-8603-7f975d84d8f8
+
+### Criar transação
+
+POST {{baseUrl}}/transactions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "amount": 100.50,
+    "description": "Supermercado",
+    "categoryId": "{{categoryId}}",
+    "date": "2026-04-05"
+}
+
+### Listar transações (paginação)
+
+GET {{baseUrl}}/transactions?page=1&pageSize=10
+Authorization: Bearer {{token}}
+
+### Buscar transação por ID
+
+GET {{baseUrl}}/transactions/{{transactionId}}
+Authorization: Bearer {{token}}
+
+
+
+
+# NOTAS
+
+##################################################
+
+# 1. Sempre execute o login primeiro
+
+# 2. O token é capturado automaticamente
+
+# 3. Ajuste os IDs conforme necessário
+
+# 4. Se o login falhar, todas as requests seguintes irão falhar
