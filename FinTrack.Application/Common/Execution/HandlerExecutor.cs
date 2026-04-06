@@ -10,10 +10,14 @@ namespace FinTrack.Application.Common.Execution;
 public class HandlerExecutor
 {
     private readonly ILogger<HandlerExecutor> _logger;
+    private readonly IEnumerable<IExecutionStep> _steps;
 
-    public HandlerExecutor(ILogger<HandlerExecutor> logger)
+    public HandlerExecutor(
+        ILogger<HandlerExecutor> logger,
+        IEnumerable<IExecutionStep> steps)
     {
         _logger = logger;
+        _steps = steps;
     }
 
     public async Task<Result<object>> Execute<TRequest>(
@@ -41,31 +45,15 @@ public class HandlerExecutor
 
         try
         {
-            // Validation
-            if (validator is not null)
+            Func<Task<Result<object>>> pipeline = handler;
+
+            foreach (var step in _steps.Reverse())
             {
-                var validationResult = await validator.ValidateAsync(request, cancellationToken);
-
-                if (!validationResult.IsValid)
-                {
-                    activity?.SetTag("validation.failed", true);
-                    activity?.SetStatus(ActivityStatusCode.Error);
-
-                    _logger.LogWarning("Validation failed for {Request}", requestName);
-
-                    var errors = validationResult.Errors
-                        .GroupBy(e => e.PropertyName)
-                        .ToDictionary(
-                            g => g.Key,
-                            g => g.Select(e => e.ErrorMessage).ToArray()
-                        );
-
-                    return Result<object>.Failure(errors, General.Validation);
-                }
+                var next = pipeline;
+                pipeline = () => step.Execute(request!, cancellationToken, next);
             }
 
-            // Execute handler
-            var result = await handler();
+            var result = await pipeline();
 
             stopwatch.Stop();
 
