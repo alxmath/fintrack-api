@@ -29,7 +29,6 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.Property(t => t.UserId)
             .IsRequired();
 
-        builder.HasIndex(t => new { t.UserId, t.Description })
-            .IsUnique();
+        builder.HasIndex(t => new { t.UserId, t.Date });
     }
 }
