@@ -27,9 +27,6 @@ public class Dispatcher
 
         dynamic handler = _serviceProvider.GetRequiredService(handlerType);
 
-        var validatorType = typeof(IValidator<>).MakeGenericType(requestType);
-        dynamic? validator = _serviceProvider.GetService(validatorType);
-
         async Task<Result<object>> handlerDelegate()
         {
             var result = await handler.Handle((dynamic)request, cancellationToken);
@@ -39,7 +36,6 @@ public class Dispatcher
         return await _executor.Execute(
             (dynamic)request,
             (Func<Task<Result<object>>>)handlerDelegate,
-            validator,
             cancellationToken);
     }
 
