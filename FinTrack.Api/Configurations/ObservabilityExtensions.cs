@@ -17,7 +17,8 @@ public static class ObservabilityExtensions
                     .SetResourceBuilder(ResourceBuilder.CreateDefault()
                         .AddService("FinTrack.Api"))
 
-                    .SetSampler(new AlwaysOnSampler()) // ESSENCIAL
+                    //.SetSampler(new AlwaysOnSampler()) // env DEV!
+                    .SetSampler(new TraceIdRatioBasedSampler(0.1)) // env PROD!
 
                     .AddAspNetCoreInstrumentation(options =>
                     {
@@ -34,7 +35,8 @@ public static class ObservabilityExtensions
                         options.Endpoint = new Uri("http://localhost:4317");
                         options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
 
-                        options.ExportProcessorType = ExportProcessorType.Simple;
+                        //options.ExportProcessorType = ExportProcessorType.Simple; // env DEV!
+                        options.ExportProcessorType = ExportProcessorType.Batch; // env PROD!
                     })
 
                     .AddConsoleExporter(); // manter pra debug
