@@ -23,7 +23,6 @@ public class HandlerExecutor
     public async Task<Result<object>> Execute<TRequest>(
         TRequest request,
         Func<Task<Result<object>>> handler,
-        IValidator<TRequest>? validator,
         CancellationToken cancellationToken)
     {
         var rawName = typeof(TRequest).Name;
