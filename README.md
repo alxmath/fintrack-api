@@ -61,22 +61,22 @@ dotnet test
 Toda a documentação detalhada está na pasta de docs (ou raiz do projeto):
 
 ### 🏗 Arquitetura
-- [architecture.md](./architecture.md)
+- [architecture.md](docs/architecture.md)
 
 ### 🔄 Fluxo da aplicação
-- [application-flow.md](./application-flow.md)
+- [application-flow.md](docs/application-flow.md)
 
 ### 📡 Contrato da API
-- [api-contract.md](./api-contract.md)
+- [api-contract.md](docs/api-contract.md)
 
 ### 🧠 Multi-tenancy
-- [multitenancy.md](./multitenancy.md)
+- [multitenancy.md](docs/multitenancy.md)
 
 ### 📖 Decisões arquiteturais
-- [decisions.md](./decisions.md)
+- [decisions.md](docs/decisions.md)
 
 ### 📊 Observabilidade
-- [observability.md](./observability.md)
+- [observability.md](docs/observability.md)
 
 ---
 
