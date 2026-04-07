@@ -31,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<HandlerExecutor>();
         services.AddScoped<IExecutionStep, ValidationStep>();
         services.AddScoped<IExecutionStep, LoggingStep>();
+        services.AddScoped<IExecutionStep, ObservabilityStep>();
 
         services.AddScoped<IRequestHandler<CreateTransactionCommand, CreateTransactionResponse>, CreateTransactionHandler>();
         services.AddScoped<IRequestHandler<GetTransactionsQuery, PagedResult<GetTransactionsResponse>>, GetTransactionsHandler>();
