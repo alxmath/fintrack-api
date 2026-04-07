@@ -2,48 +2,70 @@
 
 ---
 
-## 📌 Fluxo
+## 📌 Visão geral
+
+O fluxo foi projetado para ser:
+
+- Explícito
+- Encadeado
+- Controlável
+
+---
+
+## 🔁 Fluxo completo
 
 ```text
-Controller → Dispatcher → HandlerExecutor → Pipeline → Handler
+HTTP → Controller → Dispatcher → HandlerExecutor → Pipeline → Handler → DB
 ```
 
 ---
 
-## 🧱 Etapas
+## 🧩 Componentes
 
 ### Controller
-Entrada HTTP
 
-### Dispatcher
-Resolve handler dinamicamente
-
-### HandlerExecutor
-Monta pipeline dinamicamente
-
-### Pipeline Steps
-
-Validation  
-- Interrompe execução em erro  
-
-Logging  
-- Registra entrada/saída  
-
-Observability  
-- Cria spans  
-
-Exception  
-- Captura exceções  
-
-### Handler
-Executa regra de negócio
+Responsável apenas por HTTP.
 
 ---
 
-## 🎯 Benefícios
+### Dispatcher
 
-- Separação clara
-- Extensibilidade
-- Testabilidade
+Resolve handlers dinamicamente.
+
+---
+
+### HandlerExecutor
+
+Monta o pipeline em tempo de execução.
+
+---
+
+### Pipeline
+
+#### ValidationStep
+Garante consistência de entrada.
+
+#### LoggingStep
+Garante rastreabilidade.
+
+#### ObservabilityStep
+Gera tracing distribuído.
+
+#### ExceptionStep
+Garante captura e propagação correta de erros.
+
+---
+
+### Handler
+
+Executa regra de negócio isolada.
+
+---
+
+## 🧠 Insight arquitetural
+
+O handler deixa de ser o centro da execução.
+
+👉 O pipeline passa a ser o verdadeiro fluxo da aplicação.
 
 ---
