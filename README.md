@@ -70,7 +70,7 @@ Toda a documentação detalhada está na pasta de docs (ou raiz do projeto):
 - [api-contract.md](docs/api-contract.md)
 
 ### 🧠 Multi-tenancy
-- [multitenancy.md](docs/multitenancy.md)
+- [multitenancy.md](docs/multi-tenancy.md)
 
 ### 📖 Decisões arquiteturais
 - [decisions.md](docs/decisions.md)
