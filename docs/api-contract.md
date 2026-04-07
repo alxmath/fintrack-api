@@ -6,35 +6,30 @@
 
 - REST
 - ProblemDetails (RFC 7807)
-- JWT
+- Consistência de resposta
 
 ---
 
-## ✅ Sucesso
+## 🧠 Decisão arquitetural
 
-200 / 201 com DTO
+Uso de:
 
----
-
-## ❌ Erros
-
-Padronizados com ProblemDetails
+- Result Pattern (Application)
+- ProblemDetails (HTTP)
 
 ---
 
-## 🧠 Decisão importante
+## 🎯 Benefício
 
-Uso de Result Pattern + ProblemDetails
+Separação entre:
 
-**Motivo:**
-- Evitar exceptions como fluxo
-- Padronização
+- erro de domínio
+- erro HTTP
 
 ---
 
-## 🚧 Evolução
+## ⚖️ Trade-off
 
-- Versionamento
-- i18n
+Necessidade de mapeamento entre camadas.
 
 ---
