@@ -5,162 +5,99 @@
 O **FinTrack API** é um backend para gerenciamento financeiro pessoal, projetado com foco em:
 
 - Clareza arquitetural
-- Escalabilidade incremental
-- Observabilidade nativa
+- Evolução incremental
+- Observabilidade
 - Preparação para cenários distribuídos (offline-first)
 
-O projeto vai além de um CRUD tradicional, sendo construído como um **estudo prático de arquitetura de software aplicada**, com decisões explícitas e evolução controlada.
+O projeto também serve como base para estudo avançado de arquitetura de software e potencial Trabalho de Conclusão de Curso (TCC).
 
 ---
 
-## 🎯 Problema
+## 🎯 Objetivo
 
-Aplicações de controle financeiro frequentemente sofrem com:
-
-- Crescimento desorganizado da lógica de negócio
-- Forte acoplamento entre camadas
-- Baixa observabilidade
-- Dificuldade de evolução (mobile, offline, integrações)
-
----
-
-## 💡 Proposta
-
-O FinTrack API resolve esses problemas através de:
-
-- Pipeline explícito de execução
-- Separação rigorosa de responsabilidades
-- Observabilidade integrada desde o início
-- Estratégia de multi-tenancy simples e evolutiva
+- Demonstrar boas práticas de arquitetura
+- Servir como base evolutiva de produto
+- Explorar padrões como:
+  - Clean Architecture
+  - Vertical Slice
+  - CQRS (leve)
+  - Pipeline Pattern
 
 ---
 
-## 🧱 Arquitetura
+## 🚀 Stack
 
-A aplicação combina:
-
-- Clean Architecture  
-- Vertical Slice Architecture  
-- CQRS (leve)  
-- Pipeline Pattern (Chain of Responsibility)  
-- Result Pattern  
-
-Estrutura:
-
-```
-API → Application → Domain → Infrastructure
-```
+- .NET / ASP.NET Core
+- Entity Framework Core
+- PostgreSQL
+- FluentValidation
+- Serilog
+- OpenTelemetry
+- Testcontainers
+- xUnit
 
 ---
 
-## 🔁 Pipeline de execução
+## ▶️ Execução
 
-```
-Controller → Dispatcher → HandlerExecutor → Pipeline → Handler
-```
-
----
-
-## 🧠 Decisão arquitetural central
-
-Substituição do fluxo direto:
-
-```
-Controller → Handler
+```bash
+dotnet restore
+dotnet build
+dotnet run
 ```
 
-Por um pipeline explícito:
+### Testes
 
+```bash
+dotnet test
 ```
-Controller → Dispatcher → HandlerExecutor → Pipeline → Handler
-```
 
-### Impacto
-
-| Aspecto | Antes | Depois |
-|--------|------|--------|
-| Acoplamento | Alto | Baixo |
-| Observabilidade | Limitada | Completa |
-| Testabilidade | Média | Alta |
-| Extensibilidade | Baixa | Alta |
-
----
-
-## 📊 Observabilidade
-
-- OpenTelemetry  
-- Jaeger  
-- Tracing distribuído por requisição  
-
----
-
-## 🧠 Multi-tenancy
-
-- Isolamento por `UserId`
-- Base para evolução SaaS
+> Requer Docker para execução dos testes de integração
 
 ---
 
 ## 📚 Documentação
 
+Toda a documentação detalhada está na pasta de docs (ou raiz do projeto):
+
 ### 🏗 Arquitetura
+- [architecture.md](./architecture.md)
 
-- [architecture.md](./architecture.md)  
-  Visão arquitetural completa, decisões e trade-offs  
+### 🔄 Fluxo da aplicação
+- [application-flow.md](./application-flow.md)
 
-- [application-flow.md](./application-flow.md)  
-  Fluxo detalhado de execução da aplicação  
+### 📡 Contrato da API
+- [api-contract.md](./api-contract.md)
 
----
+### 🧠 Multi-tenancy
+- [multitenancy.md](./multitenancy.md)
 
-### 📡 API
+### 📖 Decisões arquiteturais
+- [decisions.md](./decisions.md)
 
-- [api-contract.md](./api-contract.md)  
-  Contrato HTTP, padrões de resposta e erros  
-
----
-
-### 🧠 Domínio e Estratégias
-
-- [multitenancy.md](./multitenancy.md)  
-  Estratégia de isolamento de dados e evolução  
+### 📊 Observabilidade
+- [observability.md](./observability.md)
 
 ---
 
-### 📖 Decisões Arquiteturais
+## 🧭 Como navegar na documentação
 
-- [decisions.md](./decisions.md)  
-  Registro histórico de decisões técnicas, motivações e impactos  
+Sugestão de leitura:
 
----
-
-## 🧭 Como ler esta documentação
-
-Para melhor compreensão, recomenda-se a seguinte ordem:
-
-1. `architecture.md` → visão geral  
-2. `application-flow.md` → fluxo interno  
-3. `decisions.md` → contexto das escolhas  
-4. `multitenancy.md` → estratégia de dados  
-5. `api-contract.md` → interface externa  
+1. `architecture.md`
+2. `application-flow.md`
+3. `decisions.md`
+4. `observability.md`
+5. `api-contract.md`
 
 ---
 
-## 🚀 Roadmap arquitetural
+## 🧠 Filosofia do projeto
 
-- Enriquecimento de tracing (userId, correlationId)
-- Métricas (Prometheus / Grafana)
-- Evolução para offline-first
-- Possível distribuição futura
-
----
-
-## 🧠 Diretriz do projeto
-
-> Evitar complexidade prematura, mas garantir base sólida para evolução.
+> Simplicidade inicial com capacidade de evolução controlada.
 
 ---
 
 ## 📌 Status
 
-🚧 Em evolução com foco em qualidade arquitetural e maturidade de produto
+🚧 Em evolução contínua com foco em qualidade arquitetural
