@@ -1,0 +1,15 @@
+@startuml C4_Context
+!include ./c4/C4_Context.puml
+
+title FinTrack API - Context Diagram
+
+Person(user, "Usuário (Web/Mobile)", "Usuário final que gerencia suas finanças pessoais através de aplicações cliente")
+
+System(fintrack, "FinTrack API", "API REST para gerenciamento financeiro pessoal, com suporte a multi-tenancy e observabilidade")
+
+SystemDb(db, "PostgreSQL", "Banco de dados relacional responsável pela persistência de transações, categorias e usuários")
+
+Rel(user, fintrack, "Consome API", "HTTP/JSON")
+Rel(fintrack, db, "Persistência de dados", "EF Core")
+
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+!include ./c4/C4_Component.puml
+
+title FinTrack API - Component Diagram
+
+Container(api, "FinTrack API", "ASP.NET Core", "API principal")
+
+Component(controller, "Controllers", "API Layer", "Recebem requisições HTTP")
+Component(dispatcher, "Dispatcher", "Application", "Resolve handlers")
+Component(executor, "HandlerExecutor", "Application", "Orquestra pipeline")
+
+Component(validation, "ValidationStep", "Pipeline", "Validação")
+Component(logging, "LoggingStep", "Pipeline", "Logging")
+Component(observability, "ObservabilityStep", "Pipeline", "Tracing")
+Component(exception, "ExceptionStep", "Pipeline", "Erros")
+
+Component(handler, "Handler", "Application", "Regra de negócio")
+Component(repository, "Repository", "Infrastructure", "Acesso a dados")
+
+ComponentDb(db, "PostgreSQL", "Database", "Persistência")
+
+Rel(controller, dispatcher, "Dispatch")
+Rel(dispatcher, executor, "Execute")
+
+Rel(executor, validation, "Start")
+Rel(validation, logging, "Next")
+Rel(logging, observability, "Next")
+Rel(observability, exception, "Next")
+Rel(exception, handler, "Next")
+
+Rel(handler, repository, "Usa")
+Rel(repository, db, "EF Core")
+
+@enduml

@@ -1,0 +1,18 @@
+@startuml
+!include ./c4/C4_Container.puml
+
+title FinTrack API - Container Diagram
+
+Person(user, "Usuário (Web/Mobile)", "Usuário do sistema")
+
+System_Boundary(system, "FinTrack System") {
+
+    Container(api, "FinTrack API", "ASP.NET Core", "API REST que executa regras de negócio")
+
+    ContainerDb(db, "PostgreSQL", "Database", "Persistência de dados")
+}
+
+Rel(user, api, "Usa", "HTTP/JSON")
+Rel(api, db, "Acessa", "EF Core")
+
+@enduml
