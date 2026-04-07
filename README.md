@@ -2,25 +2,36 @@
 
 ## 📌 Visão Geral
 
-O **FinTrack API** é um backend para gerenciamento financeiro pessoal, projetado com foco em **clareza arquitetural, extensibilidade e controle explícito do fluxo de execução**.
+O **FinTrack API** é um backend para gerenciamento financeiro pessoal, projetado com foco em:
 
-O projeto evoluiu de uma arquitetura simples para um modelo baseado em **pipeline de execução**, permitindo maior previsibilidade, observabilidade e desacoplamento.
+- Clareza arquitetural
+- Escalabilidade incremental
+- Observabilidade nativa
+- Preparação para cenários distribuídos (offline-first)
+
+O projeto vai além de um CRUD tradicional, sendo construído como um **estudo prático de arquitetura de software aplicada**, com decisões explícitas e evolução controlada.
 
 ---
 
-## 🎯 Objetivo
+## 🎯 Problema
 
-Este projeto serve como:
+Aplicações de controle financeiro frequentemente sofrem com:
 
-- Base para estudo avançado de arquitetura de software
-- Candidato a Trabalho de Conclusão de Curso (TCC)
-- Demonstração prática de:
-  - Clean Architecture
-  - Pipeline Pattern
-  - CQRS (leve)
-  - Observabilidade com tracing distribuído
-  - Multi-tenancy
-  - Testes de integração com banco real
+- Crescimento desorganizado da lógica de negócio
+- Forte acoplamento entre camadas
+- Baixa observabilidade
+- Dificuldade de evolução (mobile, offline, integrações)
+
+---
+
+## 💡 Proposta
+
+O FinTrack API resolve esses problemas através de:
+
+- Pipeline explícito de execução
+- Separação rigorosa de responsabilidades
+- Observabilidade integrada desde o início
+- Estratégia de multi-tenancy simples e evolutiva
 
 ---
 
@@ -28,123 +39,128 @@ Este projeto serve como:
 
 A aplicação combina:
 
-- Clean Architecture
-- Vertical Slice Architecture
-- Pipeline Pattern (Chain of Responsibility)
-- Result Pattern
+- Clean Architecture  
+- Vertical Slice Architecture  
+- CQRS (leve)  
+- Pipeline Pattern (Chain of Responsibility)  
+- Result Pattern  
 
 Estrutura:
 
+```
 API → Application → Domain → Infrastructure
+```
 
 ---
 
 ## 🔁 Pipeline de execução
 
-```text
+```
 Controller → Dispatcher → HandlerExecutor → Pipeline → Handler
 ```
 
-### Responsabilidades
-
-**Controller**
-- Entrada HTTP
-- Conversão para resposta HTTP
-
-**Dispatcher**
-- Resolução dinâmica de handlers
-
-**HandlerExecutor**
-- Orquestra pipeline
-- Não contém regra de negócio
-
-**Pipeline (Steps)**
-- Validation
-- Logging
-- Observability
-- Exception
-
-**Handler**
-- Regra de negócio
-
 ---
 
-## 🧠 Decisão arquitetural chave
+## 🧠 Decisão arquitetural central
 
-Foi adotado um pipeline explícito ao invés de frameworks como MediatR.
+Substituição do fluxo direto:
 
-**Motivo:**
+```
+Controller → Handler
+```
 
-- Maior controle do fluxo
-- Debug mais simples
-- Evitar dependência externa
+Por um pipeline explícito:
 
-**Trade-off:**
+```
+Controller → Dispatcher → HandlerExecutor → Pipeline → Handler
+```
 
-- Mais código manual
-- Maior responsabilidade arquitetural
+### Impacto
 
----
-
-## 🔐 Autenticação
-
-- JWT (Bearer Token)
-- IUserContext abstrai acesso ao usuário
-
----
-
-## 🧠 Multi-tenant
-
-- Isolamento por UserId
-- Filtro obrigatório nas queries
+| Aspecto | Antes | Depois |
+|--------|------|--------|
+| Acoplamento | Alto | Baixo |
+| Observabilidade | Limitada | Completa |
+| Testabilidade | Média | Alta |
+| Extensibilidade | Baixa | Alta |
 
 ---
 
 ## 📊 Observabilidade
 
-- OpenTelemetry
-- Jaeger
-- Tracing por request
+- OpenTelemetry  
+- Jaeger  
+- Tracing distribuído por requisição  
 
 ---
 
-## 🛠️ Stack
+## 🧠 Multi-tenancy
 
-- .NET / ASP.NET Core
-- EF Core / PostgreSQL
-- FluentValidation
-- Serilog
-- Testcontainers
-- xUnit
+- Isolamento por `UserId`
+- Base para evolução SaaS
 
 ---
 
-## 🧪 Testes
+## 📚 Documentação
 
-- Banco real (PostgreSQL)
-- Reset com Respawn
-- Testes autenticados
+### 🏗 Arquitetura
 
----
+- [architecture.md](./architecture.md)  
+  Visão arquitetural completa, decisões e trade-offs  
 
-## 🚀 Roadmap
-
-✔ Pipeline estruturado  
-✔ Observabilidade básica  
-
-🚧 Em evolução  
-- Enriquecimento de tracing  
-- Métricas (Prometheus/Grafana)  
-- Refresh token  
+- [application-flow.md](./application-flow.md)  
+  Fluxo detalhado de execução da aplicação  
 
 ---
 
-## 📄 Documentação
+### 📡 API
 
-- [architecture.md](docs/architecture.md)
-- [application-flow.md](docs/application-flow.md)
-- [decisions.md](docs/decisions.md)
-- [multitenancy.md](docs/multitenancy.md)
-- [api-contract.md](docs/api-contract.md)
+- [api-contract.md](./api-contract.md)  
+  Contrato HTTP, padrões de resposta e erros  
 
 ---
+
+### 🧠 Domínio e Estratégias
+
+- [multitenancy.md](./multitenancy.md)  
+  Estratégia de isolamento de dados e evolução  
+
+---
+
+### 📖 Decisões Arquiteturais
+
+- [decisions.md](./decisions.md)  
+  Registro histórico de decisões técnicas, motivações e impactos  
+
+---
+
+## 🧭 Como ler esta documentação
+
+Para melhor compreensão, recomenda-se a seguinte ordem:
+
+1. `architecture.md` → visão geral  
+2. `application-flow.md` → fluxo interno  
+3. `decisions.md` → contexto das escolhas  
+4. `multitenancy.md` → estratégia de dados  
+5. `api-contract.md` → interface externa  
+
+---
+
+## 🚀 Roadmap arquitetural
+
+- Enriquecimento de tracing (userId, correlationId)
+- Métricas (Prometheus / Grafana)
+- Evolução para offline-first
+- Possível distribuição futura
+
+---
+
+## 🧠 Diretriz do projeto
+
+> Evitar complexidade prematura, mas garantir base sólida para evolução.
+
+---
+
+## 📌 Status
+
+🚧 Em evolução com foco em qualidade arquitetural e maturidade de produto
