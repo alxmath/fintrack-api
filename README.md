@@ -2,215 +2,102 @@
 
 ## 📌 Visão Geral
 
-O **FinTrack API** é um backend para gerenciamento financeiro pessoal, com foco em organização de transações, categorias e usuários.
+O **FinTrack API** é um backend para gerenciamento financeiro pessoal, projetado com foco em:
 
-O projeto foi concebido com ênfase em:
+- Clareza arquitetural
+- Evolução incremental
+- Observabilidade
+- Preparação para cenários distribuídos (offline-first)
 
-* Arquitetura limpa e escalável
-* Separação de responsabilidades
-* Testes de integração realistas
-* Segurança e isolamento de dados por usuário
-* Preparação para cenários **offline-first**
+O projeto também serve como base para estudo avançado de arquitetura de software e potencial Trabalho de Conclusão de Curso (TCC).
 
 ---
 
 ## 🎯 Objetivo
 
-Servir como base para:
-
-* Estudo avançado de **arquitetura de software**
-* Evolução para **Trabalho de Conclusão de Curso (TCC)**
-* Demonstração prática de:
-
-  * Modelagem de domínio
-  * Design de APIs REST
-  * Autenticação com JWT
-  * Multi-tenant (isolamento por usuário)
-  * Testes com banco real
+- Demonstrar boas práticas de arquitetura
+- Servir como base evolutiva de produto
+- Explorar padrões como:
+  - Clean Architecture
+  - Vertical Slice
+  - CQRS (leve)
+  - Pipeline Pattern
 
 ---
 
-## 🧱 Arquitetura
+## 🚀 Stack
 
-O projeto adota:
-
-* Clean Architecture
-* Vertical Slice Architecture
-* CQRS (leve)
-* Result Pattern
-
-Estrutura:
-
-API → Application → Domain → Infrastructure
-
----
-
-## 🔁 Pipeline de execução
-
-Controller → Dispatcher → HandlerExecutor → Handler
-
-### Responsabilidades
-
-Controller
-- Recebe requisição HTTP
-- Define resposta HTTP
-
-Dispatcher
-- Resolve handler via DI
-- Resolve validator automaticamente
-
-HandlerExecutor
-- Executa validação
-- Logging estruturado
-- Controle de fluxo
-
-Handler
-- Contém regra de negócio
-
----
-
-## 🔐 Autenticação
-
-A API utiliza JWT (Bearer Token).
-
-Fluxo:
-
-1. POST /api/v1/auth/login
-2. Recebe access_token
-3. Envia no header:
-
-Authorization: Bearer {token}
-
-Observações:
-
-- Rotas protegidas exigem autenticação
-- Usuário acessado via IUserContext
-
----
-
-## 🧠 Multi-tenant
-
-Estratégia:
-
-- Cada entidade possui UserId
-- Queries filtram por usuário
-
-Benefícios:
-
-- Isolamento de dados
-- Segurança
-- Base para SaaS
-
----
-
-## 🛠️ Stack Tecnológica
-
-- .NET
-- ASP.NET Core
+- .NET / ASP.NET Core
 - Entity Framework Core
 - PostgreSQL
 - FluentValidation
 - Serilog
+- OpenTelemetry
 - Testcontainers
-- Respawn
-- xUnit + FluentAssertions
+- xUnit
 
 ---
 
-## 🧪 Testes
+## ▶️ Execução
 
-- Banco real com Testcontainers
-- Reset com Respawn
-- Testes autenticados com JWT
-
----
-
-## 📡 Padrão de respostas
-
-### Sucesso
-
-```json
-{
-  "id": "...",
-  "name": "Mercado"
-}
-```
-
-### Erro
-```json
-{
-  "type": "https://httpstatuses.com/400",
-  "title": "Validation error",
-  "status": 400,
-  "errors": {
-    "name": ["Name is required"]
-  },
-  "traceId": "..."
-}
-```
-
----
-
-## ⚙️ Execução
-
-```
-dotnet restore  
-dotnet build  
-dotnet run  
+```bash
+dotnet restore
+dotnet build
+dotnet run
 ```
 
 ### Testes
 
+```bash
+dotnet test
 ```
-dotnet test  
-```
 
-⚠️ Requer Docker
+> Requer Docker para execução dos testes de integração
 
 ---
 
-## 📦 Estrutura
+## 📚 Documentação
 
-src/
-  Api
-  Application
-  Domain
-  Infrastructure
+Toda a documentação detalhada está na pasta de docs (ou raiz do projeto):
 
-tests/
-  IntegrationTests
-  UnitTests
+### 🏗 Arquitetura
+- [architecture.md](./architecture.md)
 
----
+### 🔄 Fluxo da aplicação
+- [application-flow.md](./application-flow.md)
 
-## 🚀 Roadmap
+### 📡 Contrato da API
+- [api-contract.md](./api-contract.md)
 
-✔ Implementado
+### 🧠 Multi-tenancy
+- [multitenancy.md](./multitenancy.md)
 
-- Arquitetura base
-- CRUD
-- Result Pattern
-- ProblemDetails estruturado
-- JWT
-- Multi-tenant
-- Testes de integração
+### 📖 Decisões arquiteturais
+- [decisions.md](./decisions.md)
 
-🚧 Em evolução
-
-- Filtros avançados
-- Observabilidade
-- Refresh token
+### 📊 Observabilidade
+- [observability.md](./observability.md)
 
 ---
 
-## 📄 Documentação
+## 🧭 Como navegar na documentação
 
-- architecture.md
-- application-flow.md
-- decisions.md
+Sugestão de leitura:
+
+1. `architecture.md`
+2. `application-flow.md`
+3. `decisions.md`
+4. `observability.md`
+5. `api-contract.md`
+
+---
+
+## 🧠 Filosofia do projeto
+
+> Simplicidade inicial com capacidade de evolução controlada.
 
 ---
 
 ## 📌 Status
 
-🚧 Em evolução com foco em qualidade arquitetural
+🚧 Em evolução contínua com foco em qualidade arquitetural

@@ -367,6 +367,40 @@ Consequências:
 
 ---
 
+## 📅 2026-04-07
+
+### 🔁 Introdução do Pipeline
+
+**Problema:**
+
+- Lógica duplicada
+- Baixa observabilidade
+
+**Solução:**
+
+Pipeline baseado em steps
+
+**Resultado:**
+
+- Fluxo controlado
+- Melhor rastreabilidade
+
+---
+
+### 📊 Observabilidade distribuída
+
+**Motivação:**
+
+- Diagnóstico em produção
+- Monitoramento de performance
+
+**Impacto:**
+
+- Integração com Jaeger
+- Base para métricas
+
+---
+
 ## 📌 Diretriz geral
 
 As decisões arquiteturais devem priorizar:

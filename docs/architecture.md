@@ -2,116 +2,122 @@
 
 ---
 
-## 🏗 Visão geral
+## 🏗 Visão Arquitetural
 
-O projeto utiliza:
+A arquitetura foi projetada com base no princípio de:
 
-- Clean Architecture
-- Vertical Slice Architecture
-- CQRS leve
+> "Simplicidade inicial com capacidade de evolução controlada"
+
+O objetivo não foi criar uma arquitetura perfeita desde o início, mas sim uma estrutura que **suporte crescimento sem colapso estrutural**.
 
 ---
 
 ## 🧱 Camadas
 
-Domain → regras de negócio  
-Application → casos de uso  
-Infrastructure → persistência  
-API → HTTP  
+Domain  
+- Regras de negócio puras  
+- Independente de infraestrutura  
+
+Application  
+- Orquestra casos de uso  
+- Contém pipeline e handlers  
+
+Infrastructure  
+- Persistência  
+- Integrações externas  
+
+API  
+- Interface HTTP  
+- Conversão de contratos  
 
 ---
 
 ## 🔀 Vertical Slice
 
-Organização por feature:
+A camada Application é organizada por feature, não por tipo técnico.
 
-Features/
-  Transactions
-  Categories
+### Motivação
 
----
-
-## ⚙️ CQRS
-
-Commands → escrita  
-Queries → leitura  
+- Reduzir dispersão de código
+- Aumentar coesão
+- Facilitar manutenção
 
 ---
 
-## 🔁 Pipeline
+## ⚙️ CQRS (leve)
 
-Controller → Dispatcher → HandlerExecutor → Handler
+Separação lógica entre leitura e escrita.
 
----
+### Decisão
 
-## 🔐 Autenticação
-
-JWT com Bearer Token
-
-Componentes:
-
-- JwtTokenService
-- IUserContext
-- Middleware de autenticação
+Não separar fisicamente (microservices), evitando complexidade prematura.
 
 ---
 
-## 🧠 Multi-tenant
+## 🔁 Pipeline de execução
 
-Estratégia:
+### Problema original
 
-- UserId nas entidades
-- Filtro por usuário nos repositórios
+Cross-cutting concerns espalhados:
 
-Benefícios:
-
-- Isolamento de dados
-- Segurança
-- Base para SaaS
+- validação em handlers
+- logs inconsistentes
+- ausência de tracing
 
 ---
 
-## 🧪 Testes
+### Solução
 
-- Testcontainers
-- PostgreSQL real
-- Respawn
+Pipeline baseado em steps:
 
----
-
-## 🧩 Result Pattern
-
-- IsSuccess
-- Errors (Dictionary)
-- Value
+```text
+Validation → Logging → Observability → Exception → Handler
+```
 
 ---
 
-## 🔌 Injeção de Dependência
+## 🧠 Análise crítica
 
-Application:
-- Handlers
-- Validators
+### Benefícios
 
-Infrastructure:
-- Repositories
-- DbContext
+- Centralização de responsabilidades
+- Ordem de execução controlada
+- Extensibilidade sem alteração de handlers
 
-API:
-- Configuração
+### Trade-offs
 
----
-
-## ⚖️ Trade-offs
-
-Dispatcher custom → mais controle / mais complexidade  
-Result Pattern → padronização / mais código  
-Multi-tenant → simples / exige disciplina  
+- Complexidade inicial maior
+- Curva de aprendizado
+- Necessidade de disciplina arquitetural
 
 ---
 
-## 🚧 Próximos passos
+## ⚖️ Decisões relevantes
 
-- Observabilidade
-- Refresh token
-- Evolução de queries
+### ✔ Não uso de MediatR
+
+**Motivo:**
+
+- Evitar abstração excessiva
+- Manter controle explícito
+
+**Trade-off:**
+
+- Implementação manual
+
+---
+
+### ✔ Result Pattern
+
+**Motivo:**
+
+- Evitar exceções como fluxo
+- Padronizar respostas
+
+---
+
+## 📊 Observabilidade como pilar
+
+A observabilidade não foi tratada como complemento, mas como parte da arquitetura.
+
+---
