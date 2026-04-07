@@ -2,82 +2,122 @@
 
 ---
 
-## 🏗 Visão geral
+## 🏗 Visão Arquitetural
 
-A arquitetura foi projetada para equilibrar:
+A arquitetura foi projetada com base no princípio de:
 
-- Simplicidade inicial
-- Evolução incremental
-- Baixo acoplamento
-- Alta observabilidade
+> "Simplicidade inicial com capacidade de evolução controlada"
+
+O objetivo não foi criar uma arquitetura perfeita desde o início, mas sim uma estrutura que **suporte crescimento sem colapso estrutural**.
 
 ---
 
 ## 🧱 Camadas
 
-Domain → regras de negócio  
-Application → casos de uso  
-Infrastructure → persistência  
-API → interface HTTP  
+Domain  
+- Regras de negócio puras  
+- Independente de infraestrutura  
+
+Application  
+- Orquestra casos de uso  
+- Contém pipeline e handlers  
+
+Infrastructure  
+- Persistência  
+- Integrações externas  
+
+API  
+- Interface HTTP  
+- Conversão de contratos  
 
 ---
 
 ## 🔀 Vertical Slice
 
-Organização por feature para aumentar coesão e reduzir dependências transversais.
+A camada Application é organizada por feature, não por tipo técnico.
+
+### Motivação
+
+- Reduzir dispersão de código
+- Aumentar coesão
+- Facilitar manutenção
 
 ---
 
 ## ⚙️ CQRS (leve)
 
-Separação lógica:
+Separação lógica entre leitura e escrita.
 
-- Commands → escrita
-- Queries → leitura
+### Decisão
 
-Sem segregação física.
+Não separar fisicamente (microservices), evitando complexidade prematura.
 
 ---
 
-## 🔁 Pipeline
+## 🔁 Pipeline de execução
+
+### Problema original
+
+Cross-cutting concerns espalhados:
+
+- validação em handlers
+- logs inconsistentes
+- ausência de tracing
+
+---
+
+### Solução
+
+Pipeline baseado em steps:
 
 ```text
-Controller → Dispatcher → HandlerExecutor → Steps → Handler
+Validation → Logging → Observability → Exception → Handler
 ```
 
 ---
 
-## 🧠 Motivação do Pipeline
+## 🧠 Análise crítica
 
-Resolver problemas de:
+### Benefícios
 
-- Código duplicado (validação/log)
-- Baixa observabilidade
-- Crescimento desorganizado
+- Centralização de responsabilidades
+- Ordem de execução controlada
+- Extensibilidade sem alteração de handlers
 
----
+### Trade-offs
 
-## ⚖️ Trade-offs
-
-| Decisão | Benefício | Trade-off |
-|--------|----------|----------|
-| Pipeline próprio | Controle total | Mais código |
-| Dispatcher dinâmico | Flexibilidade | Reflection |
-| Result Pattern | Consistência | Verbosidade |
+- Complexidade inicial maior
+- Curva de aprendizado
+- Necessidade de disciplina arquitetural
 
 ---
 
-## 📊 Observabilidade
+## ⚖️ Decisões relevantes
 
-- Tracing distribuído
-- Integração com OpenTelemetry
+### ✔ Não uso de MediatR
+
+**Motivo:**
+
+- Evitar abstração excessiva
+- Manter controle explícito
+
+**Trade-off:**
+
+- Implementação manual
 
 ---
 
-## 🚧 Evolução futura
+### ✔ Result Pattern
 
-- Métricas
-- Cache
-- Refinamento do pipeline
+**Motivo:**
+
+- Evitar exceções como fluxo
+- Padronizar respostas
+
+---
+
+## 📊 Observabilidade como pilar
+
+A observabilidade não foi tratada como complemento, mas como parte da arquitetura.
 
 ---
