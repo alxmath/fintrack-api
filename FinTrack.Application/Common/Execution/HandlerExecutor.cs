@@ -1,6 +1,4 @@
-using FinTrack.Application.Common.Observability;
 using FinTrack.Application.Common.Results;
-using System.Diagnostics;
 
 namespace FinTrack.Application.Common.Execution;
 
@@ -22,54 +20,14 @@ public class HandlerExecutor
         var rawName = typeof(TRequest).Name;
         var requestName = rawName.Replace("Query", "").Replace("Command", "");
 
-        using var activity = ActivitySources.ApplicationSource.StartActivity(
-            requestName,
-            ActivityKind.Internal);
+        Func<Task<Result<object>>> pipeline = handler;
 
-        activity?.SetTag("app.request.name", requestName);
-        activity?.SetTag("app.request.type", typeof(TRequest).FullName);
-
-        var stopwatch = Stopwatch.StartNew();
-
-        try
+        foreach (var step in _steps.Reverse())
         {
-            Func<Task<Result<object>>> pipeline = handler;
-
-            foreach (var step in _steps.Reverse())
-            {
-                var next = pipeline;
-                pipeline = () => step.Execute(request!, cancellationToken, next);
-            }
-
-            var result = await pipeline();
-
-            stopwatch.Stop();
-
-            activity?.SetTag("execution.time.ms", stopwatch.ElapsedMilliseconds);
-            activity?.SetTag("result.success", result.IsSuccess);
-
-            if (result.IsSuccess)
-            {
-                activity?.SetStatus(ActivityStatusCode.Ok);
-            }
-            else
-            {
-                activity?.SetStatus(ActivityStatusCode.Error);
-            }
-
-            return result;
+            var next = pipeline;
+            pipeline = () => step.Execute(request!, cancellationToken, next);
         }
-        catch (Exception ex)
-        {
-            stopwatch.Stop();
 
-            activity?.SetStatus(ActivityStatusCode.Error);
-
-            activity?.SetTag("exception.type", ex.GetType().FullName);
-            activity?.SetTag("exception.message", ex.Message);
-            activity?.SetTag("exception.stacktrace", ex.StackTrace);
-
-            throw;
-        }
+        return await pipeline();
     }
 }

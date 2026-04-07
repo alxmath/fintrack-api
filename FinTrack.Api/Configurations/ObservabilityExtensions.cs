@@ -17,8 +17,8 @@ public static class ObservabilityExtensions
                     .SetResourceBuilder(ResourceBuilder.CreateDefault()
                         .AddService("FinTrack.Api"))
 
-                    //.SetSampler(new AlwaysOnSampler()) // env DEV!
-                    .SetSampler(new TraceIdRatioBasedSampler(0.1)) // env PROD!
+                    .SetSampler(new AlwaysOnSampler()) // env DEV!
+                    //.SetSampler(new TraceIdRatioBasedSampler(0.1)) // env PROD!
 
                     .AddAspNetCoreInstrumentation(options =>
                     {
