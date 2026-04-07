@@ -1,54 +1,49 @@
 # 🔄 Fluxo de execução da Application
 
-## 📌 Visão geral
+---
 
-Controller → Dispatcher → HandlerExecutor → Handler
+## 📌 Fluxo
+
+```text
+Controller → Dispatcher → HandlerExecutor → Pipeline → Handler
+```
 
 ---
 
 ## 🧱 Etapas
 
 ### Controller
-
-- Recebe requisição HTTP
-- Chama Dispatcher
-
----
+Entrada HTTP
 
 ### Dispatcher
-
-- Resolve handler via DI
-- Resolve validator automaticamente
-
----
+Resolve handler dinamicamente
 
 ### HandlerExecutor
+Monta pipeline dinamicamente
 
-- Executa validação
-- Interrompe fluxo em erro
-- Logging estruturado
-- Mede tempo de execução
+### Pipeline Steps
 
----
+Validation  
+- Interrompe execução em erro  
+
+Logging  
+- Registra entrada/saída  
+
+Observability  
+- Cria spans  
+
+Exception  
+- Captura exceções  
 
 ### Handler
-
-- Executa regra de negócio
-- Acessa repositórios
-- Retorna Result<T>
+Executa regra de negócio
 
 ---
 
 ## 🎯 Benefícios
 
-- Separação de responsabilidades
-- Pipeline reutilizável
-- Código limpo
+- Separação clara
+- Extensibilidade
 - Testabilidade
 
 ---
-
-## 🔐 Integração com autenticação
-
-- IUserContext fornece UserId
-- Sem acoplamento com HTTP
