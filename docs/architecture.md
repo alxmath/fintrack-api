@@ -4,11 +4,12 @@
 
 ## 🏗 Visão geral
 
-O projeto utiliza:
+A arquitetura foi projetada para equilibrar:
 
-- Clean Architecture
-- Vertical Slice Architecture
-- CQRS leve
+- Simplicidade inicial
+- Evolução incremental
+- Baixo acoplamento
+- Alta observabilidade
 
 ---
 
@@ -17,101 +18,66 @@ O projeto utiliza:
 Domain → regras de negócio  
 Application → casos de uso  
 Infrastructure → persistência  
-API → HTTP  
+API → interface HTTP  
 
 ---
 
 ## 🔀 Vertical Slice
 
-Organização por feature:
-
-Features/
-  Transactions
-  Categories
+Organização por feature para aumentar coesão e reduzir dependências transversais.
 
 ---
 
-## ⚙️ CQRS
+## ⚙️ CQRS (leve)
 
-Commands → escrita  
-Queries → leitura  
+Separação lógica:
+
+- Commands → escrita
+- Queries → leitura
+
+Sem segregação física.
 
 ---
 
 ## 🔁 Pipeline
 
-Controller → Dispatcher → HandlerExecutor → Handler
+```text
+Controller → Dispatcher → HandlerExecutor → Steps → Handler
+```
 
 ---
 
-## 🔐 Autenticação
+## 🧠 Motivação do Pipeline
 
-JWT com Bearer Token
+Resolver problemas de:
 
-Componentes:
-
-- JwtTokenService
-- IUserContext
-- Middleware de autenticação
-
----
-
-## 🧠 Multi-tenant
-
-Estratégia:
-
-- UserId nas entidades
-- Filtro por usuário nos repositórios
-
-Benefícios:
-
-- Isolamento de dados
-- Segurança
-- Base para SaaS
-
----
-
-## 🧪 Testes
-
-- Testcontainers
-- PostgreSQL real
-- Respawn
-
----
-
-## 🧩 Result Pattern
-
-- IsSuccess
-- Errors (Dictionary)
-- Value
-
----
-
-## 🔌 Injeção de Dependência
-
-Application:
-- Handlers
-- Validators
-
-Infrastructure:
-- Repositories
-- DbContext
-
-API:
-- Configuração
+- Código duplicado (validação/log)
+- Baixa observabilidade
+- Crescimento desorganizado
 
 ---
 
 ## ⚖️ Trade-offs
 
-Dispatcher custom → mais controle / mais complexidade  
-Result Pattern → padronização / mais código  
-Multi-tenant → simples / exige disciplina  
+| Decisão | Benefício | Trade-off |
+|--------|----------|----------|
+| Pipeline próprio | Controle total | Mais código |
+| Dispatcher dinâmico | Flexibilidade | Reflection |
+| Result Pattern | Consistência | Verbosidade |
 
 ---
 
-## 🚧 Próximos passos
+## 📊 Observabilidade
 
-- Observabilidade
-- Refresh token
-- Evolução de queries
+- Tracing distribuído
+- Integração com OpenTelemetry
+
+---
+
+## 🚧 Evolução futura
+
+- Métricas
+- Cache
+- Refinamento do pipeline
+
+---
