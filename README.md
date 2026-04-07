@@ -2,42 +2,36 @@
 
 ## 📌 Visão Geral
 
-O **FinTrack API** é um backend para gerenciamento financeiro pessoal, com foco em organização de transações, categorias e usuários.
+O **FinTrack API** é um backend para gerenciamento financeiro pessoal, projetado com foco em **clareza arquitetural, extensibilidade e controle explícito do fluxo de execução**.
 
-O projeto foi concebido com ênfase em:
-
-* Arquitetura limpa e escalável
-* Separação de responsabilidades
-* Testes de integração realistas
-* Segurança e isolamento de dados por usuário
-* Preparação para cenários **offline-first**
+O projeto evoluiu de uma arquitetura simples para um modelo baseado em **pipeline de execução**, permitindo maior previsibilidade, observabilidade e desacoplamento.
 
 ---
 
 ## 🎯 Objetivo
 
-Servir como base para:
+Este projeto serve como:
 
-* Estudo avançado de **arquitetura de software**
-* Evolução para **Trabalho de Conclusão de Curso (TCC)**
-* Demonstração prática de:
-
-  * Modelagem de domínio
-  * Design de APIs REST
-  * Autenticação com JWT
-  * Multi-tenant (isolamento por usuário)
-  * Testes com banco real
+- Base para estudo avançado de arquitetura de software
+- Candidato a Trabalho de Conclusão de Curso (TCC)
+- Demonstração prática de:
+  - Clean Architecture
+  - Pipeline Pattern
+  - CQRS (leve)
+  - Observabilidade com tracing distribuído
+  - Multi-tenancy
+  - Testes de integração com banco real
 
 ---
 
 ## 🧱 Arquitetura
 
-O projeto adota:
+A aplicação combina:
 
-* Clean Architecture
-* Vertical Slice Architecture
-* CQRS (leve)
-* Result Pattern
+- Clean Architecture
+- Vertical Slice Architecture
+- Pipeline Pattern (Chain of Responsibility)
+- Result Pattern
 
 Estrutura:
 
@@ -47,170 +41,110 @@ API → Application → Domain → Infrastructure
 
 ## 🔁 Pipeline de execução
 
-Controller → Dispatcher → HandlerExecutor → Handler
+```text
+Controller → Dispatcher → HandlerExecutor → Pipeline → Handler
+```
 
 ### Responsabilidades
 
-Controller
-- Recebe requisição HTTP
-- Define resposta HTTP
+**Controller**
+- Entrada HTTP
+- Conversão para resposta HTTP
 
-Dispatcher
-- Resolve handler via DI
-- Resolve validator automaticamente
+**Dispatcher**
+- Resolução dinâmica de handlers
 
-HandlerExecutor
-- Executa validação
-- Logging estruturado
-- Controle de fluxo
+**HandlerExecutor**
+- Orquestra pipeline
+- Não contém regra de negócio
 
-Handler
-- Contém regra de negócio
+**Pipeline (Steps)**
+- Validation
+- Logging
+- Observability
+- Exception
+
+**Handler**
+- Regra de negócio
+
+---
+
+## 🧠 Decisão arquitetural chave
+
+Foi adotado um pipeline explícito ao invés de frameworks como MediatR.
+
+**Motivo:**
+
+- Maior controle do fluxo
+- Debug mais simples
+- Evitar dependência externa
+
+**Trade-off:**
+
+- Mais código manual
+- Maior responsabilidade arquitetural
 
 ---
 
 ## 🔐 Autenticação
 
-A API utiliza JWT (Bearer Token).
-
-Fluxo:
-
-1. POST /api/v1/auth/login
-2. Recebe access_token
-3. Envia no header:
-
-Authorization: Bearer {token}
-
-Observações:
-
-- Rotas protegidas exigem autenticação
-- Usuário acessado via IUserContext
+- JWT (Bearer Token)
+- IUserContext abstrai acesso ao usuário
 
 ---
 
 ## 🧠 Multi-tenant
 
-Estratégia:
-
-- Cada entidade possui UserId
-- Queries filtram por usuário
-
-Benefícios:
-
-- Isolamento de dados
-- Segurança
-- Base para SaaS
+- Isolamento por UserId
+- Filtro obrigatório nas queries
 
 ---
 
-## 🛠️ Stack Tecnológica
+## 📊 Observabilidade
 
-- .NET
-- ASP.NET Core
-- Entity Framework Core
-- PostgreSQL
+- OpenTelemetry
+- Jaeger
+- Tracing por request
+
+---
+
+## 🛠️ Stack
+
+- .NET / ASP.NET Core
+- EF Core / PostgreSQL
 - FluentValidation
 - Serilog
 - Testcontainers
-- Respawn
-- xUnit + FluentAssertions
+- xUnit
 
 ---
 
 ## 🧪 Testes
 
-- Banco real com Testcontainers
+- Banco real (PostgreSQL)
 - Reset com Respawn
-- Testes autenticados com JWT
-
----
-
-## 📡 Padrão de respostas
-
-### Sucesso
-
-```json
-{
-  "id": "...",
-  "name": "Mercado"
-}
-```
-
-### Erro
-```json
-{
-  "type": "https://httpstatuses.com/400",
-  "title": "Validation error",
-  "status": 400,
-  "errors": {
-    "name": ["Name is required"]
-  },
-  "traceId": "..."
-}
-```
-
----
-
-## ⚙️ Execução
-
-```
-dotnet restore  
-dotnet build  
-dotnet run  
-```
-
-### Testes
-
-```
-dotnet test  
-```
-
-⚠️ Requer Docker
-
----
-
-## 📦 Estrutura
-
-src/
-  Api
-  Application
-  Domain
-  Infrastructure
-
-tests/
-  IntegrationTests
-  UnitTests
+- Testes autenticados
 
 ---
 
 ## 🚀 Roadmap
 
-✔ Implementado
+✔ Pipeline estruturado  
+✔ Observabilidade básica  
 
-- Arquitetura base
-- CRUD
-- Result Pattern
-- ProblemDetails estruturado
-- JWT
-- Multi-tenant
-- Testes de integração
-
-🚧 Em evolução
-
-- Filtros avançados
-- Observabilidade
-- Refresh token
+🚧 Em evolução  
+- Enriquecimento de tracing  
+- Métricas (Prometheus/Grafana)  
+- Refresh token  
 
 ---
 
 ## 📄 Documentação
 
-- architecture.md
-- application-flow.md
-- decisions.md
+- [architecture.md](docs/architecture.md)
+- [application-flow.md](docs/application-flow.md)
+- [decisions.md](docs/decisions.md)
+- [multitenancy.md](docs/multitenancy.md)
+- [api-contract.md](docs/api-contract.md)
 
 ---
-
-## 📌 Status
-
-🚧 Em evolução com foco em qualidade arquitetural
