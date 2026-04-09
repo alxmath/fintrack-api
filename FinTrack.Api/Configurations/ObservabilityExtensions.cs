@@ -1,5 +1,6 @@
 using FinTrack.Application.Common.Observability;
 using OpenTelemetry;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -41,7 +42,17 @@ public static class ObservabilityExtensions
 
                     .AddConsoleExporter(); // manter pra debug
             });
-
+        
+        services.AddOpenTelemetry()
+            .WithMetrics(metrics =>
+            {
+                metrics
+                    .AddMeter("FinTrack.Application")
+                    .AddAspNetCoreInstrumentation()
+                    .AddRuntimeInstrumentation()
+                    .AddPrometheusExporter();
+            });
+        
         return services;
     }
 }
