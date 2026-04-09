@@ -8,11 +8,8 @@ using System.Net.Http.Json;
 namespace FinTrack.Api.IntegrationTests.Features.Categories.Create;
 
 [Collection("IntegrationTests")]
-public class CreateCategoryTests : IntegrationTestBase
+public class CreateCategoryTests(PostgreSqlContainerFixture fixture) : IntegrationTestBase(fixture)
 {
-    public CreateCategoryTests(PostgreSqlContainerFixture fixture)
-        : base(fixture) { }
-
     [Fact]
     public async Task Post_ShouldCreateCategory()
     {
@@ -24,9 +21,6 @@ public class CreateCategoryTests : IntegrationTestBase
         // Act
         var response = await Client.PostAsJsonAsync(
             "/api/v1/categories", request);
-
-        var raw = await response.Content.ReadAsStringAsync();
-        Console.WriteLine(raw);
 
         // Assert
         response.EnsureSuccessStatusCode();
