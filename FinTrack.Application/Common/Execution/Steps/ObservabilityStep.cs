@@ -6,6 +6,8 @@ using FinTrack.Application.Common.Results;
 
 public class ObservabilityStep : IExecutionStep
 {
+    public int Order => 3;
+
     public async Task<Result<object>> Execute(
         object request,
         CancellationToken cancellationToken,

@@ -2,13 +2,8 @@ using FinTrack.Application.Common.Results;
 
 namespace FinTrack.Application.Common.Execution;
 
-public class HandlerExecutor
+public class HandlerExecutor(IEnumerable<IExecutionStep> steps)
 {
-    private readonly IEnumerable<IExecutionStep> _steps;
-
-    public HandlerExecutor(
-        IEnumerable<IExecutionStep> steps) => _steps = steps;
-
     public async Task<Result<object>> Execute<TRequest>(
         TRequest request,
         Func<Task<Result<object>>> handler,
@@ -19,7 +14,7 @@ public class HandlerExecutor
 
         Func<Task<Result<object>>> pipeline = handler;
 
-        foreach (var step in _steps.Reverse())
+        foreach (var step in steps.OrderByDescending(x => x.Order))
         {
             var next = pipeline;
             pipeline = () => step.Execute(request, cancellationToken, next);

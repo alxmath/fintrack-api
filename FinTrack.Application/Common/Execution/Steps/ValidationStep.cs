@@ -4,14 +4,9 @@ using static FinTrack.Application.Common.Errors.Errors;
 
 namespace FinTrack.Application.Common.Execution.Steps;
 
-public class ValidationStep : IExecutionStep
+public class ValidationStep(IServiceProvider serviceProvider) : IExecutionStep
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public ValidationStep(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
+    public int Order => 1;
 
     public async Task<Result<object>> Execute(
         object request,
@@ -19,11 +14,12 @@ public class ValidationStep : IExecutionStep
         Func<Task<Result<object>>> next)
     {
         var validatorType = typeof(IValidator<>).MakeGenericType(request.GetType());
-        var validator = _serviceProvider.GetService(validatorType);
+        var validator = serviceProvider.GetService(validatorType);
 
         if (validator is not null)
         {
-            var method = validatorType.GetMethod("ValidateAsync", [request.GetType(), typeof(CancellationToken)]);
+            var method = validatorType
+                .GetMethod("ValidateAsync", [request.GetType(), typeof(CancellationToken)]);
 
             var task = (Task)method!.Invoke(validator, [request, cancellationToken])!;
 

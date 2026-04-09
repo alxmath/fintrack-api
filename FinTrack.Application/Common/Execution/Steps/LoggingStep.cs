@@ -3,14 +3,9 @@ using Microsoft.Extensions.Logging;
 
 namespace FinTrack.Application.Common.Execution.Steps;
 
-public class LoggingStep : IExecutionStep
+public class LoggingStep(ILogger<LoggingStep> logger) : IExecutionStep
 {
-    private readonly ILogger<LoggingStep> _logger;
-
-    public LoggingStep(ILogger<LoggingStep> logger)
-    {
-        _logger = logger;
-    }
+    public int Order => 2;
 
     public async Task<Result<object>> Execute(
         object request,
@@ -19,7 +14,7 @@ public class LoggingStep : IExecutionStep
     {
         var requestName = request.GetType().Name;
 
-        _logger.LogInformation(
+        logger.LogInformation(
             "Handling {Request} {@RequestData}",
             requestName,
             request);
@@ -28,13 +23,13 @@ public class LoggingStep : IExecutionStep
 
         if (result.IsSuccess)
         {
-            _logger.LogInformation(
+            logger.LogInformation(
                 "Handled {Request} successfully",
                 requestName);
         }
         else
         {
-            _logger.LogWarning(
+            logger.LogWarning(
                 "Handled {Request} with failure: {Errors}",
                 requestName,
                 result.Errors);

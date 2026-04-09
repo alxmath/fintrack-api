@@ -4,6 +4,8 @@ namespace FinTrack.Application.Common.Execution;
 
 public interface IExecutionStep
 {
+    int Order { get; }
+    
     Task<Result<object>> Execute(
         object request,
         CancellationToken cancellationToken,

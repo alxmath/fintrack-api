@@ -4,12 +4,9 @@ using System.Diagnostics;
 
 namespace FinTrack.Application.Common.Execution.Steps;
 
-public class ExceptionStep : IExecutionStep
+public class ExceptionStep(ILogger<ExceptionStep> logger) : IExecutionStep
 {
-    private readonly ILogger<ExceptionStep> _logger;
-
-    public ExceptionStep(ILogger<ExceptionStep> logger) => 
-        _logger = logger;
+    public int Order => 5;
 
     public async Task<Result<object>> Execute(
         object request,
@@ -33,7 +30,7 @@ public class ExceptionStep : IExecutionStep
             activity?.SetTag("exception.stacktrace", ex.StackTrace);
 
             // Logging estruturado
-            _logger.LogError(
+            logger.LogError(
                 ex,
                 "Unhandled exception in {Request}",
                 requestName);

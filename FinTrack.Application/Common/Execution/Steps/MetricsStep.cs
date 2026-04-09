@@ -6,6 +6,8 @@ namespace FinTrack.Application.Common.Execution.Steps;
 
 public class MetricsStep : IExecutionStep
 {
+    public int Order => 4;
+
     public async Task<Result<object>> Execute(
         object request,
         CancellationToken cancellationToken,
