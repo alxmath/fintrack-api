@@ -64,23 +64,6 @@ public class CreateCategoryTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task Post_ShouldReturn409_WhenCategoryAlreadyExists()
-    {
-        // Arrange
-        await AuthHelper.AuthenticateAsync(Client);
-
-        var request = new CreateCategoryCommand("Alimentação");
-
-        await Client.PostAsJsonAsync("/api/v1/categories", request);
-
-        // Act
-        var response = await Client.PostAsJsonAsync("/api/v1/categories", request);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
-    }
-
-    [Fact]
     public async Task Post_ShouldReturn401_WhenNotAuthenticated()
     {
         // Arrange

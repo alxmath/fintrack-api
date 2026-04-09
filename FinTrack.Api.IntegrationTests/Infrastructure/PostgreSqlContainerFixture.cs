@@ -13,7 +13,7 @@ public class PostgreSqlContainerFixture : IAsyncLifetime
 
     public PostgreSqlContainerFixture()
     {
-        _container = new PostgreSqlBuilder("postgres:15")
+        _container = new PostgreSqlBuilder("postgres:16")
            .WithDatabase("fintrack_test")
            .WithUsername("postgres")
            .WithPassword("postgres")
@@ -25,14 +25,12 @@ public class PostgreSqlContainerFixture : IAsyncLifetime
     {
         await _container.StartAsync();
 
-        await _container.StartAsync();
-
         var services = new ServiceCollection();
 
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(ConnectionString));
 
-        using var provider = services.BuildServiceProvider();
+        await using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
 
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();

@@ -25,8 +25,6 @@ public class CreateTransactionHandler(
             categoryId: command.CategoryId,
             userId: userId);
 
-        // TODO: salvar userId na entidade
-
         await repository.AddAsync(transaction, cancellationToken);
 
         var response = new CreateTransactionResponse
