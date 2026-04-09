@@ -13,6 +13,8 @@ public static class ApplicationBuilderExtensions
 
         app.UseMiddleware<CorrelationIdMiddleware>();
         app.UseMiddleware<ObservabilityMiddleware>();
+        
+        app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
         app.UseHttpsRedirection();
 
