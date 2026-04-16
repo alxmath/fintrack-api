@@ -20,14 +20,14 @@ public class CreateTransactionHandler(
 
         var date = DateTimeUtils.ToUtc(command.Date);
 
-        var categoryExists = await categoryRepository
+        var category = await categoryRepository
             .GetByIdAsync(command.CategoryId, userId, cancellationToken);
 
-        if (categoryExists is null)
+        if (category is null)
             return Result<CreateTransactionResponse>.Failure(
                 new Dictionary<string, string[]>
                 {
-                    { "Name", ["Categoria não encontrada"] }
+                    { nameof(command.CategoryId), ["Categoria não encontrada"] }
                 },
                 General.NotFound);
 
@@ -35,7 +35,7 @@ public class CreateTransactionHandler(
             description: command.Description,
             amount: command.Amount,
             date: date,
-            categoryId: command.CategoryId,
+            categoryId: category.Id,
             userId: userId);
 
         await transactionRepository.AddAsync(transaction, cancellationToken);
