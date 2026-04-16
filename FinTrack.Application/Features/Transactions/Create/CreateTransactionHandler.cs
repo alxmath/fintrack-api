@@ -2,11 +2,13 @@ using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FinTrack.Application.Common.Utils;
 using FinTrack.Domain.Entities;
+using static FinTrack.Application.Common.Errors.Errors;
 
 namespace FinTrack.Application.Features.Transactions.Create;
 
 public class CreateTransactionHandler(
-    ITransactionRepository repository,
+    ITransactionRepository transactionRepository,
+    ICategoryRepository categoryRepository,
     IUserContext userContext)
     : IRequestHandler<CreateTransactionCommand, CreateTransactionResponse>
 {
@@ -18,14 +20,25 @@ public class CreateTransactionHandler(
 
         var date = DateTimeUtils.ToUtc(command.Date);
 
-        var transaction = new Transaction(
+        var categoryExists = await categoryRepository
+            .GetByIdAsync(command.CategoryId, userId, cancellationToken);
+
+        if (categoryExists is null)
+            return Result<CreateTransactionResponse>.Failure(
+                new Dictionary<string, string[]>
+                {
+                    { "Name", ["Categoria não encontrada"] }
+                },
+                General.NotFound);
+
+        var transaction = Transaction.Create(
             description: command.Description,
             amount: command.Amount,
             date: date,
             categoryId: command.CategoryId,
             userId: userId);
 
-        await repository.AddAsync(transaction, cancellationToken);
+        await transactionRepository.AddAsync(transaction, cancellationToken);
 
         var response = new CreateTransactionResponse
         {
