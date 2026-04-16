@@ -1,3 +1,4 @@
+using FinTrack.Application.Common.Abstractions;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FinTrack.Application.Features.Transactions.Create;
@@ -16,11 +17,12 @@ public class CreateTransactionHandlerTests
         var transactionRepositoryMock = new Mock<ITransactionRepository>();
         var categoryRespositoryMock = new Mock<ICategoryRepository>();
         var userContextMock = new Mock<IUserContext>();
+        var dateTimeProviderMock = new Mock<IDateTimeProvider>();
 
         var command = new CreateTransactionCommand(
             "Salário",
             1000,
-            DateTime.UtcNow,
+            new DateTime(2026, 04, 14),
             Guid.NewGuid()
         );
 
@@ -36,10 +38,17 @@ public class CreateTransactionHandlerTests
 
         userContextMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
 
+        var now = new DateTime(2026, 04, 15);
+
+        dateTimeProviderMock
+            .Setup(x => x.UtcNow)
+            .Returns(now);
+
         var handler = new CreateTransactionHandler(
             transactionRepositoryMock.Object,
             categoryRespositoryMock.Object,
-            userContextMock.Object);
+            userContextMock.Object,
+            dateTimeProviderMock.Object);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -62,11 +71,12 @@ public class CreateTransactionHandlerTests
         var transactionRepositoryMock = new Mock<ITransactionRepository>();
         var categoryRespositoryMock = new Mock<ICategoryRepository>();
         var userContextMock = new Mock<IUserContext>();
+        var dateTimeProviderMock = new Mock<IDateTimeProvider>();
 
         var command = new CreateTransactionCommand(
             "Salário",
             1000,
-            DateTime.UtcNow,
+            new DateTime(2026, 04, 14),
             Guid.NewGuid()
         );
 
@@ -79,10 +89,17 @@ public class CreateTransactionHandlerTests
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Category);
 
+        var now = new DateTime(2026, 04, 15);
+
+        dateTimeProviderMock
+            .Setup(x => x.UtcNow)
+            .Returns(now);
+
         var handler = new CreateTransactionHandler(
         transactionRepositoryMock.Object,
         categoryRespositoryMock.Object,
-        userContextMock.Object);
+        userContextMock.Object,
+        dateTimeProviderMock.Object);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
