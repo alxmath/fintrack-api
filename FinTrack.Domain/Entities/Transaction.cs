@@ -8,12 +8,16 @@ public class Transaction
     public DateTime Date { get; private set; }
     public Guid CategoryId { get; private set; }
     public Category Category { get; private set; } = default!;
-
     public Guid UserId { get; private set; }
 
-    public Transaction() {}
+    private Transaction() {}
 
-    public Transaction(string description, decimal amount, DateTime date, Guid categoryId, Guid userId)
+    public static Transaction Create(
+        string description,
+        decimal amount,
+        DateTime date,
+        Guid categoryId,
+        Guid userId)
     {
         if (string.IsNullOrWhiteSpace(description))
             throw new ArgumentException("Descrição é obrigatória.", nameof(description));
@@ -24,17 +28,23 @@ public class Transaction
         if (amount == 0)
             throw new ArgumentException("Valor não pode ser zero.", nameof(amount));
 
+        if (date > DateTime.UtcNow)
+            throw new ArgumentException("Data não pode ser futura.");
+
         if (categoryId == Guid.Empty)
             throw new ArgumentException("Categoria inválida.", nameof(categoryId));
 
         if (userId == Guid.Empty)
             throw new ArgumentException("Usuário inválido.", nameof(userId));
 
-        Id = Guid.NewGuid();
-        Description = description.Trim();
-        Amount = amount;
-        Date = date;
-        CategoryId = categoryId;
-        UserId = userId;
+        return new Transaction
+        {
+            Id = Guid.NewGuid(),
+            Description = description.Trim(),
+            Amount = amount,
+            Date = date,
+            CategoryId = categoryId,
+            UserId = userId,
+        };
     }
 }
