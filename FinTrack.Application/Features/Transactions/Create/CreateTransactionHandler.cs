@@ -1,3 +1,4 @@
+using FinTrack.Application.Common.Abstractions;
 using FinTrack.Application.Common.Interfaces;
 using FinTrack.Application.Common.Results;
 using FinTrack.Application.Common.Utils;
@@ -9,7 +10,8 @@ namespace FinTrack.Application.Features.Transactions.Create;
 public class CreateTransactionHandler(
     ITransactionRepository transactionRepository,
     ICategoryRepository categoryRepository,
-    IUserContext userContext)
+    IUserContext userContext,
+    IDateTimeProvider dateTimeProvider)
     : IRequestHandler<CreateTransactionCommand, CreateTransactionResponse>
 {
     public async Task<Result<CreateTransactionResponse>> Handle(
@@ -31,12 +33,15 @@ public class CreateTransactionHandler(
                 },
                 General.NotFound);
 
+        var now = dateTimeProvider.UtcNow;
+
         var transaction = Transaction.Create(
             description: command.Description,
             amount: command.Amount,
             date: date,
             categoryId: category.Id,
-            userId: userId);
+            userId: userId,
+            now: now);
 
         await transactionRepository.AddAsync(transaction, cancellationToken);
 

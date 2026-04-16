@@ -17,7 +17,8 @@ public class Transaction
         decimal amount,
         DateTime date,
         Guid categoryId,
-        Guid userId)
+        Guid userId,
+        DateTime now)
     {
         if (string.IsNullOrWhiteSpace(description))
             throw new ArgumentException("Descrição é obrigatória.", nameof(description));
@@ -28,7 +29,7 @@ public class Transaction
         if (amount == 0)
             throw new ArgumentException("Valor não pode ser zero.", nameof(amount));
 
-        if (date > DateTime.UtcNow)
+        if (date > now)
             throw new ArgumentException("Data não pode ser futura.");
 
         if (categoryId == Guid.Empty)
